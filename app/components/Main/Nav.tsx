@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faBars,
@@ -17,8 +18,8 @@ const Nav = ({ isLeftBarOpen, toggleLeftBar, toggleRightBar }: NavProps) => {
 	// console.log('Nav');
 
 	return (
-		<nav className='flex w-full items-center z-50'>
-			<div className='flex justify-between w-full  p-2 items-center bg-slate-500'>
+		<nav className='flex w-full items-center z-0'>
+			<div className='flex justify-between w-full p-2 items-center bg-slate-500'>
 				<h3 className='hidden sm:flex tracking-widest font-bold ml-2'>
 					GiChat
 				</h3>

@@ -6,8 +6,8 @@ import Link from 'next/link';
 const App = () => {
 	return (
 		<>
-			<MainApp />
-			{/* <Home /> */}
+			{/* <MainApp /> */}
+			<Home />
 		</>
 	);
 };

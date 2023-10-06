@@ -1,7 +1,7 @@
 import Button from '../components/UI/Button';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faUser } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 
 const Register = () => {
@@ -9,33 +9,40 @@ const Register = () => {
 		<div className='flex flex-col items-center my-8'>
 			<h2 className='text-xl lett tracking-wide'>Rejestracja</h2>
 			<form className='flex flex-col items-center mt-4'>
-				<div className='p-4'>
-					<input
-						className='py-2 px-4 text-slate-700'
-						type='text'
-						id='username'
-						name='username'
-						placeholder='Email:'
-					/>
-				</div>
-				<div className='p-4'>
-					<input
-						className='py-2 px-4 text-slate-700'
-						type='password'
-						id='password'
-						name='password'
-						placeholder='Hasło:'
-					/>
-				</div>
-				<div className='p-4'>
-					<input
-						className='py-2 px-4 text-slate-700'
-						type='password'
-						id='passwordConfirm'
-						name='passwordConfirm'
-						placeholder='Powtórz hasło:'
-					/>
-				</div>
+				<input
+					className='py-2 px-4 m-4 text-slate-700'
+					type='text'
+					id='username'
+					name='username'
+					placeholder='Email:'
+				/>
+				<input
+					className='py-2 px-4 m-4 text-slate-700'
+					type='password'
+					id='password'
+					name='password'
+					placeholder='Hasło:'
+				/>
+				<input
+					className='py-2 px-4 m-4 text-slate-700'
+					type='password'
+					id='passwordConfirm'
+					name='passwordConfirm'
+					placeholder='Powtórz hasło:'
+				/>
+				<label
+					className='flex w-full p-4'
+					htmlFor='avatar'>
+					<button
+						className='flex animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+						type='submit'>
+						<FontAwesomeIcon
+							className='w-6 h-6'
+							icon={faUser}
+						/>
+						<span className='ml-2'>Dodaj avatar</span>
+					</button>
+				</label>
 				<p className='w-full text-sm text-left px-4 mt-4'>
 					Masz konto?
 					<Link href='/Login'>

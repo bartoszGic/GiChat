@@ -10,7 +10,7 @@ const Backdrop = ({ onClick, bool }: Props) => {
 	return (
 		<div
 			onClick={handleClick}
-			className='absolute max-w-4xl mx-auto w-screen h-screen bg-slate-900 opacity-75 -z-40'></div>
+			className='absolute max-w-4xl mx-auto w-screen h-screen bg-slate-900 opacity-75 z-10'></div>
 	);
 };
 export default Backdrop;

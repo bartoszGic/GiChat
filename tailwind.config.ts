@@ -9,10 +9,13 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				inter: ['Inter', 'sans-serif'],
+				sans: ['var(--font-inter)'],
 			},
 			boxShadow: {
 				btnShaddow: 'inset 6.5em 0 0 0 var(slate-100)',
+			},
+			height: {
+				calc: 'calc(100vh - 44px)',
 			},
 			keyframes: {
 				animeBtn: {
@@ -20,12 +23,12 @@ const config: Config = {
 						transform: 'scale(1)',
 					},
 					'100%': {
-						transform: 'scale(.9)',
+						transform: 'scale(.95)',
 					},
 				},
 				animeOffBtn: {
 					'0%': {
-						transform: 'scale(.9)',
+						transform: 'scale(.95)',
 					},
 					'100%': {
 						transform: 'scale(1)',
