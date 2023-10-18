@@ -34,10 +34,19 @@ const config: Config = {
 						transform: 'scale(1)',
 					},
 				},
+				animeBackdrop: {
+					'0%': {
+						opacity: '0',
+					},
+					'100%': {
+						transform: '.75',
+					},
+				},
 			},
 			animation: {
 				animeBtn: 'animeBtn .2s ease-in-out forwards',
 				animeOffBtn: 'animeOffBtn .2s ease-in-out forwards',
+				animeBackdrop: 'animeBackdrop .2s ease-in-out',
 			},
 		},
 	},

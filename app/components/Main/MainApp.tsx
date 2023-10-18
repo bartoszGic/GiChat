@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
-import Left from './Left';
-import Nav from './Nav';
-import Right from './Right';
-import Forum from './Forum';
+import Left from './LeftPanel/Left';
+import Nav from './Nav/Nav';
+import Right from './RightPanel/Right';
+import Forum from './Forum/Forum';
 
 const MainApp = () => {
 	// console.log('Main');
@@ -24,15 +24,22 @@ const MainApp = () => {
 				isLeftBarOpen={isLeftBarOpen}
 				toggleLeftBar={toggleLeftBar}
 				toggleRightBar={toggleRightBar}
+				isRightBarOpen={isRightBarOpen}
 			/>
-			<Left isLeftBarOpen={isLeftBarOpen} />
+			<Left
+				isLeftBarOpen={isLeftBarOpen}
+				toggleLeftBar={toggleLeftBar}
+			/>
 			<Forum
 				isLeftBarOpen={isLeftBarOpen}
-				isRightBarOpen={isRightBarOpen}
 				toggleLeftBar={toggleLeftBar}
+				isRightBarOpen={isRightBarOpen}
 				toggleRightBar={toggleRightBar}
 			/>
-			<Right isRightBarOpen={isRightBarOpen} />
+			<Right
+				isRightBarOpen={isRightBarOpen}
+				toggleRightBar={toggleRightBar}
+			/>
 		</>
 	);
 };

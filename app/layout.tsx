@@ -1,6 +1,6 @@
 import '../styles/globals.css';
-import Nav from './components/Main/Nav';
-import App from './page';
+import Nav from './components/Main/Nav/Nav';
+import page from './page';
 import { Inter } from 'next/font/google';
 export const metadata = {
 	title: 'GiChat',
