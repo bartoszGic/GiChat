@@ -1,15 +1,22 @@
 'use client';
 import Button from '../components/UI/Button';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faUser } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import {
+	createUserWithEmailAndPassword,
+	updateProfile,
+	onAuthStateChanged,
+} from 'firebase/auth';
 import { auth, storage, db } from '../firebase-config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { setDoc, doc } from 'firebase/firestore';
 import Image from 'next/image';
+import { useAppDispatch } from '@/store/hooks';
+import { switchToMainApp } from '@/store/route-slice';
+import { useRouter, redirect } from 'next/navigation';
 
 const Register = () => {
 	const [email, setEmail] = useState('');
@@ -20,6 +27,9 @@ const Register = () => {
 	const [loading, setLoading] = useState(false);
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');
+	const [logged, setLogged] = useState<null | boolean>(null);
+	const dispatch = useAppDispatch();
+	const router = useRouter();
 
 	const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files && e.target.files[0];
@@ -53,10 +63,13 @@ const Register = () => {
 				email,
 				photoURL: downloadURL,
 			});
+			await setDoc(
+				doc(db, `userChats_${profile.user.uid}`, profile.user.uid),
+				{}
+			);
 
-			// 	// Create empty user chats on firestore
-			// 	await setDoc(doc(db, "userChats", res.user.uid), {});
-			// 	navigate("/");
+			dispatch(switchToMainApp(true));
+			router.push('/');
 		} catch (error) {
 			console.log(error);
 		}
@@ -74,6 +87,7 @@ const Register = () => {
 				password1
 			);
 			createUserAcount(profile);
+			setLoading(false);
 		} catch (error: any) {
 			setLoading(false);
 			if (error.code === 'auth/invalid-email') {
@@ -87,107 +101,119 @@ const Register = () => {
 			}
 		}
 	};
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, user => {
+			user ? setLogged(true) : setLogged(false);
+		});
+		return () => unsubscribe();
+	}, []);
 
-	return (
-		<section className='flex flex-col items-center my-8'>
-			<h2 className='text-xl lett tracking-wide'>
-				{!loading ? 'Rejestracja' : 'Ładowanie...'}
-			</h2>
-			<form
-				className='flex flex-col items-center mt-4'
-				onSubmit={signUpHandler}>
-				<input
-					className='py-2 px-4 m-4 text-slate-700'
-					type='text'
-					id='username'
-					name='username'
-					placeholder='Email:'
-					onChange={e => setEmail(e.target.value)}
-					value={email}
-				/>
-				<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
-					{emailError}
-				</div>
-				<input
-					className='py-2 px-4 m-4 text-slate-700'
-					type='password'
-					id='password'
-					name='password'
-					placeholder='Hasło:'
-					onChange={e => setPassword1(e.target.value)}
-					value={password1}
-				/>
-				<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
-					{passwordError}
-				</div>
-				<input
-					className='py-2 px-4 m-4 text-slate-700'
-					type='password'
-					id='passwordConfirm'
-					name='passwordConfirm'
-					placeholder='Powtórz hasło:'
-					onChange={e => setPassword2(e.target.value)}
-					value={password2}
-				/>
-				<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
-					{passwordError}
-				</div>
-				<label
-					className='flex items-center w-full p-4'
-					htmlFor='avatar'>
+	if (logged === null) {
+		return null;
+	} else if (!logged) {
+		return (
+			<section className='flex flex-col items-center my-8'>
+				<h2 className='text-xl lett tracking-wide'>
+					{!loading ? 'Rejestracja' : 'Ładowanie...'}
+				</h2>
+				<form
+					className='flex flex-col items-center mt-4'
+					onSubmit={signUpHandler}>
 					<input
-						onChange={handleAvatar}
-						className='hidden'
-						type='file'
-						accept='image/*'
-						id='avatar'
+						className='py-2 px-4 m-4 text-slate-700'
+						type='text'
+						id='username'
+						name='username'
+						placeholder='Email:'
+						onChange={e => setEmail(e.target.value)}
+						value={email}
 					/>
-					<span className='mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-						Dodaj avatar
-					</span>
-					{avatar === undefined || !avatarURL ? (
-						<Image
-							className='h-8 w-8 align-middle rounded-full bg-center'
-							src='/user.png'
-							alt='avatar'
-							width={40}
-							height={40}
+					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+						{emailError}
+					</div>
+					<input
+						className='py-2 px-4 m-4 text-slate-700'
+						type='password'
+						id='password'
+						name='password'
+						placeholder='Hasło:'
+						onChange={e => setPassword1(e.target.value)}
+						value={password1}
+					/>
+					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+						{passwordError}
+					</div>
+					<input
+						className='py-2 px-4 m-4 text-slate-700'
+						type='password'
+						id='passwordConfirm'
+						name='passwordConfirm'
+						placeholder='Powtórz hasło:'
+						onChange={e => setPassword2(e.target.value)}
+						value={password2}
+					/>
+					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+						{passwordError}
+					</div>
+					<label
+						className='flex items-center w-full p-4'
+						htmlFor='avatar'>
+						<input
+							onChange={handleAvatar}
+							className='hidden'
+							type='file'
+							accept='image/*'
+							id='avatar'
 						/>
-					) : (
-						<Image
-							className='h-8 w-8 align-middle rounded-full bg-center'
-							src={avatarURL as string}
-							alt='avatar'
-							width={40}
-							height={40}
-						/>
-					)}
-				</label>
-				<p className='w-full text-sm text-left px-4 mt-4'>
-					Masz konto?
-					<Link href='/Login'>
-						<button className='text-green-500 font-bold ml-2 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-							Zaloguj się
-						</button>
-					</Link>
-				</p>
-				<div className='flex justify-between w-full p-4 mt-4 '>
-					<Link href='/'>
-						<button>
-							<FontAwesomeIcon
-								className='w-8 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-								icon={faArrowLeft}
+						<span className='mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
+							Dodaj avatar
+						</span>
+						{avatar === undefined || !avatarURL ? (
+							<Image
+								className='h-8 w-8 align-middle rounded-full bg-center'
+								src='/user.png'
+								alt='avatar'
+								width={40}
+								height={40}
 							/>
-						</button>
-					</Link>
-					<Button
-						text={'Zarejestruj'}
-						backgroundColor={'bg-blue-500'}
-					/>
-				</div>
-			</form>
-		</section>
-	);
+						) : (
+							<Image
+								className='h-8 w-8 align-middle rounded-full bg-center'
+								src={avatarURL as string}
+								alt='avatar'
+								width={40}
+								height={40}
+							/>
+						)}
+					</label>
+					<p className='w-full text-sm text-left px-4 mt-4'>
+						Masz konto?
+						<Link href='/Login'>
+							<button className='text-green-500 font-bold ml-2 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
+								Zaloguj się
+							</button>
+						</Link>
+					</p>
+					<div className='flex justify-between w-full p-4 mt-4 '>
+						<Link href='/'>
+							<button>
+								<FontAwesomeIcon
+									className='w-8 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+									icon={faArrowLeft}
+								/>
+							</button>
+						</Link>
+						<Button
+							text={'Zarejestruj'}
+							backgroundColor={'bg-blue-500'}
+						/>
+					</div>
+				</form>
+			</section>
+		);
+	} else {
+		redirect('/');
+	}
 };
 
 export default Register;

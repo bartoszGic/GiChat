@@ -33,7 +33,7 @@ const Forum = ({ isLeftBarOpen, toggleLeftBar }: ForumProps) => {
 
 	return (
 		<section
-			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform z-20 sm:w-2/3 sm:right-0 sm:h-calc ${
+			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform -z-10 sm:w-2/3 sm:right-0 sm:h-calc ${
 				scrollDown && !isLeftBarOpen
 					? 'translate-y-0 sm:translate-y-11'
 					: 'translate-y-11'

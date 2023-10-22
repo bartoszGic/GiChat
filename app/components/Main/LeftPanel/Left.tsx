@@ -11,7 +11,6 @@ type LeftProps = {
 
 const Left = ({ isLeftBarOpen, toggleLeftBar }: LeftProps) => {
 	const [innerWidth, setInnerWidth] = useState(0);
-	console.log(isLeftBarOpen);
 	useEffect(() => {
 		const updateInnerWidth = () => {
 			setInnerWidth(window.innerWidth);

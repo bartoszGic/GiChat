@@ -6,6 +6,7 @@ import Nav from './Nav/Nav';
 import Right from './RightPanel/Right';
 import Forum from './Forum/Forum';
 
+type MainAppProps = {};
 const MainApp = () => {
 	// console.log('Main');
 	const [isLeftBarOpen, setIsLeftbarOpen] = useState(false);
@@ -17,7 +18,7 @@ const MainApp = () => {
 	const toggleRightBar = () => {
 		setIsRightBarOpen(!isRightBarOpen);
 	};
-	// console.log(isLeftBarOpen);
+
 	return (
 		<>
 			<Nav
