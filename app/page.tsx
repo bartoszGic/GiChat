@@ -2,7 +2,8 @@
 import Button from './components/UI/Button';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-// import { useAppSelector } from '@/store/hooks';
+// import { useAppSelector } from '@/store/hookszzz';
+import { useAppSelector } from '@/store';
 import MainApp from './components/Main/MainApp';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase-config';
@@ -10,17 +11,14 @@ import { auth } from './firebase-config';
 
 type HomeProps = {};
 const Home = () => {
-	const [mainApp, setMainApp] = useState<undefined | boolean>(undefined);
-	// const route = useAppSelector(state => state.route.mainApp);
+	const [mainApp, setMainApp] = useState<null | boolean>(null);
+	const auth = useAppSelector(state => state.auth);
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, user => {
-			user ? setMainApp(true) : setMainApp(false);
-		});
-		return () => unsubscribe();
-	}, []);
+		auth.uid !== null ? setMainApp(true) : setMainApp(false);
+	}, [auth.uid]);
 
-	if (mainApp === undefined) {
+	if (mainApp === null) {
 		return null;
 	} else if (!mainApp) {
 		return (

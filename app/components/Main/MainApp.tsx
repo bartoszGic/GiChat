@@ -11,6 +11,7 @@ const MainApp = () => {
 	// console.log('Main');
 	const [isLeftBarOpen, setIsLeftbarOpen] = useState(false);
 	const [isRightBarOpen, setIsRightBarOpen] = useState(false);
+	const [forumStyleZ, setForumStyleZ] = useState('z-0');
 
 	const toggleLeftBar = (bool?: boolean) => {
 		setIsLeftbarOpen(!bool);
@@ -26,6 +27,7 @@ const MainApp = () => {
 				toggleLeftBar={toggleLeftBar}
 				toggleRightBar={toggleRightBar}
 				isRightBarOpen={isRightBarOpen}
+				setForumStyleZ={setForumStyleZ}
 			/>
 			<Left
 				isLeftBarOpen={isLeftBarOpen}
@@ -34,8 +36,7 @@ const MainApp = () => {
 			<Forum
 				isLeftBarOpen={isLeftBarOpen}
 				toggleLeftBar={toggleLeftBar}
-				isRightBarOpen={isRightBarOpen}
-				toggleRightBar={toggleRightBar}
+				forumStyleZ={forumStyleZ}
 			/>
 			<Right
 				isRightBarOpen={isRightBarOpen}

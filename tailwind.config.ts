@@ -44,9 +44,9 @@ const config: Config = {
 				},
 			},
 			animation: {
-				animeBtn: 'animeBtn .2s ease-in-out forwards',
-				animeOffBtn: 'animeOffBtn .2s ease-in-out forwards',
-				animeBackdrop: 'animeBackdrop .2s ease-in-out',
+				animeBtn: 'animeBtn .1s ease-in-out forwards',
+				animeOffBtn: 'animeOffBtn .1s ease-in-out forwards',
+				animeBackdrop: 'animeBackdrop .1s ease-in-out',
 			},
 		},
 	},

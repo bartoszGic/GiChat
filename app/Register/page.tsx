@@ -14,8 +14,8 @@ import { auth, storage, db } from '../firebase-config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { setDoc, doc } from 'firebase/firestore';
 import Image from 'next/image';
-import { useAppDispatch } from '@/store/hooks';
-import { switchToMainApp } from '@/store/route-slice';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { loadUser } from '@/store/auth-slice';
 import { useRouter, redirect } from 'next/navigation';
 
 const Register = () => {
@@ -30,6 +30,7 @@ const Register = () => {
 	const [logged, setLogged] = useState<null | boolean>(null);
 	const dispatch = useAppDispatch();
 	const router = useRouter();
+	const isAuth = useAppSelector(state => state.auth.uid);
 
 	const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files && e.target.files[0];
@@ -52,23 +53,19 @@ const Register = () => {
 				? await uploadBytesResumable(storageRef, avatar)
 				: await uploadBytesResumable(storageRef, blob);
 			const downloadURL = await getDownloadURL(storageRef);
-
 			await updateProfile(profile.user, {
 				displayName: email,
 				photoURL: downloadURL,
 			});
-			await setDoc(doc(db, 'users', profile.user.uid), {
+			const userData = {
 				uid: profile.user.uid,
 				displayName: email,
-				email,
+				email: email,
 				photoURL: downloadURL,
-			});
-			await setDoc(
-				doc(db, `userChats_${profile.user.uid}`, profile.user.uid),
-				{}
-			);
-
-			dispatch(switchToMainApp(true));
+			};
+			dispatch(loadUser(userData));
+			await setDoc(doc(db, 'users', profile.user.uid), userData);
+			await setDoc(doc(db, 'userChats', profile.user.uid), {});
 			router.push('/');
 		} catch (error) {
 			console.log(error);
@@ -102,11 +99,8 @@ const Register = () => {
 		}
 	};
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, user => {
-			user ? setLogged(true) : setLogged(false);
-		});
-		return () => unsubscribe();
-	}, []);
+		isAuth !== null ? setLogged(true) : setLogged(false);
+	}, [isAuth]);
 
 	if (logged === null) {
 		return null;

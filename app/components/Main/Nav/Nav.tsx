@@ -1,4 +1,5 @@
 import React from 'react';
+// import { Dispatch, setSt } from 'react';
 import NavBars from './NavBars';
 import NavSearch from './NavSearch';
 import NavUser from './NavUser';
@@ -8,6 +9,7 @@ type NavProps = {
 	isRightBarOpen: boolean;
 	toggleLeftBar: (bool: boolean) => void;
 	toggleRightBar: () => void;
+	setForumStyleZ: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const Nav = ({
@@ -15,6 +17,7 @@ const Nav = ({
 	isRightBarOpen,
 	toggleLeftBar,
 	toggleRightBar,
+	setForumStyleZ,
 }: NavProps) => {
 	// console.log('Nav');
 
@@ -29,7 +32,7 @@ const Nav = ({
 					toggleLeftBar={toggleLeftBar}
 				/>
 				<div className='flex items-center justify-end w-full'>
-					<NavSearch />
+					<NavSearch setForumStyleZ={setForumStyleZ} />
 					<NavUser
 						isRightBarOpen={isRightBarOpen}
 						toggleRightBar={toggleRightBar}

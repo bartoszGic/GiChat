@@ -7,13 +7,19 @@ import {
 import { auth } from '@/app/firebase-config';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '../../../../store';
+import { loadUser, logOutUser } from '@/store/auth-slice';
+import { logoutUserChat } from '@/store/chat-slice';
 
 const RightAcountBtns = () => {
 	const router = useRouter();
+	const dispatch = useAppDispatch();
 
 	const logOutHandler = async () => {
 		try {
 			await signOut(auth);
+			dispatch(logOutUser());
+			dispatch(logoutUserChat());
 			router.push('/');
 		} catch (error) {
 			console.log(error);

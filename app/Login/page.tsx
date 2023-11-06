@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase-config';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { useAppDispatch } from '@/store/hooks';
-import { switchToMainApp } from '@/store/route-slice';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { loadUser } from '@/store/auth-slice';
 import { useRouter, redirect } from 'next/navigation';
 
 const Login = () => {
@@ -17,39 +17,45 @@ const Login = () => {
 	const [loading, setLoading] = useState(false);
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');
-	const [logged, setLogged] = useState<boolean | undefined>(undefined);
+	const [logged, setLogged] = useState<boolean | null>(null);
+	const dispatch = useAppDispatch();
 	const router = useRouter();
+	const isAuth = useAppSelector(state => state.auth.uid);
 
 	const signInHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
 			setLoading(true);
 			await signInWithEmailAndPassword(auth, email, password1);
+			if (auth.currentUser !== null) {
+				dispatch(
+					loadUser({
+						uid: auth.currentUser.uid,
+						displayName: auth.currentUser.email,
+						email: auth.currentUser.email,
+						photoURL: auth.currentUser.photoURL,
+					})
+				);
+			}
 			setLoading(false);
 		} catch (error: any) {
 			console.error(error);
 			setLoading(false);
-			if (error.code === 'auth/user-not-found') {
-				setEmailError('Użytkownik nie znaleziony');
-				setPasswordError('');
-			} else if (error.code === 'auth/wrong-password') {
-				setPasswordError('Błędne hasło');
-			} else if (error.code === 'auth/invalid-email') {
-				setEmailError('Błędny adres email');
+			if (error) {
+				setEmailError('Błędny email lub hasło');
+				setPasswordError('Błędny email lub hasło');
 			}
 		}
 	};
-	useEffect(() => {
-		if (logged) router.push('/');
-	}, [logged, router]);
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, user => {
-			user ? setLogged(true) : setLogged(false);
-		});
-		return () => unsubscribe();
-	}, []);
 
-	if (logged === undefined) {
+	useEffect(() => {
+		if (isAuth !== null) {
+			setLogged(true);
+			router.push('/');
+		} else setLogged(false);
+	}, [isAuth, router]);
+
+	if (logged === null) {
 		return null;
 	} else if (!logged) {
 		return (
@@ -84,9 +90,9 @@ const Login = () => {
 							onChange={e => setPassword1(e.target.value)}
 							value={password1}
 						/>
-						<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
-							{passwordError}
-						</div>
+					</div>
+					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+						{passwordError}
 					</div>
 					<p className='w-full text-sm text-left px-4 mt-4'>
 						Nie masz konta?

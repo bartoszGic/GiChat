@@ -8,7 +8,6 @@ const Backdrop = ({ onClick, bool, isRightBarOpen }: Props) => {
 	const handleClick = () => {
 		bool ? onClick(bool) : onClick();
 	};
-	console.log(isRightBarOpen);
 	return (
 		<div
 			onClick={handleClick}
