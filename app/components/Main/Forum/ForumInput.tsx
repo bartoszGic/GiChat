@@ -96,7 +96,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				isLeftBarOpen ? 'hidden sm:flex' : 'flex'
 			}  w-full h-11 justify-between bg-slate-50`}>
 			<textarea
-				className='flex text-slate-900 bg-slate-50 text-xs py-1 px-1 mr-2 resize-none w-2/3 sm:text-sm'
+				className='flex text-slate-900 bg-slate-50 text-sm py-1 px-1 mr-2 resize-none w-2/3 sm:text-base'
 				placeholder='Napisz wiadomość...'
 				maxLength={200}
 				id='message'
