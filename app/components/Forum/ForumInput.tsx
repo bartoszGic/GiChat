@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from '../../UI/Button';
+import Button from '../UI/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faImage,

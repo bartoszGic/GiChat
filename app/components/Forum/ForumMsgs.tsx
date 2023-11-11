@@ -5,21 +5,11 @@ import { useAppSelector } from '@/store';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { DocumentData } from 'firebase/firestore';
+import { Message } from '../Types/types';
 
 type ForumMsgsProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
-};
-type Message = {
-	id: string;
-	message: string;
-	date: {
-		seconds: number;
-		nanoseconds: number;
-	};
-	displayName: string;
-	authorID: string;
-	img?: string;
 };
 
 const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
@@ -56,7 +46,7 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 				unsub();
 			};
 		};
-		chat.chatKey && getRealtimeUpdate();
+		getRealtimeUpdate();
 	}, [chat.chatKey]);
 
 	return (

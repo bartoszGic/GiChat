@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 // import { useAppSelector } from '@/store/hookszzz';
 import { useAppSelector } from '@/store';
-import MainApp from './components/Main/MainApp';
+import MainApp from './components/MainApp';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase-config';
 // import { useRouter } from 'next/navigation';

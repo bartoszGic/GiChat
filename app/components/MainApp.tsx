@@ -5,7 +5,7 @@ import Left from './LeftPanel/Left';
 import Nav from './Nav/Nav';
 import Right from './RightPanel/Right';
 import Forum from './Forum/Forum';
-import ImageModal from '../UI/ImageModal';
+import ImageModal from './UI/ImageModal';
 
 type MainAppProps = {};
 const MainApp = () => {

@@ -7,7 +7,7 @@ import {
 import { auth } from '@/app/firebase-config';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '../../../../store';
+import { useAppDispatch } from '../../../store';
 import { loadUser, logOutUser } from '@/store/auth-slice';
 import { logoutUserChat } from '@/store/chat-slice';
 

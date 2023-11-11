@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Backdrop from '../../UI/Backdrop';
+import Backdrop from '../UI/Backdrop';
 import LeftFriend from './LeftFriend';
 import LeftRoom from './LeftRoom';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -7,31 +7,11 @@ import { db } from '@/app/firebase-config';
 import { useAppSelector, useAppDispatch } from '@/store';
 import Image from 'next/image';
 import { logoutUserChat } from '@/store/chat-slice';
+import { UserChat, TransformedUserChat } from '../Types/types';
 
 type LeftProps = {
 	isLeftBarOpen: boolean;
 	toggleLeftBar: (bool?: boolean) => void;
-};
-
-type UserChat = {
-	[key: string]: {
-		date: {
-			seconds: number;
-			nanoseconds: number;
-		};
-		info: {
-			displayName: string;
-			photoURL: string;
-			uid: string;
-		};
-	};
-};
-type TransformedUserChat = {
-	key: string;
-	date: number;
-	displayName: string;
-	photoURL: string;
-	uid: string;
 };
 
 const Left = ({ isLeftBarOpen, toggleLeftBar }: LeftProps) => {
@@ -42,9 +22,6 @@ const Left = ({ isLeftBarOpen, toggleLeftBar }: LeftProps) => {
 	const auth = useAppSelector(state => state.auth);
 	const dispatch = useAppDispatch();
 
-	const handleMainChat = () => {
-		dispatch(logoutUserChat());
-	};
 	useEffect(() => {
 		if (auth.uid) {
 			const unsub = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
@@ -127,7 +104,7 @@ const Left = ({ isLeftBarOpen, toggleLeftBar }: LeftProps) => {
 					</div>
 					<button
 						className='flex items-center w-full justify-center mb-4 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-						onClick={handleMainChat}>
+						onClick={() => dispatch(logoutUserChat())}>
 						<span className='mr-2'>Czat ogólny</span>
 						<Image
 							className=''
