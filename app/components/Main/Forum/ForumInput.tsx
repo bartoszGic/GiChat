@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import Button from '../../UI/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import {
+	faImage,
+	faPaperPlane,
+	faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 import {
 	arrayUnion,
 	doc,
@@ -19,12 +24,12 @@ type ForumInput = {
 };
 const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 	const [message, setMessage] = useState('');
-	const [image, setImage] = useState<File | undefined>(undefined);
-	const [imageURL, setImageURL] = useState<string | undefined>(undefined);
+	const [image, setImage] = useState<File | null>(null);
+	const [imageURL, setImageURL] = useState<string | null>(null);
 
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
-
+	console.log(image);
 	const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const file = e.target.files && e.target.files[0];
@@ -37,7 +42,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 			reader.readAsDataURL(file);
 		}
 	};
-
 	const sendMessage = async () => {
 		if (!image) {
 			try {
@@ -56,21 +60,25 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 			} catch (error) {
 				console.log(error);
 			}
-		} else {
+		} else if (image) {
 			const date = new Date().getTime();
 			const storageRef = ref(storage, `${chat.chatKey}+${date}`);
 			try {
 				await uploadBytesResumable(storageRef, image);
-				await updateDoc(doc(db, 'allUsersChats', chat.chatKey as string), {
-					messages: arrayUnion({
-						id: uuidv4(),
-						message,
-						date: Timestamp.now(),
-						authorID: auth.uid,
-						displayName: auth.displayName,
-						img: imageURL,
-					}),
-				});
+				const downloadURL = await getDownloadURL(storageRef);
+				await updateDoc(
+					doc(db, 'allUsersChatMessages', chat.chatKey as string),
+					{
+						messages: arrayUnion({
+							id: uuidv4(),
+							message,
+							date: Timestamp.now(),
+							authorID: auth.uid,
+							displayName: auth.displayName,
+							img: downloadURL,
+						}),
+					}
+				);
 			} catch (error) {
 				console.log(error);
 			}
@@ -88,7 +96,8 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 		}
 
 		setMessage('');
-		setImage(undefined);
+		setImage(null);
+		setImageURL(null);
 	};
 	return (
 		<div
@@ -104,21 +113,45 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				value={message}
 			/>
 			<div className='flex items-center'>
-				<input
-					className='hidden'
-					type='file'
-					accept='image/*'
-					id='image'
-					onChange={handleImage}
-				/>
-				<label
-					htmlFor='image'
-					className='flex items-center justify-end mr-4'>
-					<FontAwesomeIcon
-						className='w-6 h-6 cursor-pointer text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-						icon={faImage}
+				<>
+					{imageURL && (
+						<button>
+							<FontAwesomeIcon
+								className='w-4 h-4 mr-1 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+								icon={faXmark}
+								onClick={() => {
+									setImage(null);
+									setImageURL(null);
+								}}
+							/>
+						</button>
+					)}
+					<input
+						className='hidden'
+						type='file'
+						accept='image/*'
+						id='image'
+						onChange={handleImage}
 					/>
-				</label>
+					<label
+						htmlFor='image'
+						className='flex items-center justify-end mr-2'>
+						{imageURL ? (
+							<Image
+								className='h-8 w-8 cursor-pointer align-middle bg-center justify-end'
+								src={imageURL}
+								alt='avatar'
+								width={40}
+								height={40}
+							/>
+						) : (
+							<FontAwesomeIcon
+								className='w-6 h-6 cursor-pointer text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn mr-2'
+								icon={faImage}
+							/>
+						)}
+					</label>
+				</>
 				<button onClick={sendMessage}>
 					<FontAwesomeIcon
 						className='w-6 h-6 mr-2 cursor-pointer  text-blue-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'

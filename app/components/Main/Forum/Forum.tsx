@@ -3,44 +3,21 @@ import Image from 'next/image';
 import ForumMsgs from './ForumMsgs';
 import ForumInput from './ForumInput';
 import { useAppSelector } from '@/store';
-import { onSnapshot, doc } from 'firebase/firestore';
-import { db } from '@/app/firebase-config';
-import { DocumentData } from 'firebase/firestore';
 type ForumProps = {
 	isLeftBarOpen: boolean;
 	toggleLeftBar: (bool?: boolean) => void;
 	forumStyleZ: string;
+	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
+	setImage: React.Dispatch<React.SetStateAction<string>>;
 };
-type Message = {
-	id: string;
-	message: string;
-	date: {
-		seconds: number;
-		nanoseconds: number;
-	};
-	displayName: string;
-	authorID: string;
-	img?: string;
-};
-const Forum = ({ isLeftBarOpen, toggleLeftBar, forumStyleZ }: ForumProps) => {
+const Forum = ({
+	isLeftBarOpen,
+	toggleLeftBar,
+	forumStyleZ,
+	setShowImage,
+	setImage,
+}: ForumProps) => {
 	const chat = useAppSelector(state => state.chat);
-	const [messages, setMessages] = useState<Message[] | undefined | null>(null);
-	let scrollDown: boolean = false;
-
-	useEffect(() => {
-		const getRealtimeUpdate = () => {
-			const unsub = onSnapshot(
-				doc(db, 'allUsersChatMessages', chat.chatKey as string),
-				doc => {
-					doc.exists() && setMessages(doc.data().messages);
-				}
-			);
-			return () => {
-				unsub();
-			};
-		};
-		chat.chatKey && getRealtimeUpdate();
-	}, [chat.chatKey]);
 
 	useEffect(() => {
 		const handleWindowResize = () => {
@@ -54,11 +31,7 @@ const Forum = ({ isLeftBarOpen, toggleLeftBar, forumStyleZ }: ForumProps) => {
 
 	return (
 		<section
-			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} sm:w-2/3 sm:right-0 sm:h-calc ${
-				scrollDown && !isLeftBarOpen
-					? 'translate-y-0 sm:translate-y-11'
-					: 'translate-y-11'
-			} ${isLeftBarOpen ? 'translate-y-0 h-calc' : 'h-full'}`}>
+			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-11 sm:w-2/3 sm:right-0 h-calc`}>
 			<div className='flex justify-end items-center py-3 px-4'>
 				<h3 className='mr-2'>{chat.displayName}</h3>
 				<Image
@@ -70,8 +43,8 @@ const Forum = ({ isLeftBarOpen, toggleLeftBar, forumStyleZ }: ForumProps) => {
 				/>
 			</div>
 			<ForumMsgs
-				messages={messages}
-				scrollDown={scrollDown}
+				setShowImage={setShowImage}
+				setImage={setImage}
 			/>
 			<ForumInput isLeftBarOpen={isLeftBarOpen} />
 		</section>
