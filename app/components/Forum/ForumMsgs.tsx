@@ -32,19 +32,24 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 			return `dzisiaj ${hours}:${minutes}`;
 		}
 	};
-
+	// napisać tak, przenieść do forum zrobić zmienną chatId i zrobić arunke kiedy może sie getRealtime robić
 	useEffect(() => {
 		const getRealtimeUpdate = () => {
-			console.log('getRealtimeUpdate');
-			const unsub = onSnapshot(
-				doc(db, 'allUsersChatMessages', chat.chatKey as string),
-				doc => {
-					doc.exists() && setMessages(doc.data().messages);
-				}
-			);
-			return () => {
-				unsub();
-			};
+			if (
+				doc(db, 'allUsersChatMessages', chat.chatKey as string).id ===
+				chat.chatKey
+			) {
+				console.log('onSnapshot');
+				const unsub = onSnapshot(
+					doc(db, 'allUsersChatMessages', chat.chatKey as string),
+					doc => {
+						doc.exists() && setMessages(doc.data().messages);
+					}
+				);
+				return () => {
+					unsub();
+				};
+			}
 		};
 		getRealtimeUpdate();
 	}, [chat.chatKey]);
