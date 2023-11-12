@@ -7,7 +7,6 @@ import Right from './RightPanel/Right';
 import Forum from './Forum/Forum';
 import ImageModal from './UI/ImageModal';
 
-type MainAppProps = {};
 const MainApp = () => {
 	// console.log('Main');
 	const [isLeftBarOpen, setIsLeftbarOpen] = useState(false);

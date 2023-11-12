@@ -107,9 +107,8 @@ const Left = ({ isLeftBarOpen, toggleLeftBar }: LeftProps) => {
 						onClick={() => dispatch(logoutUserChat())}>
 						<span className='mr-2'>Czat ogólny</span>
 						<Image
-							className=''
 							src='/home (1).png'
-							alt='czlowiek'
+							alt='czat ogólny'
 							width={20}
 							height={20}
 						/>

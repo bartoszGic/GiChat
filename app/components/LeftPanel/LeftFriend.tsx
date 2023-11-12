@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/store';
 import { changeUserChat } from '@/store/chat-slice';
@@ -27,9 +27,6 @@ const LeftFriend = ({
 			})
 		);
 	};
-	useEffect(() => {
-		// w tym miejscu pobrać dane czatu ogólnego i wprowadzić do redux
-	});
 
 	return (
 		<li className='flex items-center'>

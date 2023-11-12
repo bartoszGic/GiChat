@@ -29,7 +29,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
-	console.log(image);
+
 	const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const file = e.target.files && e.target.files[0];
