@@ -1,12 +1,13 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useAppSelector } from '@/store';
+import { useAppSelector, useAppDispatch } from '@/store';
 import { onSnapshot, doc, documentId } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { DocumentData } from 'firebase/firestore';
 import { Message } from '../Types/types';
 import { createLogger } from 'redux-logger';
+import { changeUserChat } from '@/store/chat-slice';
 
 type ForumMsgsProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,6 +21,7 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 	const [receivedMessages, setReceivedMessages] = useState<
 		Message[] | undefined | null
 	>(null);
+	const dispatch = useAppDispatch();
 	// const [messages, setMessages] = useState<Message[] | undefined | null>(null);
 
 	const formatDate = (timestamp: number) => {
@@ -37,21 +39,20 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 			return `dzisiaj ${hours}:${minutes}`;
 		}
 	};
-	console.log(chat.chatKey);
 
 	useEffect(() => {
 		const docRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
 		const getRealtimeUpdate = () => {
 			const unsub = onSnapshot(docRef, doc => {
-				console.log(doc.id);
-				console.log(chat.chatKey);
 				doc.exists() && setReceivedMessages(doc.data().messages);
 			});
+			console.log(chat.chatKey);
 			return () => {
 				unsub();
 			};
 		};
 		getRealtimeUpdate();
+		console.log(chat.chatKey);
 	}, [chat.chatKey]);
 
 	return (
