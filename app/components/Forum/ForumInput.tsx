@@ -54,7 +54,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							date: Timestamp.now(),
 							authorID: auth.uid,
 							displayName: auth.displayName,
-							chatKey: chat.chatKey,
 						}),
 					}
 				);
@@ -77,7 +76,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							authorID: auth.uid,
 							displayName: auth.displayName,
 							img: downloadURL,
-							chatKey: chat.chatKey,
 						}),
 					}
 				);

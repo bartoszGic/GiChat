@@ -38,7 +38,7 @@ const Forum = ({
 	return (
 		<section
 			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-11 sm:w-2/3 sm:right-0 h-calc`}>
-			{/* <div className='flex justify-end items-center py-3 px-4'>
+			<div className='flex justify-end items-center py-3 px-4'>
 				<h3 className='mr-2'>{chat.chatKey}</h3>
 				<Image
 					className='rounded-full'
@@ -47,8 +47,9 @@ const Forum = ({
 					width={30}
 					height={30}
 				/>
-			</div> */}
+			</div>
 			<ForumMsgs
+				key={chat.chatKey}
 				setShowImage={setShowImage}
 				setImage={setImage}
 			/>

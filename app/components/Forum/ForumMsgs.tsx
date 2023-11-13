@@ -15,7 +15,6 @@ type ForumMsgsProps = {
 };
 
 const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
-	// console.log('ForumMsgs');
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<
@@ -23,6 +22,9 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 	>(null);
 	const dispatch = useAppDispatch();
 	// const [messages, setMessages] = useState<Message[] | undefined | null>(null);
+	console.log('ForumMsgs');
+	console.log(chat.chatKey);
+	console.log('----------------');
 
 	const formatDate = (timestamp: number) => {
 		const date = new Date(timestamp * 1000);
@@ -41,32 +43,27 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 	};
 
 	useEffect(() => {
+		// na świeżo załadowanej stronie mam selektor chat.chatKey=qwe kiedy i innego urządzenia na innym koncie wyślę wiadomość na chat gdzie chat.chatKey=qwerty to na komputerze widzę dalej czat gdzie chat.chatKey=qwe i kiedy wejde na czat gdzie chat.chatKey=qwerty to widzę zaktualizowane wiadomości, teraz na komputerze wejde znowu w czat gdzie chat.chatKey=qwe i jeśli zonowu wyślę wiadomość z telefonu to na komputerze tym razem już nie widze czatu chat.chatKey=qwe, tylko chat.chatKey=qwerty.
 		const docRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
+		console.log(chat.chatKey);
 		const getRealtimeUpdate = () => {
 			const unsub = onSnapshot(docRef, doc => {
-				doc.exists() && setReceivedMessages(doc.data().messages);
+				if (doc.exists()) {
+					// console.log(doc.id);
+					// console.log(chat.chatKey);
+					// dodatkowo nie wiem dlaczego w tym miejscu jeśli dam logi chat.chatKey i doc.id
+					setReceivedMessages(doc.data().messages);
+				}
 			});
-			console.log(chat.chatKey);
 			return () => {
 				unsub();
 			};
 		};
 		getRealtimeUpdate();
-		console.log(chat.chatKey);
 	}, [chat.chatKey]);
 
 	return (
 		<>
-			<div className='flex justify-end items-center py-3 px-4'>
-				<h3 className='mr-2'>{chat.chatKey}</h3>
-				<Image
-					className='rounded-full'
-					src={chat.photoURL as string}
-					alt='zdjęcie znajomego'
-					width={30}
-					height={30}
-				/>
-			</div>
 			<ul className='flex flex-col items-center overflow-y-auto h-full w-full px-2 max-w-full'>
 				<li className='flex flex-col mb-2 w-full text-xs break-words'>
 					{receivedMessages &&
