@@ -3,6 +3,7 @@ import React from 'react';
 import NavBars from './NavBars';
 import NavSearch from './NavSearch';
 import NavUser from './NavUser';
+import { TransformedUserChat } from '../Types/types';
 
 type NavProps = {
 	isLeftBarOpen: boolean;
@@ -10,6 +11,7 @@ type NavProps = {
 	toggleLeftBar: (bool: boolean) => void;
 	toggleRightBar: () => void;
 	setForumStyleZ: React.Dispatch<React.SetStateAction<string>>;
+	userChats: TransformedUserChat[] | undefined;
 };
 
 const Nav = ({
@@ -18,6 +20,7 @@ const Nav = ({
 	toggleLeftBar,
 	toggleRightBar,
 	setForumStyleZ,
+	userChats,
 }: NavProps) => {
 	// console.log('Nav');
 
@@ -32,7 +35,10 @@ const Nav = ({
 					toggleLeftBar={toggleLeftBar}
 				/>
 				<div className='flex items-center justify-end w-full'>
-					<NavSearch setForumStyleZ={setForumStyleZ} />
+					<NavSearch
+						setForumStyleZ={setForumStyleZ}
+						userChats={userChats}
+					/>
 					<NavUser
 						isRightBarOpen={isRightBarOpen}
 						toggleRightBar={toggleRightBar}

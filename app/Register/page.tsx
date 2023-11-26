@@ -3,7 +3,11 @@ import Button from '../components/UI/Button';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+	faArrowLeft,
+	faUser,
+	faUsers,
+} from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import {
 	createUserWithEmailAndPassword,
@@ -44,8 +48,7 @@ const Register = () => {
 		}
 	};
 	const createUserAcount = async (profile: any) => {
-		const date = new Date().getTime();
-		const storageRef = ref(storage, `${email}+${date}`);
+		const storageRef = ref(storage, `${email}_PROFILE_IMG`);
 		try {
 			const defautImg = await fetch('../user.png');
 			const blob = await defautImg.blob();
@@ -159,26 +162,26 @@ const Register = () => {
 							accept='image/*'
 							id='avatar'
 						/>
-						<span className='mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
+						<span className='flex items-center cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
 							Dodaj avatar
+							{avatar === undefined || !avatarURL ? (
+								<Image
+									className='h-8 w-8 ml-2 align-middle rounded-full bg-center'
+									src='/user.png'
+									alt='avatar'
+									width={40}
+									height={40}
+								/>
+							) : (
+								<Image
+									className='h-8 w-8 ml-2 align-middle rounded-full bg-center'
+									src={avatarURL as string}
+									alt='avatar'
+									width={40}
+									height={40}
+								/>
+							)}
 						</span>
-						{avatar === undefined || !avatarURL ? (
-							<Image
-								className='h-8 w-8 align-middle rounded-full bg-center'
-								src='/user.png'
-								alt='avatar'
-								width={40}
-								height={40}
-							/>
-						) : (
-							<Image
-								className='h-8 w-8 align-middle rounded-full bg-center'
-								src={avatarURL as string}
-								alt='avatar'
-								width={40}
-								height={40}
-							/>
-						)}
 					</label>
 					<p className='w-full text-sm text-left px-4 mt-4'>
 						Masz konto?

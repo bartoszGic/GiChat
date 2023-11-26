@@ -5,6 +5,7 @@ import {
 	faUserPlus,
 	faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
+import { User, TransformedUserChat } from '../Types/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	collection,
@@ -22,15 +23,10 @@ import { useAppSelector } from '@/store';
 
 type NavSearchProps = {
 	setForumStyleZ: React.Dispatch<React.SetStateAction<string>>;
+	userChats: TransformedUserChat[] | undefined;
 };
 
-type User = {
-	uid: string;
-	displayName: string;
-	email: string;
-	photoURL: string;
-};
-const NavSearch = ({ setForumStyleZ }: NavSearchProps) => {
+const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 	const [searchUser, setSearchUser] = useState('');
 	const [existingUsers, setExistingUsers] = useState<User[]>([]);
 	const [showList, setShowList] = useState(false);
@@ -42,15 +38,18 @@ const NavSearch = ({ setForumStyleZ }: NavSearchProps) => {
 		e.preventDefault();
 		setLoading(true);
 		const usersRef = collection(db, 'users');
-		const q = query(usersRef, where('displayName', '==', searchUser));
+		const usersQ = query(usersRef, where('displayName', '==', searchUser));
 		try {
-			const querySnapshot = await getDocs(q);
+			const usersQSnapshot = await getDocs(usersQ);
 			const usersData: User[] = [];
-			querySnapshot.forEach(doc => {
+			usersQSnapshot.forEach(doc => {
 				usersData.push(doc.data() as User);
 			});
+			const currentUserIndex = usersData.findIndex(
+				user => user.uid === auth.uid
+			);
+			currentUserIndex !== -1 && usersData.splice(currentUserIndex, 1);
 			setExistingUsers(usersData);
-			console.log(existingUsers);
 			setLoading(false);
 			setShowList(true);
 			setForumStyleZ('-z-10');
@@ -60,40 +59,40 @@ const NavSearch = ({ setForumStyleZ }: NavSearchProps) => {
 	};
 
 	const addFriend = async (findedUser: User) => {
-		if (auth.uid !== null) {
+		if (auth.uid === null) return;
+		try {
 			const combinedId =
 				auth.uid > findedUser.uid
 					? auth.uid + findedUser.uid
 					: findedUser.uid + auth.uid;
-			try {
-				const docSnap = await getDoc(
-					doc(db, 'allUsersChatMessages', combinedId)
-				);
-				if (!docSnap.exists()) {
-					await setDoc(doc(db, 'allUsersChatMessages', combinedId), {
-						messages: [],
-					});
-					await updateDoc(doc(db, 'userChats', findedUser.uid), {
-						[`${combinedId}.info`]: {
-							uid: auth.uid,
-							displayName: auth.displayName,
-							photoURL: auth.photoURL,
-						},
-						[`${combinedId}.date`]: serverTimestamp(),
-					});
-					await updateDoc(doc(db, 'userChats', auth.uid), {
-						[`${combinedId}.info`]: {
-							uid: findedUser.uid,
-							displayName: findedUser.displayName,
-							photoURL: findedUser.photoURL,
-						},
-						[`${combinedId}.date`]: serverTimestamp(),
-					});
-				}
-			} catch (error: any) {
-				console.log(error);
+			const docSnap = await getDoc(doc(db, 'allUsersChatMessages', combinedId));
+			if (!docSnap.exists()) {
+				await setDoc(doc(db, 'allUsersChatMessages', combinedId), {
+					messages: [],
+				});
+				await updateDoc(doc(db, 'userChats', findedUser.uid), {
+					[`${combinedId}.info`]: {
+						uid: auth.uid,
+						displayName: auth.displayName,
+						photoURL: auth.photoURL,
+					},
+					[`${combinedId}.date`]: serverTimestamp(),
+				});
+				await updateDoc(doc(db, 'userChats', auth.uid), {
+					[`${combinedId}.info`]: {
+						uid: findedUser.uid,
+						displayName: findedUser.displayName,
+						photoURL: findedUser.photoURL,
+					},
+					[`${combinedId}.date`]: serverTimestamp(),
+				});
 			}
+		} catch (error: any) {
+			console.log(error);
 		}
+		setShowList(false);
+		setSearchUser('');
+		setForumStyleZ('z-0');
 	};
 
 	useEffect(() => {
@@ -138,14 +137,19 @@ const NavSearch = ({ setForumStyleZ }: NavSearchProps) => {
 								key={user.email}
 								className='flex justify-between items-center py-1 overflow-hidden'>
 								{user.displayName}
-								<button
-									type='button'
-									onClick={() => addFriend(user)}>
-									<FontAwesomeIcon
-										className='text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-										icon={faUserPlus}
-									/>
-								</button>
+								{userChats &&
+									!userChats.some(
+										existingUser => existingUser.uid === user.uid
+									) && (
+										<button
+											type='button'
+											onClick={() => addFriend(user)}>
+											<FontAwesomeIcon
+												className='text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+												icon={faUserPlus}
+											/>
+										</button>
+									)}
 							</li>
 						))
 					) : (

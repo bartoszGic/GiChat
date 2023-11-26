@@ -26,15 +26,15 @@ const RightAcountBtns = () => {
 		}
 	};
 	return (
-		<div className='flex justify-end my-2'>
+		<div className='flex px-4'>
 			<button
 				className='flex items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 				onClick={logOutHandler}>
 				<FontAwesomeIcon
-					className='p-2'
+					className=''
 					icon={faArrowRightFromBracket}
 				/>
-				Wyloguj
+				<span className='ml-2'>Wyloguj</span>
 			</button>
 			{/* <button className='flex items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
 				<FontAwesomeIcon

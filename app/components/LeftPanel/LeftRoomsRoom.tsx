@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import { useAppDispatch } from '@/store';
 import { changeUserChat } from '@/store/chat-slice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import Image from 'next/image';
 
-type LeftFriendProps = {
+type LeftRoomsRoomProps = {
 	chatKey: string;
 	id: string;
-	photoURL: string | null;
-	displayName: string;
+	photoURL: string;
+	displayName: string | null;
 };
-const LeftFriend = ({
+const LeftRoomsRoom = ({
 	id,
 	photoURL,
 	displayName,
 	chatKey,
-}: LeftFriendProps) => {
+}: LeftRoomsRoomProps) => {
 	const dispatch = useAppDispatch();
 
-	const openFriendChat = () => {
+	const openRoomChat = () => {
 		dispatch(
 			changeUserChat({
 				chatKey: chatKey,
@@ -29,27 +29,29 @@ const LeftFriend = ({
 			})
 		);
 	};
-
 	return (
-		<li className='flex items-center'>
+		<li
+			key={chatKey}
+			className='flex items-center'>
 			<button
-				className='flex items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-				onClick={openFriendChat}>
+				onClick={openRoomChat}
+				className='flex h-6 items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
 				{photoURL && (
 					<Image
 						className='h-6 w-6 mr-1 rounded-full'
 						src={photoURL}
-						alt='ikona użytkownika'
+						alt='czlowiek'
 						width={40}
 						height={40}
 					/>
 				)}
-				<span className='whitespace-nowrap overflow-hidden text-xs px-1'>
+
+				<div className='whitespace-nowrap overflow-hidden text-xs'>
 					{displayName}
-				</span>
+				</div>
 			</button>
 		</li>
 	);
 };
 
-export default LeftFriend;
+export default LeftRoomsRoom;

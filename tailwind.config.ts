@@ -23,12 +23,12 @@ const config: Config = {
 						transform: 'scale(1)',
 					},
 					'100%': {
-						transform: 'scale(.95)',
+						transform: 'scale(.97)',
 					},
 				},
 				animeOffBtn: {
 					'0%': {
-						transform: 'scale(.95)',
+						transform: 'scale(.97)',
 					},
 					'100%': {
 						transform: 'scale(1)',

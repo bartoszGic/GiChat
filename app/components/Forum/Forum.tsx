@@ -3,10 +3,8 @@ import Image from 'next/image';
 import ForumMsgs from './ForumMsgs';
 import ForumInput from './ForumInput';
 import { useAppSelector } from '@/store';
-import { onSnapshot, doc } from 'firebase/firestore';
-import { db } from '@/app/firebase-config';
-import { DocumentData } from 'firebase/firestore';
-import { Message } from '../Types/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
 
 type ForumProps = {
 	isLeftBarOpen: boolean;
@@ -39,14 +37,16 @@ const Forum = ({
 		<section
 			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-11 sm:w-2/3 sm:right-0 h-calc`}>
 			<div className='flex justify-end items-center py-3 px-4'>
-				<h3 className='mr-2'>{chat.chatKey}</h3>
-				<Image
-					className='rounded-full'
-					src={chat.photoURL as string}
-					alt='zdjęcie znajomego'
-					width={30}
-					height={30}
-				/>
+				<h3 className='mr-2'>{chat.displayName}</h3>
+				{chat.photoURL && (
+					<Image
+						className='rounded-full'
+						src={chat.photoURL as string}
+						alt='zdjęcie znajomego'
+						width={30}
+						height={30}
+					/>
+				)}
 			</div>
 			<ForumMsgs
 				key={chat.chatKey}
