@@ -25,21 +25,23 @@ const ForumMsgsSent = ({
 					<div className='text-sm font-bold'>{auth.displayName}</div>
 				</div>
 				<div className='mt-2 text-justify'>{message.message}</div>
-				{message.img && (
-					<div
-						className='flex flex-col cursor-pointer mt-2'
-						onClick={() => {
-							setShowImage(true);
-							setImage(message.img as string);
-						}}>
-						<Image
-							src={message.img as string}
-							alt='przesłany obraz'
-							width={160}
-							height={160}
-						/>
-					</div>
-				)}
+				<div className='relative mt-2 text-justify w-40'>
+					{message.img && (
+						<div
+							className='flex flex-col cursor-pointer mt-2'
+							onClick={() => {
+								setShowImage(true);
+								setImage(message.img as string);
+							}}>
+							<Image
+								src={message.img as string}
+								alt='przesłany obraz'
+								width={160}
+								height={160}
+							/>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);

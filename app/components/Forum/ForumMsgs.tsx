@@ -10,15 +10,25 @@ import ForumMsgsReceived from './ForumMsgsReceived';
 type ForumMsgsProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
+	setActualFriendName: React.Dispatch<React.SetStateAction<string | null>>;
+	setActualFriendAvatar: React.Dispatch<React.SetStateAction<string | null>>;
+	actualFriendName: string | null;
+	actualFriendAvatar: string | null;
 };
 
-const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
+const ForumMsgs = ({
+	setShowImage,
+	setImage,
+	setActualFriendName,
+	setActualFriendAvatar,
+	actualFriendName,
+	actualFriendAvatar,
+}: ForumMsgsProps) => {
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<
 		Message[] | undefined | null
 	>(null);
-	const [actualFriendName, setActualFriendName] = useState(chat.displayName);
 
 	useEffect(() => {
 		const allMsgsRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
@@ -34,14 +44,15 @@ const ForumMsgs = ({ setShowImage, setImage }: ForumMsgsProps) => {
 		getRealtimeUpdate();
 	}, [chat.chatKey]);
 
-	// useEffect(() => {
-	// 	const getActualFriendDetails = async () => {
-	// 		const friendRef = doc(db, 'users', chat.chatID as string);
-	// 		const actualFriendDetails = await getDoc(friendRef);
-	// 		console.log(actualFriendDetails);
-	// 	};
-	// 	getActualFriendDetails();
-	// }, [chat.chatID]);
+	useEffect(() => {
+		const getActualFriendDetails = async () => {
+			const friendRef = doc(db, 'users', chat.chatID as string);
+			const actualFriendDetails = await getDoc(friendRef);
+			setActualFriendName(actualFriendDetails.data()?.displayName);
+			setActualFriendAvatar(actualFriendDetails.data()?.photoURL);
+		};
+		getActualFriendDetails();
+	}, [chat.chatID, setActualFriendName, setActualFriendAvatar]);
 
 	return (
 		<>

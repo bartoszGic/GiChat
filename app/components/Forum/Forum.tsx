@@ -22,7 +22,12 @@ const Forum = ({
 }: ForumProps) => {
 	// console.log('Forum');
 	const chat = useAppSelector(state => state.chat);
-
+	const [actualFriendName, setActualFriendName] = useState<string | null>(
+		chat.displayName
+	);
+	const [actualFriendAvatar, setActualFriendAvatar] = useState<string | null>(
+		chat.photoURL
+	);
 	useEffect(() => {
 		const handleWindowResize = () => {
 			window.innerWidth >= 640 ? toggleLeftBar(false) : toggleLeftBar(true);
@@ -37,11 +42,11 @@ const Forum = ({
 		<section
 			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-11 sm:w-2/3 sm:right-0 h-calc`}>
 			<div className='flex justify-end items-center py-3 px-4'>
-				<h3 className='mr-2'>{chat.displayName}</h3>
-				{chat.photoURL && (
+				<h3 className='mr-2'>{actualFriendName}</h3>
+				{actualFriendAvatar && (
 					<Image
 						className='rounded-full'
-						src={chat.photoURL as string}
+						src={actualFriendAvatar as string}
 						alt='zdjęcie znajomego'
 						width={30}
 						height={30}
@@ -52,6 +57,10 @@ const Forum = ({
 				key={chat.chatKey}
 				setShowImage={setShowImage}
 				setImage={setImage}
+				setActualFriendName={setActualFriendName}
+				actualFriendName={actualFriendName}
+				setActualFriendAvatar={setActualFriendAvatar}
+				actualFriendAvatar={actualFriendAvatar}
 			/>
 			<ForumInput isLeftBarOpen={isLeftBarOpen} />
 		</section>
