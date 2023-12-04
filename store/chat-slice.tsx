@@ -23,7 +23,22 @@ const chatSlice = createSlice({
 		logoutUserChat(state) {
 			return initialState;
 		},
+		updateDisplayNameAndPhotoURL(
+			state,
+			action: PayloadAction<{ displayName: string; photoURL: string }>
+		) {
+			if (
+				action.payload.displayName !== state.displayName ||
+				action.payload.photoURL !== state.photoURL
+			)
+				return {
+					...state,
+					displayName: action.payload.displayName || state.displayName,
+					photoURL: action.payload.photoURL || state.photoURL,
+				};
+		},
 	},
 });
-export const { changeUserChat, logoutUserChat } = chatSlice.actions;
+export const { changeUserChat, logoutUserChat, updateDisplayNameAndPhotoURL } =
+	chatSlice.actions;
 export default chatSlice.reducer;

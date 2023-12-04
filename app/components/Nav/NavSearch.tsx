@@ -77,6 +77,7 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 						photoURL: auth.photoURL,
 					},
 					[`${combinedId}.date`]: serverTimestamp(),
+					[`${combinedId}.author`]: '',
 				});
 				await updateDoc(doc(db, 'userChats', auth.uid), {
 					[`${combinedId}.info`]: {
@@ -85,6 +86,7 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 						photoURL: findedUser.photoURL,
 					},
 					[`${combinedId}.date`]: serverTimestamp(),
+					[`${combinedId}.author`]: '',
 				});
 			}
 		} catch (error: any) {

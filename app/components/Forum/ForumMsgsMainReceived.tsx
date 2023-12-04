@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Message, formatDate } from '../Types/types';
-import { useAppSelector, useAppDispatch } from '@/store';
+import { Message, User, formatDate } from '../Types/types';
+import { useAppSelector } from '@/store';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/app/firebase-config';
 
-type ForumMsgsReceivedProps = {
+type ForumMsgsMainReceivedProps = {
 	message: Message;
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
 };
-const ForumMsgsReceived = ({
+const ForumMsgsMainReceived = ({
 	message,
 	setShowImage,
 	setImage,
-}: ForumMsgsReceivedProps) => {
+}: ForumMsgsMainReceivedProps) => {
 	return (
 		<div
 			key={message.id}
@@ -45,4 +47,4 @@ const ForumMsgsReceived = ({
 	);
 };
 
-export default ForumMsgsReceived;
+export default ForumMsgsMainReceived;

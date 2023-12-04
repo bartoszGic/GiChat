@@ -10,6 +10,7 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { loadUser } from '@/store/auth-slice';
 import { useRouter, redirect } from 'next/navigation';
+import { getDoc, doc } from 'firebase/firestore';
 
 const Login = () => {
 	const [email, setEmail] = useState('');
@@ -28,12 +29,15 @@ const Login = () => {
 			setLoading(true);
 			await signInWithEmailAndPassword(auth, email, password1);
 			if (auth.currentUser !== null) {
+				const actualUserDetails = await getDoc(
+					doc(db, 'users', auth.currentUser.uid)
+				);
 				dispatch(
 					loadUser({
 						uid: auth.currentUser.uid,
-						displayName: auth.currentUser.email,
+						displayName: actualUserDetails.data()?.displayName,
 						email: auth.currentUser.email,
-						photoURL: auth.currentUser.photoURL,
+						photoURL: actualUserDetails.data()?.photoURL,
 					})
 				);
 			}

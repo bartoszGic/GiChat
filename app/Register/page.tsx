@@ -16,7 +16,7 @@ import {
 } from 'firebase/auth';
 import { auth, storage, db } from '../firebase-config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, getDoc, arrayUnion, updateDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { loadUser } from '@/store/auth-slice';
@@ -35,6 +35,7 @@ const Register = () => {
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const isAuth = useAppSelector(state => state.auth.uid);
+	const chat = useAppSelector(state => state.chat);
 
 	const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files && e.target.files[0];
@@ -69,6 +70,13 @@ const Register = () => {
 			dispatch(loadUser(userData));
 			await setDoc(doc(db, 'users', profile.user.uid), userData);
 			await setDoc(doc(db, 'userChats', profile.user.uid), {});
+			await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
+				[`${chat.chatKey}.info.friendsInRoom`]: arrayUnion({
+					displayName: email,
+					uid: profile.user.uid,
+					photoURL: downloadURL,
+				}),
+			});
 			router.push('/');
 		} catch (error) {
 			console.log(error);
@@ -214,3 +222,21 @@ const Register = () => {
 };
 
 export default Register;
+
+// vQr1FA5Ps6hYqH0x4XGF
+// :
+// allUsersUIDs
+// :
+// (2) ['VHTZJyt0O5bCyijTrxlrAyrqdBj2', 'NrP8bGHk2xZw4viCCwsM4aBB81z1']
+// author
+// :
+// "VHTZJyt0O5bCyijTrxlrAyrqdBj2"
+// date
+// :
+// Timestamp {seconds: 1699197850, nanoseconds: 505000000}
+// info
+// :
+// {uid: 'vQr1FA5Ps6hYqH0x4XGF', displayName: 'Ogólny', photoURL: 'https://firebasestorage.googleapis.com/v0/b/gichat…=media&token=a6a064db-894d-476c-97ba-c9e5b02ddd63'}
+// [[Prototype]]
+// :
+// Object

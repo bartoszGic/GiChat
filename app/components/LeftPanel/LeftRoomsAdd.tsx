@@ -62,18 +62,29 @@ const LeftRoomsAdd = ({
 					messages: [],
 				});
 				const roomInfo = {
-					uid: roomUsers.map(user => user.uid),
+					friendsInRoom: roomUsers.map(user => ({
+						uid: user.uid,
+						displayName: user.displayName,
+						photoURL: user.photoURL,
+					})),
 					displayName: roomName,
 					photoURL: imageURL,
 				};
+				roomInfo.friendsInRoom.push({
+					uid: auth.uid,
+					displayName: auth.displayName || '',
+					photoURL: auth.photoURL || '',
+				});
 				await updateDoc(doc(db, 'userChats', auth.uid), {
 					[`${combinedId}.info`]: roomInfo,
 					[`${combinedId}.date`]: serverTimestamp(),
+					[`${combinedId}.author`]: '',
 				});
 				for (const user of roomUsers) {
 					await updateDoc(doc(db, 'userChats', user.uid), {
 						[`${combinedId}.info`]: roomInfo,
 						[`${combinedId}.date`]: serverTimestamp(),
+						[`${combinedId}.author`]: '',
 					});
 				}
 			}

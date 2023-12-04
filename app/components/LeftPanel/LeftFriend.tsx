@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/store';
-import { changeUserChat } from '@/store/chat-slice';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+	changeUserChat,
+	updateDisplayNameAndPhotoURL,
+} from '@/store/chat-slice';
 
 type LeftFriendProps = {
 	chatKey: string;
@@ -24,8 +25,8 @@ const LeftFriend = ({
 			changeUserChat({
 				chatKey: chatKey,
 				chatID: id,
-				displayName: displayName,
-				photoURL: photoURL,
+				displayName: '',
+				photoURL: '',
 			})
 		);
 	};

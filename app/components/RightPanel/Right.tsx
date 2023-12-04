@@ -13,13 +13,14 @@ import { auth, db, storage } from '@/app/firebase-config';
 import { updateProfile } from 'firebase/auth';
 import { useAppDispatch } from '@/store';
 import { loadUser } from '@/store/auth-slice';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import {
 	deleteObject,
 	ref,
 	uploadBytesResumable,
 	getDownloadURL,
 } from 'firebase/storage';
+import { UserChat } from '../Types/types';
 
 type RightProps = {
 	isRightBarOpen: boolean;
@@ -40,9 +41,8 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 	// console.log(authProfile.currentUser?.displayName);
 
 	const updateUser = async () => {
-		if (!authProfile.currentUser) {
-			return;
-		}
+		if (!authProfile.currentUser) return;
+
 		const storageRef = ref(
 			storage,
 			`${authProfile.currentUser.email}_PROFILE_IMG`
@@ -60,16 +60,16 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 				displayName: currentName,
 				photoURL: downloadURL,
 			});
-			const updatedData = {
+			const updatedUser = {
 				uid: authProfile.currentUser.uid,
 				displayName: currentName,
 				email: authProfile.currentUser.email,
 				photoURL: downloadURL,
 			};
-			dispatch(loadUser(updatedData));
+			dispatch(loadUser(updatedUser));
 			await updateDoc(
 				doc(db, 'users', authProfile.currentUser.uid),
-				updatedData
+				updatedUser
 			);
 			setLoading(false);
 			toggleRightBar();

@@ -5,12 +5,14 @@ import LeftRoomsAdd from './LeftRoomsAdd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faUsers } from '@fortawesome/free-solid-svg-icons';
 import LeftRoomsRoom from './LeftRoomsRoom';
+import { useAppSelector } from '@/store';
 type LeftRoomsProps = {
 	userChats: TransformedUserChat[] | undefined;
 	userRooms: TransformedUserChat[];
 };
 
 const LeftRooms = ({ userChats, userRooms }: LeftRoomsProps) => {
+	const auth = useAppSelector(state => state.auth);
 	const [showList, setShowList] = useState(false);
 	const [roomUsers, setRoomUsers] = useState<TransformedUserChat[]>([]);
 	const [image, setImage] = useState<File | null>(null);

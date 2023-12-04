@@ -26,12 +26,15 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 	const [message, setMessage] = useState('');
 	const [image, setImage] = useState<File | null>(null);
 	const [imageURL, setImageURL] = useState<string | null>(null);
+	const [inputKey, setInputKey] = useState<string>(uuidv4());
 
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
-
+	// console.log(image);
+	// console.log(imageURL);
 	const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
+		console.log('handleImage');
 		const file = e.target.files && e.target.files[0];
 		if (file) {
 			setImage(file);
@@ -40,6 +43,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				if (e.target !== null) setImageURL(e.target.result as string);
 			};
 			reader.readAsDataURL(file);
+			setInputKey(uuidv4());
 		}
 	};
 	const sendMessage = async () => {
@@ -127,6 +131,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 						</button>
 					)}
 					<input
+						key={inputKey}
 						className='hidden'
 						type='file'
 						accept='image/*'
@@ -143,6 +148,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 								alt='avatar'
 								width={40}
 								height={40}
+								onError={e => console.error('Image loading error', e)}
 							/>
 						) : (
 							<FontAwesomeIcon

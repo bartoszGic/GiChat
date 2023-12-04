@@ -9,7 +9,7 @@ type LeftRoomsRoomProps = {
 	chatKey: string;
 	id: string;
 	photoURL: string;
-	displayName: string | null;
+	displayName: string;
 };
 const LeftRoomsRoom = ({
 	id,

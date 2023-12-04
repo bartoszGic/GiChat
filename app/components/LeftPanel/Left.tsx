@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import Backdrop from '../UI/Backdrop';
 import LeftFriend from './LeftFriend';
 import LeftRooms from './LeftRooms';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, getDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { useAppSelector, useAppDispatch } from '@/store';
+import { updateDisplayNameAndPhotoURL } from '@/store/chat-slice';
 import Image from 'next/image';
 import { logoutUserChat } from '@/store/chat-slice';
-import { UserChat, TransformedUserChat } from '../Types/types';
+import { UserChat, TransformedUserChat, User } from '../Types/types';
 
 type LeftProps = {
 	isLeftBarOpen: boolean;
 	toggleLeftBar: (bool?: boolean) => void;
 	setUserChats: React.Dispatch<React.SetStateAction<TransformedUserChat[]>>;
 	userChats: TransformedUserChat[];
+	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const Left = ({
@@ -21,15 +23,44 @@ const Left = ({
 	toggleLeftBar,
 	setUserChats,
 	userChats,
+	setLoadingForum,
 }: LeftProps) => {
+	const auth = useAppSelector(state => state.auth);
+	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
-	const auth = useAppSelector(state => state.auth);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
+		if (!chat.chatID || typeof chat.chatID !== 'string') return;
+		const unsub1 = onSnapshot(doc(db, 'users', chat.chatID), doc => {
+			setLoadingForum(true);
+			const actualFriendDetails = doc.data() as User;
+			if (
+				chat.displayName === 'Czat ogólny' ||
+				(chat.chatKey && chat.chatKey.substring(0, 6) === 'GROUP_')
+			) {
+				setLoadingForum(false);
+			} else {
+				dispatch(
+					updateDisplayNameAndPhotoURL({
+						displayName: actualFriendDetails.displayName,
+						photoURL: actualFriendDetails.photoURL,
+					})
+				);
+				setLoadingForum(false);
+			}
+		});
+
+		return () => {
+			unsub1();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [chat, dispatch]);
+
+	useEffect(() => {
 		if (!auth.uid) return;
-		const unsub = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
+		const unsub2 = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
 			const data = doc.data() as UserChat;
 			if (!data) return;
 			const transformedChatsData = Object.keys(data).map(key => {
@@ -41,6 +72,7 @@ const Left = ({
 						displayName: data[key].info?.displayName || '',
 						photoURL: data[key].info?.photoURL || '',
 						uid: data[key].info?.uid || '',
+						author: data[key].author || '',
 					};
 				}
 				return null;
@@ -48,21 +80,20 @@ const Left = ({
 			const rooms: TransformedUserChat[] = [];
 			const chats: TransformedUserChat[] = [];
 			transformedChatsData.forEach(item => {
-				if (item !== null) {
-					if (item.key.slice(0, 6) === 'GROUP_') {
-						rooms.push(item);
-					} else {
-						chats.push(item);
-					}
+				if (item === null) return;
+				if (item.key.slice(0, 6) === 'GROUP_') {
+					rooms.push(item);
+				} else {
+					chats.push(item);
 				}
 			});
 			setUserRoms(rooms);
 			setUserChats(chats);
 		});
 		return () => {
-			unsub();
+			unsub2();
 		};
-	}, [auth.uid, setUserChats]);
+	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum]);
 
 	useEffect(() => {
 		const updateInnerWidth = () => {

@@ -1,5 +1,6 @@
 export type UserChat = {
 	[key: string]: {
+		author: string;
 		date: {
 			seconds: number;
 			nanoseconds: number;

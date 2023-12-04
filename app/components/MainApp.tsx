@@ -16,6 +16,7 @@ const MainApp = () => {
 	const [showImage, setShowImage] = useState(false);
 	const [image, setImage] = useState('');
 	const [userChats, setUserChats] = useState<TransformedUserChat[]>([]);
+	const [loadingForum, setLoadingForum] = useState(true);
 
 	const toggleLeftBar = (bool?: boolean) => {
 		setIsLeftbarOpen(!bool);
@@ -45,6 +46,7 @@ const MainApp = () => {
 				toggleLeftBar={toggleLeftBar}
 				userChats={userChats}
 				setUserChats={setUserChats}
+				setLoadingForum={setLoadingForum}
 			/>
 			<Forum
 				isLeftBarOpen={isLeftBarOpen}
@@ -52,6 +54,8 @@ const MainApp = () => {
 				forumStyleZ={forumStyleZ}
 				setShowImage={setShowImage}
 				setImage={setImage}
+				userChats={userChats}
+				loadingForum={loadingForum}
 			/>
 			<Right
 				isRightBarOpen={isRightBarOpen}
