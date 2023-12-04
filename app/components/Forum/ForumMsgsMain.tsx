@@ -47,22 +47,22 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 				);
 				if (!userChatsSnap.exists()) return;
 				console.log(userChatsSnap.data());
-				// if (userChatsSnap.exists()) {
-				// 	const actualDetails: Array<User> = [];
-				// 	const querySnapshot = await getDocs(query(collection(db, 'users')));
+				if (userChatsSnap.exists()) {
+					const actualDetails: User[] = [];
+					const querySnapshot = await getDocs(query(collection(db, 'users')));
 
-				// 	querySnapshot.forEach(doc => {
-				// 		const userData = doc.data() as User;
-				// 		actualDetails.push({
-				// 			uid: userData.uid,
-				// 			displayName: userData.displayName,
-				// 			email: userData.email,
-				// 			photoURL: userData.photoURL,
-				// 		});
-				// 	});
+					querySnapshot.forEach(doc => {
+						const userData = doc.data() as User;
+						actualDetails.push({
+							uid: userData.uid,
+							displayName: userData.displayName,
+							email: userData.email,
+							photoURL: userData.photoURL,
+						});
+					});
 
-				// 	setArrayOfActualDetails(actualDetails);
-				// }
+					setArrayOfActualDetails(actualDetails);
+				}
 			} catch (error) {
 				console.error(error);
 			} finally {
