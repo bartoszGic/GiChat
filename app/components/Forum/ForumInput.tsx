@@ -24,17 +24,13 @@ type ForumInput = {
 };
 const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 	const [message, setMessage] = useState('');
-	const [image, setImage] = useState<File | null>(null);
+	const [image, setImage] = useState<File | undefined>();
 	const [imageURL, setImageURL] = useState<string | null>(null);
-	const [inputKey, setInputKey] = useState<string>(uuidv4());
 
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
-	// console.log(image);
-	// console.log(imageURL);
-	const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-		e.preventDefault();
-		console.log('handleImage');
+
+	const handleForumInputImg = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files && e.target.files[0];
 		if (file) {
 			setImage(file);
@@ -43,7 +39,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				if (e.target !== null) setImageURL(e.target.result as string);
 			};
 			reader.readAsDataURL(file);
-			setInputKey(uuidv4());
 		}
 	};
 	const sendMessage = async () => {
@@ -100,7 +95,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 		}
 
 		setMessage('');
-		setImage(null);
+		setImage(undefined);
 		setImageURL(null);
 	};
 	return (
@@ -121,41 +116,42 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 					{imageURL && (
 						<button>
 							<FontAwesomeIcon
-								className='w-4 h-4 mr-1 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+								className='w-4 h-4 mr-2 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 								icon={faXmark}
 								onClick={() => {
-									setImage(null);
+									setImage(undefined);
 									setImageURL(null);
 								}}
 							/>
 						</button>
 					)}
-					<input
-						key={inputKey}
-						className='hidden'
-						type='file'
-						accept='image/*'
-						id='image'
-						onChange={handleImage}
-					/>
 					<label
-						htmlFor='image'
+						htmlFor='picture'
 						className='flex items-center justify-end mr-2'>
-						{imageURL ? (
-							<Image
-								className='h-8 w-8 cursor-pointer align-middle bg-center justify-end'
-								src={imageURL}
-								alt='avatar'
-								width={40}
-								height={40}
-								onError={e => console.error('Image loading error', e)}
-							/>
-						) : (
-							<FontAwesomeIcon
-								className='w-6 h-6 cursor-pointer text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn mr-2'
-								icon={faImage}
-							/>
-						)}
+						<input
+							onChange={e => handleForumInputImg(e)}
+							className='hidden'
+							type='file'
+							accept='image/*'
+							id='picture'
+						/>
+						<span>
+							{imageURL ? (
+								<Image
+									className='h-8 w-8 cursor-pointer align-middle bg-center justify-end'
+									src={imageURL as string}
+									alt='obrazek'
+									width={40}
+									height={40}
+									onError={e => console.error('Image loading error', e)}
+								/>
+							) : (
+								<FontAwesomeIcon
+									className='w-6 h-6 cursor-pointer text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn mr-2'
+									icon={faImage}
+								/>
+							)}
+						</span>
 					</label>
 				</>
 				<button onClick={sendMessage}>

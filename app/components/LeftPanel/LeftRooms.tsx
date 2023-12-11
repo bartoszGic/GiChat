@@ -12,6 +12,7 @@ type LeftRoomsProps = {
 };
 
 const LeftRooms = ({ userChats, userRooms }: LeftRoomsProps) => {
+	// console.log('LeftRooms');
 	const auth = useAppSelector(state => state.auth);
 	const [showList, setShowList] = useState(false);
 	const [roomUsers, setRoomUsers] = useState<TransformedUserChat[]>([]);
@@ -40,7 +41,7 @@ const LeftRooms = ({ userChats, userRooms }: LeftRoomsProps) => {
 	return (
 		<>
 			<button
-				className='flex items-center justify-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+				className='flex items-center ml-2 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 				onClick={() => setShowList(state => !state)}>
 				<h3 className='mr-2'>Grupy</h3>
 				<FontAwesomeIcon
@@ -60,7 +61,7 @@ const LeftRooms = ({ userChats, userRooms }: LeftRoomsProps) => {
 				imageURL={imageURL}
 				setImageURL={setImageURL}
 			/>
-			<ul className='grid gap-2'>
+			<ul className='flex flex-col'>
 				{userRooms.map(room => (
 					<LeftRoomsRoom
 						chatKey={room.key}

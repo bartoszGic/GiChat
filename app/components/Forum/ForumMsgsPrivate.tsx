@@ -25,6 +25,8 @@ const ForumMsgsPrivate = ({
 	setShowImage,
 	setImage,
 }: ForumMsgsPrivateProps) => {
+	// console.log('ForumMsgsPrivate');
+
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<

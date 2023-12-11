@@ -1,11 +1,12 @@
 import Backdrop from '../UI/Backdrop';
 import RightAcountBtns from './RightAcountBtns';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faArrowsRotate,
 	faXmark,
 	faSpinner,
+	faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { useAppSelector } from '@/store';
 import Image from 'next/image';
@@ -20,7 +21,6 @@ import {
 	uploadBytesResumable,
 	getDownloadURL,
 } from 'firebase/storage';
-import { UserChat } from '../Types/types';
 
 type RightProps = {
 	isRightBarOpen: boolean;
@@ -28,17 +28,17 @@ type RightProps = {
 };
 
 const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
+	// console.log('Right');
 	const authState = useAppSelector(state => state.auth);
 	const [currentName, setCurrentName] = useState(authState.displayName ?? '');
 	const [loading, setLoading] = useState(false);
-	const [avatar, setAvatar] = useState<File | undefined>();
+	const [avatar, setAvatar] = useState<File | null>(null);
+	const [tempAvatar, setTempAvatar] = useState<File | null>(null);
 	const [currentAvatarURL, setCurrentAvatarURL] = useState<string | null>(
 		authState.photoURL
 	);
 	const dispatch = useAppDispatch();
 	const authProfile = auth;
-
-	// console.log(authProfile.currentUser?.displayName);
 
 	const updateUser = async () => {
 		if (!authProfile.currentUser) return;
@@ -52,7 +52,7 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 			const defautImg = await fetch('../user.png');
 			const blob = await defautImg.blob();
 			await deleteObject(storageRef);
-			avatar !== undefined
+			avatar !== null
 				? await uploadBytesResumable(storageRef, avatar)
 				: await uploadBytesResumable(storageRef, blob);
 			const downloadURL = await getDownloadURL(storageRef);
@@ -72,15 +72,17 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 				updatedUser
 			);
 			setLoading(false);
+			setTempAvatar(null);
 			toggleRightBar();
 		} catch (error) {
 			console.log(error);
 		}
 	};
-	const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleRightAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files && e.target.files[0];
 		if (file) {
 			setAvatar(file);
+			setTempAvatar(file);
 			const reader = new FileReader();
 			reader.onload = e => {
 				if (e.target !== null) setCurrentAvatarURL(e.target.result as string);
@@ -88,6 +90,22 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 			reader.readAsDataURL(file);
 		}
 	};
+
+	useEffect(() => {
+		const setAvatarFromURL = async (url: string) => {
+			try {
+				const response = await fetch(url);
+				const blob = await response.blob();
+				const file = new File([blob], `${authState.email}_PROFILE_IMG`, {
+					type: blob.type,
+				});
+				setAvatar(file);
+			} catch (error) {
+				console.error(error);
+			}
+		};
+		currentAvatarURL && setAvatarFromURL(currentAvatarURL);
+	}, [currentAvatarURL, authState]);
 
 	return (
 		<>
@@ -121,37 +139,42 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 							<div className='flex items-center justify-between w-full'>
 								<div className='text-slate-300'>Avatar:</div>
 								<div className='flex items-center'>
-									{currentAvatarURL === '/user.png' ||
-										(avatar && (
-											<button className='mr-1'>
-												<FontAwesomeIcon
-													className='w-4 h-4 mr-1 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-													icon={faXmark}
-													onClick={() => {
-														setAvatar(undefined);
-														setCurrentAvatarURL('/user.png');
-													}}
-												/>
-											</button>
-										))}
+									{tempAvatar && (
+										<button className='mr-1'>
+											<FontAwesomeIcon
+												className='w-4 h-4 mr-1 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+												icon={faXmark}
+												onClick={() => {
+													setAvatar(null);
+													setCurrentAvatarURL('/user.png');
+													setTempAvatar(null);
+												}}
+											/>
+										</button>
+									)}
 									<label
 										className='flex items-center'
 										htmlFor='avatar'>
 										<input
-											onChange={handleAvatar}
+											onChange={e => handleRightAvatar(e)}
 											className='hidden'
 											type='file'
 											accept='image/*'
 											id='avatar'
 										/>
 										<span className='flex items-center cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-											{authState.uid && (
+											{authState.photoURL ? (
 												<Image
 													className='h-8 w-8 ml-2 align-middle rounded-full bg-center'
 													src={currentAvatarURL as string}
 													alt='avatar'
 													width={40}
 													height={40}
+												/>
+											) : (
+												<FontAwesomeIcon
+													className='w-5 h-6 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+													icon={faUser}
 												/>
 											)}
 										</span>

@@ -18,9 +18,12 @@ const chatSlice = createSlice({
 	initialState,
 	reducers: {
 		changeUserChat(state, action: PayloadAction<UserState>) {
-			return { ...state, ...action.payload };
+			if (state.chatKey !== action.payload.chatKey) {
+				return { ...state, ...action.payload };
+			}
+			return state;
 		},
-		logoutUserChat(state) {
+		logoutUserChat() {
 			return initialState;
 		},
 		updateDisplayNameAndPhotoURL(

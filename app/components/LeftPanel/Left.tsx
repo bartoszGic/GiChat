@@ -2,13 +2,19 @@ import React, { useState, useEffect } from 'react';
 import Backdrop from '../UI/Backdrop';
 import LeftFriend from './LeftFriend';
 import LeftRooms from './LeftRooms';
-import { doc, onSnapshot, getDoc } from 'firebase/firestore';
+import {
+	doc,
+	onSnapshot,
+	getDocs,
+	query,
+	collection,
+} from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { updateDisplayNameAndPhotoURL } from '@/store/chat-slice';
 import Image from 'next/image';
-import { logoutUserChat } from '@/store/chat-slice';
 import { UserChat, TransformedUserChat, User } from '../Types/types';
+import LeftMain from './LeftMain';
 
 type LeftProps = {
 	isLeftBarOpen: boolean;
@@ -16,6 +22,8 @@ type LeftProps = {
 	setUserChats: React.Dispatch<React.SetStateAction<TransformedUserChat[]>>;
 	userChats: TransformedUserChat[];
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
+	setArrayOfActualNames: React.Dispatch<React.SetStateAction<User[]>>;
+	arrayOfActualNames: User[];
 };
 
 const Left = ({
@@ -24,39 +32,68 @@ const Left = ({
 	setUserChats,
 	userChats,
 	setLoadingForum,
+	setArrayOfActualNames,
+	arrayOfActualNames,
 }: LeftProps) => {
+	// console.log('Left');
+
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
+
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		if (!chat.chatID || typeof chat.chatID !== 'string') return;
-		const unsub1 = onSnapshot(doc(db, 'users', chat.chatID), doc => {
-			setLoadingForum(true);
-			const actualFriendDetails = doc.data() as User;
-			if (
-				chat.displayName === 'Czat ogólny' ||
-				(chat.chatKey && chat.chatKey.substring(0, 6) === 'GROUP_')
-			) {
-				setLoadingForum(false);
-			} else {
-				dispatch(
-					updateDisplayNameAndPhotoURL({
-						displayName: actualFriendDetails.displayName,
-						photoURL: actualFriendDetails.photoURL,
-					})
-				);
-				setLoadingForum(false);
-			}
-		});
+		const getActualNames = async () => {
+			try {
+				const actualDetails: User[] = [];
+				const querySnapshot = await getDocs(query(collection(db, 'users')));
 
-		return () => {
-			unsub1();
+				querySnapshot.forEach(doc => {
+					const userData = doc.data() as User;
+					actualDetails.push({
+						uid: userData.uid,
+						displayName: userData.displayName,
+						email: userData.email,
+						photoURL: userData.photoURL,
+					});
+				});
+				setArrayOfActualNames(actualDetails);
+			} catch (error) {
+				console.log(error);
+			}
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [chat, dispatch]);
+		getActualNames();
+	}, [setArrayOfActualNames]);
+
+	// useEffect(() => {
+	// 	if (!chat.chatID || typeof chat.chatID !== 'string') return;
+	// 	const unsub1 = onSnapshot(doc(db, 'users', chat.chatID), doc => {
+	// 		if (!chat.chatKey) return;
+	// 		setLoadingForum(true);
+	// 		const actualFriendDetails = doc.data() as User;
+	// 		if (
+	// 			chat.displayName === 'Czat ogólny' ||
+	// 			chat.chatKey.substring(0, 6) === 'GROUP_'
+	// 		) {
+	// 			setLoadingForum(false);
+	// 		} else {
+	// 			dispatch(
+	// 				updateDisplayNameAndPhotoURL({
+	// 					displayName: actualFriendDetails.displayName,
+	// 					photoURL: actualFriendDetails.photoURL,
+	// 				})
+	// 			);
+	// 			setLoadingForum(false);
+	// 		}
+	// 	});
+
+	// 	return () => {
+	// 		unsub1();
+	// 	};
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [chat, dispatch]);
 
 	useEffect(() => {
 		if (!auth.uid) return;
@@ -120,41 +157,42 @@ const Left = ({
 						? 'transform translate-x-0 w-3/4 sm:w-1/3'
 						: 'transform -translate-x-full w-2/3 sm:w-1/3'
 				}`}>
-				<div className='flex flex-col h-full justify-between'>
-					<div className='grid grid-cols-2 px-2 py-4 gap-4'>
-						<div>
-							<h3 className='mb-4'>Znajomi</h3>
-							<ul className='grid gap-2'>
+				<div className='flex flex-col h-full w-full justify-between items-center'>
+					<div className='flex w-full py-4'>
+						<div className='flex flex-col w-1/2'>
+							<h3 className='mb-4 ml-2'>Znajomi</h3>
+							<ul className='flex flex-col'>
 								{userChats !== undefined &&
-									userChats.map(chat => (
-										<LeftFriend
-											chatKey={chat.key}
-											key={chat.uid}
-											id={chat.uid}
-											photoURL={chat.photoURL}
-											displayName={chat.displayName}
-										/>
-									))}
+									userChats.map(chat => {
+										const friendName = arrayOfActualNames.find(
+											user => user.uid === chat.uid
+										);
+										const friendAvatar = arrayOfActualNames.find(
+											user => user.uid === chat.uid
+										);
+										const friendActualName = friendName?.displayName || '';
+										const friendActualAvatar = friendAvatar?.photoURL || '';
+										return (
+											<LeftFriend
+												chatKey={chat.key}
+												key={chat.uid}
+												id={chat.uid}
+												photoURL={friendActualAvatar}
+												displayName={friendActualName}
+												setLoadingForum={setLoadingForum}
+											/>
+										);
+									})}
 							</ul>
 						</div>
-						<div>
+						<div className='flex flex-col w-1/2'>
 							<LeftRooms
 								userChats={userChats}
 								userRooms={userRooms}
 							/>
 						</div>
 					</div>
-					<button
-						className='flex items-center w-full justify-center mb-4 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-						onClick={() => dispatch(logoutUserChat())}>
-						<span className='mr-2'>Czat ogólny</span>
-						<Image
-							src='/home (1).png'
-							alt='czat ogólny'
-							width={20}
-							height={20}
-						/>
-					</button>
+					<LeftMain />
 				</div>
 			</section>
 		</>

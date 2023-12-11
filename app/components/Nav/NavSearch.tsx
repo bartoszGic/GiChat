@@ -27,6 +27,7 @@ type NavSearchProps = {
 };
 
 const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
+	// console.log('NavSearch');
 	const [searchUser, setSearchUser] = useState('');
 	const [existingUsers, setExistingUsers] = useState<User[]>([]);
 	const [showList, setShowList] = useState(false);
@@ -70,6 +71,7 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 				await setDoc(doc(db, 'allUsersChatMessages', combinedId), {
 					messages: [],
 				});
+
 				await updateDoc(doc(db, 'userChats', findedUser.uid), {
 					[`${combinedId}.info`]: {
 						uid: auth.uid,

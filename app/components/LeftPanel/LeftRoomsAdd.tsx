@@ -69,12 +69,14 @@ const LeftRoomsAdd = ({
 					})),
 					displayName: roomName,
 					photoURL: imageURL,
+					uid: combinedId,
 				};
 				roomInfo.friendsInRoom.push({
 					uid: auth.uid,
 					displayName: auth.displayName || '',
 					photoURL: auth.photoURL || '',
 				});
+
 				await updateDoc(doc(db, 'userChats', auth.uid), {
 					[`${combinedId}.info`]: roomInfo,
 					[`${combinedId}.date`]: serverTimestamp(),
@@ -119,7 +121,7 @@ const LeftRoomsAdd = ({
 
 	return (
 		<form
-			className='relative mb-4'
+			className='relative mb-4 ml-2'
 			onSubmit={addRoomHandler}>
 			<div
 				ref={usersListRef}

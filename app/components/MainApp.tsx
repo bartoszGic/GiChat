@@ -6,7 +6,7 @@ import Nav from './Nav/Nav';
 import Right from './RightPanel/Right';
 import Forum from './Forum/Forum';
 import ImageModal from './UI/ImageModal';
-import { TransformedUserChat } from './Types/types';
+import { TransformedUserChat, User } from './Types/types';
 
 const MainApp = () => {
 	// console.log('Main');
@@ -16,7 +16,8 @@ const MainApp = () => {
 	const [showImage, setShowImage] = useState(false);
 	const [image, setImage] = useState('');
 	const [userChats, setUserChats] = useState<TransformedUserChat[]>([]);
-	const [loadingForum, setLoadingForum] = useState(true);
+	const [arrayOfActualNames, setArrayOfActualNames] = useState<User[]>([]);
+	const [loadingForum, setLoadingForum] = useState(false);
 
 	const toggleLeftBar = (bool?: boolean) => {
 		setIsLeftbarOpen(!bool);
@@ -47,6 +48,8 @@ const MainApp = () => {
 				userChats={userChats}
 				setUserChats={setUserChats}
 				setLoadingForum={setLoadingForum}
+				setArrayOfActualNames={setArrayOfActualNames}
+				arrayOfActualNames={arrayOfActualNames}
 			/>
 			<Forum
 				isLeftBarOpen={isLeftBarOpen}
@@ -56,6 +59,7 @@ const MainApp = () => {
 				setImage={setImage}
 				userChats={userChats}
 				loadingForum={loadingForum}
+				arrayOfActualNames={arrayOfActualNames}
 			/>
 			<Right
 				isRightBarOpen={isRightBarOpen}

@@ -8,7 +8,7 @@ import { faUsers, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { db } from '@/app/firebase-config';
 import { onSnapshot, doc, documentId, getDoc } from 'firebase/firestore';
-import { TransformedUserChat } from '../Types/types';
+import { TransformedUserChat, User } from '../Types/types';
 
 type ForumProps = {
 	isLeftBarOpen: boolean;
@@ -18,6 +18,7 @@ type ForumProps = {
 	setImage: React.Dispatch<React.SetStateAction<string>>;
 	userChats: TransformedUserChat[];
 	loadingForum: boolean;
+	arrayOfActualNames: User[];
 };
 const Forum = ({
 	isLeftBarOpen,
@@ -26,9 +27,16 @@ const Forum = ({
 	setShowImage,
 	setImage,
 	loadingForum,
+	userChats,
+	arrayOfActualNames,
 }: ForumProps) => {
 	// console.log('Forum');
 	const chat = useAppSelector(state => state.chat);
+	const auth = useAppSelector(state => state.auth);
+	const listRef = useRef<HTMLDivElement | null>(null);
+	const [showList, setShowList] = useState(false);
+	const [roomFriends, setRoomFriends] = useState([]);
+
 	useEffect(() => {
 		const handleWindowResize = () => {
 			window.innerWidth >= 640 ? toggleLeftBar(false) : toggleLeftBar(true);
@@ -38,6 +46,25 @@ const Forum = ({
 			window.removeEventListener('resize', handleWindowResize);
 		};
 	}, [toggleLeftBar]);
+	useEffect(() => {
+		const outsideClickCatch = (e: MouseEvent) => {
+			if (listRef.current) {
+				const target = e.target as Node;
+				if (!listRef.current.contains(target)) {
+					setShowList(false);
+				}
+			}
+		};
+		document.addEventListener('mousedown', outsideClickCatch);
+		return () => {
+			document.removeEventListener('mousedown', outsideClickCatch);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	if (!chat.chatKey) {
+		return null;
+	}
 
 	return (
 		<section
@@ -53,22 +80,67 @@ const Forum = ({
 			) : (
 				<>
 					<div className='flex justify-end items-center py-3 px-4'>
-						<div className='h-6 flex'>
-							<h3 className='mr-2'>{chat.displayName}</h3>
-							{chat.photoURL && (
-								<Image
-									className='rounded-full'
-									src={chat.photoURL as string}
-									alt='zdjęcie znajomego'
-									width={30}
-									height={30}
-								/>
+						<div
+							className={`flex ${
+								chat.chatKey.substring(0, 6) === 'GROUP_'
+									? 'justify-between'
+									: 'justify-end'
+							} h-6 w-full`}>
+							{chat.chatKey.substring(0, 6) === 'GROUP_' && (
+								<div
+									className='flex items-center'
+									ref={listRef}>
+									<button
+										className='flex items-center'
+										onClick={() => setShowList(state => !state)}>
+										<FontAwesomeIcon
+											className='w-6 h-6 rounded-full mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+											icon={faUsers}
+										/>
+									</button>
+									<ul
+										className={`${
+											showList ? 'flex' : 'hidden'
+										} flex-col justify-start absolute left-0 top-0 px-2 py-1 text-xs text-slate-50 w-40 bg-slate-500 max-h-32 max-w-[160px] overflow-y-auto z-30`}>
+										{arrayOfActualNames.map(user => (
+											<li
+												key={user.uid}
+												className='flex justify-between items-center py-1 overflow-x-hidden'>
+												<div className='flex items-center'>
+													<Image
+														className='h-6 w-6 mr-2 rounded-full'
+														src={user.photoURL}
+														alt='zdjęcie znajomego'
+														width={20}
+														height={20}
+													/>
+													{user.displayName === auth.displayName ? (
+														<div className='ml-2 text-green-500'>TY</div>
+													) : (
+														<div>{user.displayName}</div>
+													)}
+												</div>
+											</li>
+										))}
+									</ul>
+								</div>
 							)}
+							<div className='h-6 flex'>
+								<h3 className='mr-2'>{chat.displayName}</h3>
+								{chat.photoURL && (
+									<Image
+										className='rounded-full'
+										src={chat.photoURL as string}
+										alt='zdjęcie znajomego'
+										width={30}
+										height={30}
+									/>
+								)}
+							</div>
 						</div>
 					</div>
 					{chat.displayName === 'Czat ogólny' ||
-					(chat.chatKey !== null &&
-						chat.chatKey.substring(0, 6) === 'GROUP_') ? (
+					chat.chatKey.substring(0, 6) === 'GROUP_' ? (
 						<ForumMsgsMain
 							key={chat.chatKey}
 							setShowImage={setShowImage}

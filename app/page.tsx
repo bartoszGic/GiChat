@@ -11,6 +11,7 @@ import { auth } from './firebase-config';
 
 type HomeProps = {};
 const Home = () => {
+	// console.log('Home');
 	const [mainApp, setMainApp] = useState<null | boolean>(null);
 	const auth = useAppSelector(state => state.auth);
 

@@ -23,10 +23,12 @@ type ForumMsgsMainProps = {
 };
 
 const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
+	// console.log('ForumMsgsMain');
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
-	const [arrayOfActualDetails, setArrayOfActualDetails] = useState<User[]>([]);
+	const [arrayOfActualNamesAndAvatars, setArrayOfActualNamesAndAvatars] =
+		useState<User[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -42,27 +44,21 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 	useEffect(() => {
 		const getActualChatDetails = async () => {
 			try {
-				const userChatsSnap = await getDoc(
-					doc(db, 'userChats', chat.chatKey as string)
-				);
-				if (!userChatsSnap.exists()) return;
-				console.log(userChatsSnap.data());
-				if (userChatsSnap.exists()) {
-					const actualDetails: User[] = [];
-					const querySnapshot = await getDocs(query(collection(db, 'users')));
+				const actualDetails: User[] = [];
 
-					querySnapshot.forEach(doc => {
-						const userData = doc.data() as User;
-						actualDetails.push({
-							uid: userData.uid,
-							displayName: userData.displayName,
-							email: userData.email,
-							photoURL: userData.photoURL,
-						});
+				const querySnapshot = await getDocs(query(collection(db, 'users')));
+
+				querySnapshot.forEach(doc => {
+					const userData = doc.data() as User;
+					actualDetails.push({
+						uid: userData.uid,
+						displayName: userData.displayName,
+						email: userData.email,
+						photoURL: userData.photoURL,
 					});
+				});
 
-					setArrayOfActualDetails(actualDetails);
-				}
+				setArrayOfActualNamesAndAvatars(actualDetails);
 			} catch (error) {
 				console.error(error);
 			} finally {
@@ -87,7 +83,7 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 					<li className='flex flex-col mb-2 w-full text-xs break-words'>
 						{receivedMessages.length !== 0 &&
 							receivedMessages.map((message: Message) => {
-								const authorUser = arrayOfActualDetails.find(
+								const authorUser = arrayOfActualNamesAndAvatars.find(
 									user => user.uid === message.authorID
 								);
 								const authorActualName = authorUser?.displayName || '';

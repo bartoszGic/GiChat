@@ -1,51 +1,77 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import {
 	changeUserChat,
 	updateDisplayNameAndPhotoURL,
 } from '@/store/chat-slice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/app/firebase-config';
+import { User } from '../Types/types';
 
 type LeftFriendProps = {
 	chatKey: string;
 	id: string;
 	photoURL: string | null;
 	displayName: string;
+	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const LeftFriend = ({
 	id,
 	photoURL,
 	displayName,
 	chatKey,
+	setLoadingForum,
 }: LeftFriendProps) => {
+	// console.log('LeftFriend');
+	const chat = useAppSelector(state => state.chat);
 	const dispatch = useAppDispatch();
 
-	const openFriendChat = () => {
-		dispatch(
-			changeUserChat({
-				chatKey: chatKey,
-				chatID: id,
-				displayName: '',
-				photoURL: '',
-			})
-		);
+	const openFriendChat = async () => {
+		try {
+			setLoadingForum(true);
+			const userSnapshot = await getDoc(doc(db, 'users', id));
+			const userData = userSnapshot.data() as User;
+
+			dispatch(
+				updateDisplayNameAndPhotoURL({
+					displayName: userData.displayName,
+					photoURL: userData.photoURL,
+				})
+			);
+
+			dispatch(
+				changeUserChat({
+					chatKey: chatKey,
+					chatID: id,
+					displayName: userData.displayName,
+					photoURL: userData.photoURL,
+				})
+			);
+			setLoadingForum(false);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (
-		<li className='flex items-center'>
+		<li
+			className={`flex items-center p-2 overflow-x-hidden ${
+				id === chat.chatID ? 'bg-slate-400' : 'bg-transparent'
+			}`}>
 			<button
-				className='flex items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+				className='flex items-center overflow-x-hidden animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 				onClick={openFriendChat}>
-				{photoURL && (
-					<Image
-						className='h-6 w-6 mr-1 rounded-full'
-						src={photoURL}
-						alt='ikona użytkownika'
-						width={40}
-						height={40}
-					/>
-				)}
-				<span className='whitespace-nowrap overflow-hidden text-xs px-1'>
+				<Image
+					className='h-5 w-5 mr-1 rounded-full'
+					src={photoURL as string}
+					alt='ikona użytkownika'
+					width={40}
+					height={40}
+				/>
+				<span className='whitespace-nowrap overflow-x-hidden text-xs'>
 					{displayName}
 				</span>
 			</button>

@@ -2,7 +2,7 @@
 import Button from '../components/UI/Button';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase-config';
@@ -13,6 +13,7 @@ import { useRouter, redirect } from 'next/navigation';
 import { getDoc, doc } from 'firebase/firestore';
 
 const Login = () => {
+	// console.log('Login');
 	const [email, setEmail] = useState('');
 	const [password1, setPassword1] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -64,8 +65,16 @@ const Login = () => {
 	} else if (!logged) {
 		return (
 			<div className='flex flex-col items-center my-8'>
-				<h2 className='text-xl lett tracking-wide'>
-					{!loading ? 'Logowanie' : 'Ładowanie...'}
+				<h2 className='flex items-center justify-center h-6 text-xl lett tracking-wide'>
+					{!loading ? (
+						<span>Logowanie</span>
+					) : (
+						<FontAwesomeIcon
+							className='w-6 h-6 py-1 text-slate-50'
+							icon={faSpinner}
+							spin
+						/>
+					)}
 				</h2>
 				<form
 					className='flex flex-col items-center mt-4'
