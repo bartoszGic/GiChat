@@ -42,62 +42,52 @@ const Left = ({
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
 
-	const dispatch = useAppDispatch();
-
-	useEffect(() => {
-		const getActualNames = async () => {
-			try {
-				const actualDetails: User[] = [];
-				const querySnapshot = await getDocs(query(collection(db, 'users')));
-
-				querySnapshot.forEach(doc => {
-					const userData = doc.data() as User;
-					actualDetails.push({
-						uid: userData.uid,
-						displayName: userData.displayName,
-						email: userData.email,
-						photoURL: userData.photoURL,
-					});
-				});
-				setArrayOfActualNames(actualDetails);
-			} catch (error) {
-				console.log(error);
-			}
-		};
-		getActualNames();
-	}, [setArrayOfActualNames]);
-
 	// useEffect(() => {
-	// 	if (!chat.chatID || typeof chat.chatID !== 'string') return;
-	// 	const unsub1 = onSnapshot(doc(db, 'users', chat.chatID), doc => {
-	// 		if (!chat.chatKey) return;
-	// 		setLoadingForum(true);
-	// 		const actualFriendDetails = doc.data() as User;
-	// 		if (
-	// 			chat.displayName === 'Czat ogólny' ||
-	// 			chat.chatKey.substring(0, 6) === 'GROUP_'
-	// 		) {
-	// 			setLoadingForum(false);
-	// 		} else {
-	// 			dispatch(
-	// 				updateDisplayNameAndPhotoURL({
-	// 					displayName: actualFriendDetails.displayName,
-	// 					photoURL: actualFriendDetails.photoURL,
-	// 				})
-	// 			);
-	// 			setLoadingForum(false);
-	// 		}
-	// 	});
+	// 	const getActualNames = async () => {
+	// 		try {
+	// 			const actualDetails: User[] = [];
+	// 			const querySnapshot = await getDocs(query(collection(db, 'users')));
 
-	// 	return () => {
-	// 		unsub1();
+	// 			querySnapshot.forEach(doc => {
+	// 				const userData = doc.data() as User;
+	// 				actualDetails.push({
+	// 					uid: userData.uid,
+	// 					displayName: userData.displayName,
+	// 					email: userData.email,
+	// 					photoURL: userData.photoURL,
+	// 				});
+	// 			});
+	// 			setArrayOfActualNames(actualDetails);
+	// 		} catch (error) {
+	// 			console.log(error);
+	// 		}
 	// 	};
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [chat, dispatch]);
+	// 	getActualNames();
+	// }, [setArrayOfActualNames, , chat.chatKey]);
+	useEffect(() => {
+		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
+			const actualDetails: User[] = [];
+			doc.forEach(doc => {
+				const userData = doc.data() as User;
+				actualDetails.push({
+					uid: userData.uid,
+					displayName: userData.displayName,
+					email: userData.email,
+					photoURL: userData.photoURL,
+				});
+			});
+			setArrayOfActualNames(actualDetails);
+		});
+		return () => {
+			unsub1();
+		};
+	}, [setArrayOfActualNames]);
 
 	useEffect(() => {
 		if (!auth.uid) return;
 		const unsub2 = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
+			console.log('onSnapshot - userChats - Left');
+
 			const data = doc.data() as UserChat;
 			if (!data) return;
 			const transformedChatsData = Object.keys(data).map(key => {
@@ -109,7 +99,8 @@ const Left = ({
 						displayName: data[key].info?.displayName || '',
 						photoURL: data[key].info?.photoURL || '',
 						uid: data[key].info?.uid || '',
-						author: data[key].author || '',
+						author: data[key]?.author || '',
+						isReaded: data[key]?.isReaded || true,
 					};
 				}
 				return null;
@@ -177,6 +168,7 @@ const Left = ({
 												chatKey={chat.key}
 												key={chat.uid}
 												id={chat.uid}
+												isReaded={chat.isReaded}
 												photoURL={friendActualAvatar}
 												displayName={friendActualName}
 												setLoadingForum={setLoadingForum}

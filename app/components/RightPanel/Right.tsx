@@ -33,7 +33,6 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 	const [currentName, setCurrentName] = useState(authState.displayName ?? '');
 	const [loading, setLoading] = useState(false);
 	const [avatar, setAvatar] = useState<File | null>(null);
-	const [tempAvatar, setTempAvatar] = useState<File | null>(null);
 	const [currentAvatarURL, setCurrentAvatarURL] = useState<string | null>(
 		authState.photoURL
 	);
@@ -71,8 +70,8 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 				doc(db, 'users', authProfile.currentUser.uid),
 				updatedUser
 			);
+			setCurrentAvatarURL(downloadURL);
 			setLoading(false);
-			setTempAvatar(null);
 			toggleRightBar();
 		} catch (error) {
 			console.log(error);
@@ -82,7 +81,6 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 		const file = e.target.files && e.target.files[0];
 		if (file) {
 			setAvatar(file);
-			setTempAvatar(file);
 			const reader = new FileReader();
 			reader.onload = e => {
 				if (e.target !== null) setCurrentAvatarURL(e.target.result as string);
@@ -139,15 +137,13 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 							<div className='flex items-center justify-between w-full'>
 								<div className='text-slate-300'>Avatar:</div>
 								<div className='flex items-center'>
-									{tempAvatar && (
+									{avatar && currentAvatarURL !== authState.photoURL && (
 										<button className='mr-1'>
 											<FontAwesomeIcon
 												className='w-4 h-4 mr-1 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 												icon={faXmark}
 												onClick={() => {
-													setAvatar(null);
-													setCurrentAvatarURL('/user.png');
-													setTempAvatar(null);
+													setCurrentAvatarURL(authState.photoURL);
 												}}
 											/>
 										</button>
@@ -163,18 +159,13 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 											id='avatar'
 										/>
 										<span className='flex items-center cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-											{authState.photoURL ? (
+											{avatar && (
 												<Image
 													className='h-8 w-8 ml-2 align-middle rounded-full bg-center'
 													src={currentAvatarURL as string}
 													alt='avatar'
 													width={40}
 													height={40}
-												/>
-											) : (
-												<FontAwesomeIcon
-													className='w-5 h-6 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-													icon={faUser}
 												/>
 											)}
 										</span>
@@ -187,7 +178,12 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 								className='flex my-auto mx-auto animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 								onClick={updateUser}>
 								<FontAwesomeIcon
-									className='w-6 h-6 text-green-500'
+									className={`w-6 h-6 ${
+										currentName !== authState.displayName ||
+										currentAvatarURL !== authState.photoURL
+											? 'text-red-500'
+											: 'text-green-500'
+									}`}
 									icon={faArrowsRotate}
 								/>
 							</button>

@@ -34,6 +34,7 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 	useEffect(() => {
 		const allMsgsRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
 		const unsub = onSnapshot(allMsgsRef, doc => {
+			console.log('onSnapshot - allUsersChatMessages - ForumMsgsMain');
 			doc.exists() && setReceivedMessages(doc.data().messages);
 		});
 		return () => {

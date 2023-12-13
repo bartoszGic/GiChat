@@ -85,10 +85,13 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 		try {
 			await updateDoc(doc(db, 'userChats', auth.uid as string), {
 				[`${chat.chatKey}.author`]: auth.uid,
+				[`${chat.chatKey}.date`]: Timestamp.now(),
 			});
 
 			await updateDoc(doc(db, 'userChats', chat.chatID as string), {
 				[`${chat.chatKey}.author`]: auth.uid,
+				[`${chat.chatKey}.date`]: Timestamp.now(),
+				[`${chat.chatKey}.isReaded`]: false,
 			});
 		} catch (error) {
 			console.log(error);

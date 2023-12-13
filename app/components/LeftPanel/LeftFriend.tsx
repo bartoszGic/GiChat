@@ -7,7 +7,7 @@ import {
 } from '@/store/chat-slice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { User } from '../Types/types';
 
@@ -17,6 +17,7 @@ type LeftFriendProps = {
 	photoURL: string | null;
 	displayName: string;
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
+	isReaded: boolean;
 };
 const LeftFriend = ({
 	id,
@@ -24,15 +25,24 @@ const LeftFriend = ({
 	displayName,
 	chatKey,
 	setLoadingForum,
+	isReaded,
 }: LeftFriendProps) => {
 	// console.log('LeftFriend');
 	const chat = useAppSelector(state => state.chat);
-	const dispatch = useAppDispatch();
+	const auth = useAppSelector(state => state.auth);
 
+	const dispatch = useAppDispatch();
+	console.log(isReaded);
 	const openFriendChat = async () => {
 		try {
 			setLoadingForum(true);
 			const userSnapshot = await getDoc(doc(db, 'users', id));
+			const userChatsSnapshot = await getDoc(
+				doc(db, 'userChats', auth.uid as string)
+			);
+			await updateDoc(doc(db, 'userChats', auth.uid as string), {
+				[`${chat.chatKey}.isReaded`]: true,
+			});
 			const userData = userSnapshot.data() as User;
 
 			dispatch(
@@ -71,7 +81,10 @@ const LeftFriend = ({
 					width={40}
 					height={40}
 				/>
-				<span className='whitespace-nowrap overflow-x-hidden text-xs'>
+				<span
+					className={`${
+						isReaded ? 'text-slate-50' : 'text-green-500'
+					} whitespace-nowrap overflow-x-hidden text-xs`}>
 					{displayName}
 				</span>
 			</button>

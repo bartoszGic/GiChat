@@ -35,7 +35,6 @@ const Forum = ({
 	const auth = useAppSelector(state => state.auth);
 	const listRef = useRef<HTMLDivElement | null>(null);
 	const [showList, setShowList] = useState(false);
-	const [roomFriends, setRoomFriends] = useState([]);
 
 	useEffect(() => {
 		const handleWindowResize = () => {

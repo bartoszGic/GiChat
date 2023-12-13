@@ -80,6 +80,7 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 					},
 					[`${combinedId}.date`]: serverTimestamp(),
 					[`${combinedId}.author`]: '',
+					[`${combinedId}.isReaded`]: true,
 				});
 				await updateDoc(doc(db, 'userChats', auth.uid), {
 					[`${combinedId}.info`]: {
@@ -89,6 +90,7 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 					},
 					[`${combinedId}.date`]: serverTimestamp(),
 					[`${combinedId}.author`]: '',
+					[`${combinedId}.isReaded`]: true,
 				});
 			}
 		} catch (error: any) {

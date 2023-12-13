@@ -1,6 +1,7 @@
 export type UserChat = {
 	[key: string]: {
 		author: string;
+		isReaded: boolean;
 		date: {
 			seconds: number;
 			nanoseconds: number;
@@ -18,6 +19,7 @@ export type TransformedUserChat = {
 	displayName: string;
 	photoURL: string;
 	uid: string;
+	isReaded: boolean;
 };
 export type Message = {
 	id: string;

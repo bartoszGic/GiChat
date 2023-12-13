@@ -40,7 +40,8 @@ const ForumMsgsPrivate = ({
 
 		const getRealtimeUpdate = () => {
 			const unsub = onSnapshot(allMsgsRef, doc => {
-				doc.exists() && setReceivedMessages(doc.data().messages);
+				console.log('onSnapshot - allUsersChatMessages - ForumMsgsPrivate');
+				doc.exists() && setReceivedMessages(doc.data()?.messages);
 			});
 			return () => {
 				unsub();

@@ -14,7 +14,7 @@ const authPersistConfig = {
 const chatPersistConfig = {
 	key: 'chat',
 	storage: storage,
-	whitelist: ['chatID', 'displayName', 'photoURL'],
+	whitelist: ['chatKey', 'chatID', 'displayName', 'photoURL'],
 };
 const authReducer = combineReducers({
 	auth: persistReducer(authPersistConfig, authSlice),
