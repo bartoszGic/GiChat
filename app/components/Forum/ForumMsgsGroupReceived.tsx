@@ -5,16 +5,16 @@ import { useAppSelector } from '@/store';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 
-type ForumMsgsMainReceivedProps = {
+type ForumMsgsGroupReceivedProps = {
 	message: Message;
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
 };
-const ForumMsgsMainReceived = ({
+const ForumMsgsGroupReceived = ({
 	message,
 	setShowImage,
 	setImage,
-}: ForumMsgsMainReceivedProps) => {
+}: ForumMsgsGroupReceivedProps) => {
 	return (
 		<div
 			key={message.id}
@@ -47,4 +47,4 @@ const ForumMsgsMainReceived = ({
 	);
 };
 
-export default ForumMsgsMainReceived;
+export default ForumMsgsGroupReceived;

@@ -8,6 +8,8 @@ import {
 	getDocs,
 	query,
 	collection,
+	updateDoc,
+	getDoc,
 } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { useAppSelector, useAppDispatch } from '@/store';
@@ -42,28 +44,6 @@ const Left = ({
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
 
-	// useEffect(() => {
-	// 	const getActualNames = async () => {
-	// 		try {
-	// 			const actualDetails: User[] = [];
-	// 			const querySnapshot = await getDocs(query(collection(db, 'users')));
-
-	// 			querySnapshot.forEach(doc => {
-	// 				const userData = doc.data() as User;
-	// 				actualDetails.push({
-	// 					uid: userData.uid,
-	// 					displayName: userData.displayName,
-	// 					email: userData.email,
-	// 					photoURL: userData.photoURL,
-	// 				});
-	// 			});
-	// 			setArrayOfActualNames(actualDetails);
-	// 		} catch (error) {
-	// 			console.log(error);
-	// 		}
-	// 	};
-	// 	getActualNames();
-	// }, [setArrayOfActualNames, , chat.chatKey]);
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
 			const actualDetails: User[] = [];
@@ -85,9 +65,39 @@ const Left = ({
 
 	useEffect(() => {
 		if (!auth.uid) return;
+		const updateIsReadedPrivate = async (chatKeyToUpdate: string) => {
+			try {
+				await updateDoc(doc(db, 'userChats', auth.uid as string), {
+					[`${chatKeyToUpdate}.isReaded`]: true,
+				});
+			} catch (error) {
+				console.error(error);
+			}
+		};
+		// const updateIsReadedGroup = async () => {
+		// 	try {
+		// 		const allUsersChatMessagesSnap = await getDoc(
+		// 			doc(db, 'allUsersChatMessages', chat.chatKey as string)
+		// 		);
+		// 		if (!allUsersChatMessagesSnap.exists()) return;
+		// 		const members = allUsersChatMessagesSnap.data().members;
+		// 		console.log(members);
+		// 		// for (const member of members) {
+		// 		// 	if (member.uid === auth.uid) {
+		// 		// 		member.isReaded = true;
+		// 		// 	}
+		// 		// }
+		// 		// await updateDoc(
+		// 		// 	doc(db, 'allUsersChatMessages', chat.chatKey as string),
+		// 		// 	{
+		// 		// 		members: members,
+		// 		// 	}
+		// 		// );
+		// 	} catch (error) {
+		// 		console.error(error);
+		// 	}
+		// };
 		const unsub2 = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
-			console.log('onSnapshot - userChats - Left');
-
 			const data = doc.data() as UserChat;
 			if (!data) return;
 			const transformedChatsData = Object.keys(data).map(key => {
@@ -100,11 +110,24 @@ const Left = ({
 						photoURL: data[key].info?.photoURL || '',
 						uid: data[key].info?.uid || '',
 						author: data[key]?.author || '',
-						isReaded: data[key]?.isReaded || true,
+						isReaded: !!data[key]?.isReaded,
 					};
 				}
 				return null;
 			});
+
+			const hasUnreadMessages = transformedChatsData.some(
+				item => item !== null && !item.isReaded && item.key === chat.chatKey
+			);
+
+			if (hasUnreadMessages) {
+				transformedChatsData.forEach(item => {
+					if (item !== null && !item.isReaded && item.key === chat.chatKey) {
+						updateIsReadedPrivate(item.key);
+					}
+				});
+			}
+
 			const rooms: TransformedUserChat[] = [];
 			const chats: TransformedUserChat[] = [];
 			transformedChatsData.forEach(item => {
@@ -115,13 +138,25 @@ const Left = ({
 					chats.push(item);
 				}
 			});
-			setUserRoms(rooms);
-			setUserChats(chats);
+			const sortedChats = chats.sort((a, b) => b.date - a.date);
+			const sortedRooms = rooms.sort((a, b) => b.date - a.date);
+
+			setUserRoms(sortedRooms);
+			setUserChats(sortedChats);
 		});
+		// const unsub3 = onSnapshot(
+		// 	doc(db, 'allUsersChatMessages', chat.chatKey as string),
+		// 	doc => {
+		// 		const data = doc.data() as UserChat;
+		// 		if (!data) return;
+		// 		updateIsReadedGroup();
+		// 	}
+		// );
 		return () => {
 			unsub2();
+			// unsub3();
 		};
-	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum]);
+	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat.chatKey]);
 
 	useEffect(() => {
 		const updateInnerWidth = () => {
@@ -172,6 +207,7 @@ const Left = ({
 												photoURL={friendActualAvatar}
 												displayName={friendActualName}
 												setLoadingForum={setLoadingForum}
+												toggleLeftBar={toggleLeftBar}
 											/>
 										);
 									})}
@@ -181,6 +217,7 @@ const Left = ({
 							<LeftRooms
 								userChats={userChats}
 								userRooms={userRooms}
+								toggleLeftBar={toggleLeftBar}
 							/>
 						</div>
 					</div>

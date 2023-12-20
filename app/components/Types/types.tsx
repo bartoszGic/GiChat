@@ -31,6 +31,7 @@ export type Message = {
 	displayName: string;
 	authorID: string;
 	img?: string;
+	isReaded?: object[];
 };
 export type User = {
 	uid: string;

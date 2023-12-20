@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Message, formatDate } from '../Types/types';
 import { useAppSelector, useAppDispatch } from '@/store';
@@ -14,10 +14,14 @@ const ForumMsgsSent = ({
 	setImage,
 }: ForumMsgsSentProps) => {
 	const auth = useAppSelector(state => state.auth);
-
+	const refOne = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		refOne.current?.scrollIntoView({ behavior: 'smooth' });
+	});
 	return (
 		<div
 			key={message.id}
+			ref={refOne}
 			className='flex flex-row-reverse mb-2'>
 			<div className='flex flex-col bg-slate-300 text-slate-950 px-2 py-2 w-3/4 rounded-t-lg rounded-bl-lg sm:max-w-[350px]'>
 				<div className='flex text-slate-500 justify-between items-center'>
@@ -27,19 +31,17 @@ const ForumMsgsSent = ({
 				<div className='mt-2 text-justify'>{message.message}</div>
 				<div className='relative mt-2 text-justify w-40'>
 					{message.img && (
-						<div
-							className='flex flex-col cursor-pointer mt-2'
+						<Image
 							onClick={() => {
 								setShowImage(true);
 								setImage(message.img as string);
-							}}>
-							<Image
-								src={message.img as string}
-								alt='przesłany obraz'
-								width={160}
-								height={160}
-							/>
-						</div>
+							}}
+							className='w-auto h-auto cursor-pointer mt-2'
+							src={message.img as string}
+							alt='przesłany obraz'
+							width={160}
+							height={160}
+						/>
 					)}
 				</div>
 			</div>

@@ -18,6 +18,7 @@ type LeftFriendProps = {
 	displayName: string;
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 	isReaded: boolean;
+	toggleLeftBar: (bool?: boolean) => void;
 };
 const LeftFriend = ({
 	id,
@@ -26,22 +27,20 @@ const LeftFriend = ({
 	chatKey,
 	setLoadingForum,
 	isReaded,
+	toggleLeftBar,
 }: LeftFriendProps) => {
 	// console.log('LeftFriend');
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
-
 	const dispatch = useAppDispatch();
-	console.log(isReaded);
+
 	const openFriendChat = async () => {
 		try {
 			setLoadingForum(true);
+			toggleLeftBar(true);
 			const userSnapshot = await getDoc(doc(db, 'users', id));
-			const userChatsSnapshot = await getDoc(
-				doc(db, 'userChats', auth.uid as string)
-			);
 			await updateDoc(doc(db, 'userChats', auth.uid as string), {
-				[`${chat.chatKey}.isReaded`]: true,
+				[`${chatKey}.isReaded`]: true,
 			});
 			const userData = userSnapshot.data() as User;
 
@@ -83,7 +82,9 @@ const LeftFriend = ({
 				/>
 				<span
 					className={`${
-						isReaded ? 'text-slate-50' : 'text-green-500'
+						isReaded || (!isReaded && chatKey === chat.chatKey)
+							? 'text-slate-50'
+							: 'text-green-500'
 					} whitespace-nowrap overflow-x-hidden text-xs`}>
 					{displayName}
 				</span>

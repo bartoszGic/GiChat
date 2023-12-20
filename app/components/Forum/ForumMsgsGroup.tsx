@@ -13,16 +13,16 @@ import {
 import { db } from '@/app/firebase-config';
 import { Message, User } from '../Types/types';
 import ForumMsgsSent from './ForumMsgsSent';
-import ForumMsgsMainReceived from './ForumMsgsMainReceived';
+import ForumMsgsGroupReceived from './ForumMsgsGroupReceived';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-type ForumMsgsMainProps = {
+type ForumMsgsGroupProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
+const ForumMsgsGroup = ({ setShowImage, setImage }: ForumMsgsGroupProps) => {
 	// console.log('ForumMsgsMain');
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
@@ -34,7 +34,6 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 	useEffect(() => {
 		const allMsgsRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
 		const unsub = onSnapshot(allMsgsRef, doc => {
-			console.log('onSnapshot - allUsersChatMessages - ForumMsgsMain');
 			doc.exists() && setReceivedMessages(doc.data().messages);
 		});
 		return () => {
@@ -97,7 +96,7 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 										setImage={setImage}
 									/>
 								) : (
-									<ForumMsgsMainReceived
+									<ForumMsgsGroupReceived
 										key={message.id}
 										message={{
 											...message,
@@ -115,4 +114,4 @@ const ForumMsgsMain = ({ setShowImage, setImage }: ForumMsgsMainProps) => {
 	);
 };
 
-export default ForumMsgsMain;
+export default ForumMsgsGroup;

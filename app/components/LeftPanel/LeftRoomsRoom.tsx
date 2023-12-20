@@ -11,12 +11,14 @@ type LeftRoomsRoomProps = {
 	id: string;
 	photoURL: string;
 	displayName: string;
+	toggleLeftBar: (bool?: boolean) => void;
 };
 const LeftRoomsRoom = ({
 	id,
 	photoURL,
 	displayName,
 	chatKey,
+	toggleLeftBar,
 }: LeftRoomsRoomProps) => {
 	// console.log('LeftRoomsRoom');
 	const chat = useAppSelector(state => state.chat);
@@ -24,6 +26,7 @@ const LeftRoomsRoom = ({
 	const dispatch = useAppDispatch();
 
 	const openRoomChat = () => {
+		toggleLeftBar(true);
 		dispatch(
 			changeUserChat({
 				chatKey: chatKey,
@@ -43,13 +46,21 @@ const LeftRoomsRoom = ({
 			<button
 				onClick={openRoomChat}
 				className='flex items-center overflow-x-hidden animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-				<Image
-					className='h-5 w-5 mr-1 rounded-full'
-					src={photoURL as string}
-					alt='ikona użytkownika'
-					width={40}
-					height={40}
-				/>
+				{photoURL ? (
+					<Image
+						className='h-5 w-5 mr-1 rounded-full'
+						src={photoURL as string}
+						alt='ikona użytkownika'
+						width={40}
+						height={40}
+					/>
+				) : (
+					<FontAwesomeIcon
+						className='w-6 h-6 rounded-full mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+						icon={faUsers}
+					/>
+				)}
+
 				<div className='whitespace-nowrap overflow-x-hidden text-xs'>
 					{displayName}
 				</div>

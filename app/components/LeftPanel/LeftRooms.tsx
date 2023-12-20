@@ -9,9 +9,10 @@ import { useAppSelector } from '@/store';
 type LeftRoomsProps = {
 	userChats: TransformedUserChat[] | undefined;
 	userRooms: TransformedUserChat[];
+	toggleLeftBar: (bool?: boolean) => void;
 };
 
-const LeftRooms = ({ userChats, userRooms }: LeftRoomsProps) => {
+const LeftRooms = ({ userChats, userRooms, toggleLeftBar }: LeftRoomsProps) => {
 	// console.log('LeftRooms');
 	const auth = useAppSelector(state => state.auth);
 	const [showList, setShowList] = useState(false);
@@ -69,6 +70,7 @@ const LeftRooms = ({ userChats, userRooms }: LeftRoomsProps) => {
 						id={room.uid}
 						photoURL={room.photoURL}
 						displayName={room.displayName}
+						toggleLeftBar={toggleLeftBar}
 					/>
 				))}
 			</ul>

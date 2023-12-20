@@ -56,9 +56,15 @@ const LeftRoomsAdd = ({
 		try {
 			const sortedIds = roomUsers.map(user => user.uid.substring(0, 3)).sort();
 			const combinedId = `GROUP_${sortedIds.join('')}`;
+			const roomCreator = {
+				uid: auth.uid,
+				displayName: auth.displayName || '',
+				photoURL: auth.photoURL || '',
+			};
 			const docSnap = await getDoc(doc(db, 'allUsersChatMessages', combinedId));
 			if (!docSnap.exists()) {
 				await setDoc(doc(db, 'allUsersChatMessages', combinedId), {
+					members: [...roomUsers, roomCreator],
 					messages: [],
 				});
 				const roomInfo = {
@@ -71,11 +77,7 @@ const LeftRoomsAdd = ({
 					photoURL: imageURL,
 					uid: combinedId,
 				};
-				roomInfo.friendsInRoom.push({
-					uid: auth.uid,
-					displayName: auth.displayName || '',
-					photoURL: auth.photoURL || '',
-				});
+				roomInfo.friendsInRoom.push(roomCreator);
 
 				await updateDoc(doc(db, 'userChats', auth.uid), {
 					[`${combinedId}.info`]: roomInfo,

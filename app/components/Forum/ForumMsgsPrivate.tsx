@@ -13,7 +13,7 @@ import {
 import { db } from '@/app/firebase-config';
 import { Message, User } from '../Types/types';
 import ForumMsgsSent from './ForumMsgsSent';
-import ForumMsgsReceived from './ForumMsgsMainReceived';
+import ForumMsgsReceived from './ForumMsgsGroupReceived';
 import ForumMsgsPrivateReceived from './ForumMsgsPrivateReceived';
 
 type ForumMsgsPrivateProps = {
@@ -40,7 +40,6 @@ const ForumMsgsPrivate = ({
 
 		const getRealtimeUpdate = () => {
 			const unsub = onSnapshot(allMsgsRef, doc => {
-				console.log('onSnapshot - allUsersChatMessages - ForumMsgsPrivate');
 				doc.exists() && setReceivedMessages(doc.data()?.messages);
 			});
 			return () => {

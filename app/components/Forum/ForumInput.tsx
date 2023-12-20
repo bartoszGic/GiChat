@@ -10,14 +10,22 @@ import { v4 as uuidv4 } from 'uuid';
 import Image from 'next/image';
 import {
 	arrayUnion,
+	collection,
 	doc,
 	serverTimestamp,
 	Timestamp,
 	updateDoc,
+	getDoc,
+	query,
+	where,
+	FieldPath,
+	getDocs,
+	writeBatch,
 } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/app/firebase-config';
 import { useAppSelector } from '@/store';
+import { User } from '../Types/types';
 
 type ForumInput = {
 	isLeftBarOpen: boolean;
@@ -42,7 +50,13 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 		}
 	};
 	const sendMessage = async () => {
+		if (!chat.chatKey) return;
 		if (!image) {
+			if (
+				chat.chatKey.substring(0, 6) === 'GROUP_' ||
+				chat.displayName === 'Czat ogólny'
+			) {
+			}
 			try {
 				await updateDoc(
 					doc(db, 'allUsersChatMessages', chat.chatKey as string),
@@ -82,24 +96,78 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				console.log(error);
 			}
 		}
-		try {
-			await updateDoc(doc(db, 'userChats', auth.uid as string), {
-				[`${chat.chatKey}.author`]: auth.uid,
-				[`${chat.chatKey}.date`]: Timestamp.now(),
-			});
+		if (
+			chat.chatKey.substring(0, 6) !== 'GROUP_' &&
+			chat.displayName !== 'Czat ogólny'
+		) {
+			try {
+				await updateDoc(doc(db, 'userChats', auth.uid as string), {
+					[`${chat.chatKey}.author`]: auth.uid,
+					[`${chat.chatKey}.date`]: Timestamp.now(),
+				});
 
-			await updateDoc(doc(db, 'userChats', chat.chatID as string), {
-				[`${chat.chatKey}.author`]: auth.uid,
-				[`${chat.chatKey}.date`]: Timestamp.now(),
-				[`${chat.chatKey}.isReaded`]: false,
-			});
-		} catch (error) {
-			console.log(error);
+				await updateDoc(doc(db, 'userChats', chat.chatID as string), {
+					[`${chat.chatKey}.author`]: auth.uid,
+					[`${chat.chatKey}.date`]: Timestamp.now(),
+					[`${chat.chatKey}.isReaded`]: false,
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		} else {
+			try {
+				const userChatsSnap = await getDoc(
+					doc(db, 'userChats', auth.uid as string)
+				);
+				if (!userChatsSnap.exists()) return;
+
+				const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
+				const membersUID = members.map((member: { uid: string }) => member.uid);
+				// console.log(members);
+				const userChatsQuery = query(
+					collection(db, 'userChats'),
+					where('__name__', 'in', membersUID)
+				);
+				const membersDocs = await getDocs(userChatsQuery);
+				// console.log(membersDocs.docs);
+				const batch = writeBatch(db);
+
+				membersDocs.docs.forEach(docRef => {
+					const updatedMembers = members.map((member: { uid: string }) => ({
+						...member,
+						isReaded: member.uid === auth.uid ? true : false,
+					}));
+					batch.update(docRef.ref, {
+						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+					});
+				});
+
+				await batch.commit();
+			} catch (error) {
+				console.log(error);
+			}
 		}
 
 		setMessage('');
 		setImage(undefined);
 		setImageURL(null);
+	};
+	// for (const member of membersDocs.docs) {
+	// 	console.log(member.);
+	// if (member.uid !== auth.uid) {
+	// 	member.isReaded = false;
+	// } else {
+	// 	member.isReaded = true;
+	// }
+	// }
+	// await updateDoc(doc(db, 'userChats', auth.uid as string), {
+	// 	[`${chat.chatKey}.info.friendsInRoom`]: members,
+	// });
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			sendMessage();
+		}
 	};
 	return (
 		<div
@@ -112,6 +180,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				maxLength={200}
 				id='message'
 				onChange={e => setMessage(e.target.value)}
+				onKeyDown={handleKeyDown}
 				value={message}
 			/>
 			<div className='flex items-center'>

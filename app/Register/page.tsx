@@ -76,6 +76,12 @@ const Register = () => {
 
 			await setDoc(doc(db, 'userChats', profile.user.uid), {});
 
+			// await updateDoc(doc(db, 'allUsersChatMessages', chat.chatKey as string), {
+			// 	members: arrayUnion({
+			// 		uid: profile.user.uid,
+			// 		isReaded: true,
+			// 	}),
+			// });
 			await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
 				[`${chat.chatKey}.info.friendsInRoom`]: arrayUnion({
 					displayName: email,

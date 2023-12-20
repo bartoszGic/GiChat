@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import ForumMsgsMain from './ForumMsgsMain';
+import ForumMsgsGroup from './ForumMsgsGroup';
 import ForumMsgsPrivate from './ForumMsgsPrivate';
 import ForumInput from './ForumInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { db } from '@/app/firebase-config';
 import { onSnapshot, doc, documentId, getDoc } from 'firebase/firestore';
 import { TransformedUserChat, User } from '../Types/types';
+import ForumMembers from './ForumMembers';
 
 type ForumProps = {
 	isLeftBarOpen: boolean;
@@ -32,9 +33,6 @@ const Forum = ({
 }: ForumProps) => {
 	// console.log('Forum');
 	const chat = useAppSelector(state => state.chat);
-	const auth = useAppSelector(state => state.auth);
-	const listRef = useRef<HTMLDivElement | null>(null);
-	const [showList, setShowList] = useState(false);
 
 	useEffect(() => {
 		const handleWindowResize = () => {
@@ -45,21 +43,6 @@ const Forum = ({
 			window.removeEventListener('resize', handleWindowResize);
 		};
 	}, [toggleLeftBar]);
-	useEffect(() => {
-		const outsideClickCatch = (e: MouseEvent) => {
-			if (listRef.current) {
-				const target = e.target as Node;
-				if (!listRef.current.contains(target)) {
-					setShowList(false);
-				}
-			}
-		};
-		document.addEventListener('mousedown', outsideClickCatch);
-		return () => {
-			document.removeEventListener('mousedown', outsideClickCatch);
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	if (!chat.chatKey) {
 		return null;
@@ -84,51 +67,15 @@ const Forum = ({
 								chat.chatKey.substring(0, 6) === 'GROUP_'
 									? 'justify-between'
 									: 'justify-end'
-							} h-6 w-full`}>
+							} w-full items-center`}>
 							{chat.chatKey.substring(0, 6) === 'GROUP_' && (
-								<div
-									className='flex items-center'
-									ref={listRef}>
-									<button
-										className='flex items-center'
-										onClick={() => setShowList(state => !state)}>
-										<FontAwesomeIcon
-											className='w-6 h-6 rounded-full mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-											icon={faUsers}
-										/>
-									</button>
-									<ul
-										className={`${
-											showList ? 'flex' : 'hidden'
-										} flex-col justify-start absolute left-0 top-0 px-2 py-1 text-xs text-slate-50 w-40 bg-slate-500 max-h-32 max-w-[160px] overflow-y-auto z-30`}>
-										{arrayOfActualNames.map(user => (
-											<li
-												key={user.uid}
-												className='flex justify-between items-center py-1 overflow-x-hidden'>
-												<div className='flex items-center'>
-													<Image
-														className='h-6 w-6 mr-2 rounded-full'
-														src={user.photoURL}
-														alt='zdjęcie znajomego'
-														width={20}
-														height={20}
-													/>
-													{user.displayName === auth.displayName ? (
-														<div className='ml-2 text-green-500'>TY</div>
-													) : (
-														<div>{user.displayName}</div>
-													)}
-												</div>
-											</li>
-										))}
-									</ul>
-								</div>
+								<ForumMembers arrayOfActualNames={arrayOfActualNames} />
 							)}
-							<div className='h-6 flex'>
+							<div className='flex items-center'>
 								<h3 className='mr-2'>{chat.displayName}</h3>
 								{chat.photoURL && (
 									<Image
-										className='rounded-full'
+										className='h-7 w-7 rounded-full'
 										src={chat.photoURL as string}
 										alt='zdjęcie znajomego'
 										width={30}
@@ -140,7 +87,7 @@ const Forum = ({
 					</div>
 					{chat.displayName === 'Czat ogólny' ||
 					chat.chatKey.substring(0, 6) === 'GROUP_' ? (
-						<ForumMsgsMain
+						<ForumMsgsGroup
 							key={chat.chatKey}
 							setShowImage={setShowImage}
 							setImage={setImage}
