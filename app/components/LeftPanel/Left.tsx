@@ -46,7 +46,7 @@ const Left = ({
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
 	const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
-
+	console.log(userRooms);
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
 			const actualDetails: User[] = [];
