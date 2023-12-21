@@ -77,12 +77,12 @@ const Left = ({
 			}
 		};
 		const updateIsReadedGroup = async () => {
-			if (!chat.chatKey) return;
-			if (
-				chat.chatKey.slice(0, 6) !== 'GROUP_' &&
-				chat.displayName !== 'Czat ogólny'
-			)
-				return;
+			// if (!chat.chatKey) return;
+			// if (
+			// 	chat.chatKey.slice(0, 6) !== 'GROUP_' &&
+			// 	chat.displayName !== 'Czat ogólny'
+			// )
+			// 	return;
 			try {
 				const userChatsSnap = await getDoc(
 					doc(db, 'userChats', auth.uid as string)
@@ -100,17 +100,17 @@ const Left = ({
 				console.log(membersDocs.docs);
 				const batch = writeBatch(db);
 
-				membersDocs.docs.forEach(docRef => {
-					const updatedMembers = members.map((member: { uid: string }) => ({
-						...member,
-						isReaded: member.uid === auth.uid && true,
-					}));
-					batch.update(docRef.ref, {
-						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
-					});
-				});
+				// membersDocs.docs.forEach(docRef => {
+				// 	const updatedMembers = members.map((member: { uid: string }) => ({
+				// 		...member,
+				// 		isReaded: member.uid === auth.uid && true,
+				// 	}));
+				// 	batch.update(docRef.ref, {
+				// 		[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+				// 	});
+				// });
 
-				await batch.commit();
+				// await batch.commit();
 			} catch (error) {
 				console.log(error);
 			}
@@ -135,15 +135,28 @@ const Left = ({
 			});
 
 			const hasUnreadMessages = transformedChatsData.some(
-				item => item !== null && !item.isReaded && item.key === chat.chatKey
+				chatItem =>
+					chatItem !== null &&
+					!chatItem.isReaded &&
+					chatItem.key === chat.chatKey
 			);
 
 			if (hasUnreadMessages) {
-				transformedChatsData.forEach(item => {
-					if (item !== null && !item.isReaded && item.key === chat.chatKey) {
-						updateIsReadedPrivate(item.key);
+				transformedChatsData.forEach(chatItem => {
+					if (
+						chatItem !== null &&
+						!chatItem.isReaded &&
+						chatItem.key === chat.chatKey
+					) {
+						updateIsReadedPrivate(chatItem.key);
 					}
 				});
+			}
+			if (
+				chat.chatKey &&
+				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
+					chat.displayName === 'Czat ogólny')
+			) {
 			}
 
 			const rooms: TransformedUserChat[] = [];
@@ -162,14 +175,8 @@ const Left = ({
 			setUserRoms(sortedRooms);
 			setUserChats(sortedChats);
 		});
-		const unsub3 = onSnapshot(doc(db, 'userChats', auth.uid as string), doc => {
-			const data = doc.data() as UserChat;
-			if (!data) return;
-			updateIsReadedGroup();
-		});
 		return () => {
 			unsub2();
-			unsub3();
 		};
 	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat]);
 
