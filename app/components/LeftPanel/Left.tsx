@@ -141,23 +141,24 @@ const Left = ({
 					chatItem.key === chat.chatKey
 			);
 
-			if (hasUnreadMessages) {
-				transformedChatsData.forEach(chatItem => {
-					if (
-						chatItem !== null &&
-						!chatItem.isReaded &&
-						chatItem.key === chat.chatKey
-					) {
-						updateIsReadedPrivate(chatItem.key);
-					}
-				});
-			}
 			if (
 				chat.chatKey &&
 				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
 					chat.displayName === 'Czat ogólny')
 			) {
 				updateIsReadedGroup();
+			} else {
+				if (hasUnreadMessages) {
+					transformedChatsData.forEach(chatItem => {
+						if (
+							chatItem !== null &&
+							!chatItem.isReaded &&
+							chatItem.key === chat.chatKey
+						) {
+							updateIsReadedPrivate(chatItem.key);
+						}
+					});
+				}
 			}
 
 			const rooms: TransformedUserChat[] = [];
