@@ -10,6 +10,8 @@ import {
 	collection,
 	updateDoc,
 	getDoc,
+	where,
+	writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { useAppSelector, useAppDispatch } from '@/store';
@@ -74,29 +76,45 @@ const Left = ({
 				console.error(error);
 			}
 		};
-		// const updateIsReadedGroup = async () => {
-		// 	try {
-		// 		const allUsersChatMessagesSnap = await getDoc(
-		// 			doc(db, 'allUsersChatMessages', chat.chatKey as string)
-		// 		);
-		// 		if (!allUsersChatMessagesSnap.exists()) return;
-		// 		const members = allUsersChatMessagesSnap.data().members;
-		// 		console.log(members);
-		// 		// for (const member of members) {
-		// 		// 	if (member.uid === auth.uid) {
-		// 		// 		member.isReaded = true;
-		// 		// 	}
-		// 		// }
-		// 		// await updateDoc(
-		// 		// 	doc(db, 'allUsersChatMessages', chat.chatKey as string),
-		// 		// 	{
-		// 		// 		members: members,
-		// 		// 	}
-		// 		// );
-		// 	} catch (error) {
-		// 		console.error(error);
-		// 	}
-		// };
+		const updateIsReadedGroup = async () => {
+			if (!chat.chatKey) return;
+			if (
+				chat.chatKey.slice(0, 6) !== 'GROUP_' &&
+				chat.displayName !== 'Czat ogólny'
+			)
+				return;
+			try {
+				const userChatsSnap = await getDoc(
+					doc(db, 'userChats', auth.uid as string)
+				);
+				if (!userChatsSnap.exists() || !chat.chatKey) return;
+				const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
+				console.log(members);
+				const membersUID = members.map((member: { uid: string }) => member.uid);
+				// console.log(members);
+				const userChatsQuery = query(
+					collection(db, 'userChats'),
+					where('__name__', 'in', membersUID)
+				);
+				const membersDocs = await getDocs(userChatsQuery);
+				console.log(membersDocs.docs);
+				const batch = writeBatch(db);
+
+				membersDocs.docs.forEach(docRef => {
+					const updatedMembers = members.map((member: { uid: string }) => ({
+						...member,
+						isReaded: member.uid === auth.uid && true,
+					}));
+					batch.update(docRef.ref, {
+						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+					});
+				});
+
+				await batch.commit();
+			} catch (error) {
+				console.log(error);
+			}
+		};
 		const unsub2 = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
 			const data = doc.data() as UserChat;
 			if (!data) return;
@@ -144,19 +162,16 @@ const Left = ({
 			setUserRoms(sortedRooms);
 			setUserChats(sortedChats);
 		});
-		// const unsub3 = onSnapshot(
-		// 	doc(db, 'allUsersChatMessages', chat.chatKey as string),
-		// 	doc => {
-		// 		const data = doc.data() as UserChat;
-		// 		if (!data) return;
-		// 		updateIsReadedGroup();
-		// 	}
-		// );
+		const unsub3 = onSnapshot(doc(db, 'userChats', auth.uid as string), doc => {
+			const data = doc.data() as UserChat;
+			if (!data) return;
+			updateIsReadedGroup();
+		});
 		return () => {
 			unsub2();
-			// unsub3();
+			unsub3();
 		};
-	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat.chatKey]);
+	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat]);
 
 	useEffect(() => {
 		const updateInnerWidth = () => {
