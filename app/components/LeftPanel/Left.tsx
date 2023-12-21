@@ -45,6 +45,7 @@ const Left = ({
 	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
+	const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
 
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
@@ -67,15 +68,6 @@ const Left = ({
 
 	useEffect(() => {
 		if (!auth.uid) return;
-		const updateIsReadedPrivate = async (chatKeyToUpdate: string) => {
-			try {
-				await updateDoc(doc(db, 'userChats', auth.uid as string), {
-					[`${chatKeyToUpdate}.isReaded`]: true,
-				});
-			} catch (error) {
-				console.error(error);
-			}
-		};
 		const updateIsReadedGroup = async () => {
 			// if (!chat.chatKey) return;
 			// if (
@@ -84,6 +76,7 @@ const Left = ({
 			// )
 			// 	return;
 			try {
+				setIsUpdatingGroup(true);
 				const userChatsSnap = await getDoc(
 					doc(db, 'userChats', auth.uid as string)
 				);
@@ -109,10 +102,22 @@ const Left = ({
 						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
 					});
 				});
+				console.log('update GROUP_');
 
 				await batch.commit();
+				setIsUpdatingGroup(false);
 			} catch (error) {
 				console.log(error);
+			}
+		};
+		const updateIsReadedPrivate = async (chatKeyToUpdate: string) => {
+			try {
+				await updateDoc(doc(db, 'userChats', auth.uid as string), {
+					[`${chatKeyToUpdate}.isReaded`]: true,
+				});
+				console.log('update Private');
+			} catch (error) {
+				console.error(error);
 			}
 		};
 		const unsub2 = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
@@ -144,7 +149,8 @@ const Left = ({
 			if (
 				chat.chatKey &&
 				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
-					chat.displayName === 'Czat ogólny')
+					chat.displayName === 'Czat ogólny') &&
+				!isUpdatingGroup
 			) {
 				updateIsReadedGroup();
 			} else {
@@ -180,7 +186,14 @@ const Left = ({
 		return () => {
 			unsub2();
 		};
-	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat]);
+	}, [
+		auth.uid,
+		setUserChats,
+		setUserRoms,
+		setLoadingForum,
+		chat,
+		isUpdatingGroup,
+	]);
 
 	useEffect(() => {
 		const updateInnerWidth = () => {
