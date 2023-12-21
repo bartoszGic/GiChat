@@ -100,17 +100,17 @@ const Left = ({
 				console.log(membersDocs.docs);
 				const batch = writeBatch(db);
 
-				// membersDocs.docs.forEach(docRef => {
-				// 	const updatedMembers = members.map((member: { uid: string }) => ({
-				// 		...member,
-				// 		isReaded: member.uid === auth.uid && true,
-				// 	}));
-				// 	batch.update(docRef.ref, {
-				// 		[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
-				// 	});
-				// });
+				membersDocs.docs.forEach(docRef => {
+					const updatedMembers = members.map((member: { uid: string }) => ({
+						...member,
+						isReaded: member.uid === auth.uid && true,
+					}));
+					batch.update(docRef.ref, {
+						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+					});
+				});
 
-				// await batch.commit();
+				await batch.commit();
 			} catch (error) {
 				console.log(error);
 			}
@@ -157,6 +157,7 @@ const Left = ({
 				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
 					chat.displayName === 'Czat ogólny')
 			) {
+				updateIsReadedGroup();
 			}
 
 			const rooms: TransformedUserChat[] = [];
