@@ -46,7 +46,7 @@ const Left = ({
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
 	const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
-	console.log(userRooms);
+
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
 			const actualDetails: User[] = [];
@@ -76,7 +76,6 @@ const Left = ({
 			// )
 			// 	return;
 			try {
-				setIsUpdatingGroup(true);
 				const userChatsSnap = await getDoc(
 					doc(db, 'userChats', auth.uid as string)
 				);
@@ -104,8 +103,7 @@ const Left = ({
 				});
 				console.log('update GROUP_');
 
-				await batch.commit();
-				setIsUpdatingGroup(false);
+				// await batch.commit();
 			} catch (error) {
 				console.log(error);
 			}
