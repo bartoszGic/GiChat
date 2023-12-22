@@ -42,7 +42,7 @@ const LeftRoomsRoom = ({
 		try {
 			setLoadingForum(true);
 			toggleLeftBar(true);
-			if (chat.chatKey && chat.chatKey.slice(0, 6) === 'GROUP_') {
+			if (chatKey && chatKey.slice(0, 6) === 'GROUP_') {
 				const userChatsSnap = await getDoc(
 					doc(db, 'userChats', auth.uid as string)
 				);
@@ -70,33 +70,18 @@ const LeftRoomsRoom = ({
 					});
 				});
 				await batch.commit();
-			} else {
-				const mainChatSnap = await getDoc(
-					doc(db, 'userChats', chat.chatKey as string)
-				);
-				if (!mainChatSnap.exists()) return;
-				const membersDoc = mainChatSnap.data()[chatKey].info.friendsInRoom;
-				const updatedDoc = membersDoc.map(
-					(member: { uid: string; isReaded: string }) => ({
-						...member,
-						isReaded: member.uid === auth.uid ? true : member.isReaded,
+				dispatch(
+					changeUserChat({
+						chatKey: chatKey,
+						chatID: id,
+						displayName: displayName,
+						photoURL: photoURL,
 					})
 				);
-				console.log(updatedDoc);
-				await updateDoc(doc(db, 'userChats', chatKey as string), {
-					[`${chatKey}.info.friendsInRoom`]: updatedDoc,
-				});
+				setLoadingForum(false);
+			} else {
+				return;
 			}
-
-			dispatch(
-				changeUserChat({
-					chatKey: chatKey,
-					chatID: id,
-					displayName: displayName,
-					photoURL: photoURL,
-				})
-			);
-			setLoadingForum(false);
 		} catch (error) {
 			console.log(error);
 		}
