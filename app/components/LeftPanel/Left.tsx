@@ -45,7 +45,6 @@ const Left = ({
 	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
-	const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
 
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
@@ -68,46 +67,36 @@ const Left = ({
 
 	useEffect(() => {
 		if (!auth.uid) return;
-		const updateIsReadedGroup = async () => {
-			// if (!chat.chatKey) return;
-			// if (
-			// 	chat.chatKey.slice(0, 6) !== 'GROUP_' &&
-			// 	chat.displayName !== 'Czat ogólny'
-			// )
-			// 	return;
-			try {
-				const userChatsSnap = await getDoc(
-					doc(db, 'userChats', auth.uid as string)
-				);
-				if (!userChatsSnap.exists() || !chat.chatKey) return;
-				const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
-				console.log(members);
-				const membersUID = members.map((member: { uid: string }) => member.uid);
-				// console.log(members);
-				const userChatsQuery = query(
-					collection(db, 'userChats'),
-					where('__name__', 'in', membersUID)
-				);
-				const membersDocs = await getDocs(userChatsQuery);
-				console.log(membersDocs.docs);
-				const batch = writeBatch(db);
+		// const updateIsReadedGroup = async () => {
+		// 	try {
+		// 		const userChatsSnap = await getDoc(
+		// 			doc(db, 'userChats', auth.uid as string)
+		// 		);
+		// 		if (!userChatsSnap.exists() || !chat.chatKey) return;
+		// 		const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
+		// 		const membersUID = members.map((member: { uid: string }) => member.uid);
+		// 		const userChatsQuery = query(
+		// 			collection(db, 'userChats'),
+		// 			where('__name__', 'in', membersUID)
+		// 		);
+		// 		const membersDocs = await getDocs(userChatsQuery);
+		// 		const batch = writeBatch(db);
 
-				membersDocs.docs.forEach(docRef => {
-					const updatedMembers = members.map((member: { uid: string }) => ({
-						...member,
-						isReaded: member.uid === auth.uid && true,
-					}));
-					batch.update(docRef.ref, {
-						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
-					});
-				});
-				console.log('update GROUP_');
-
-				// await batch.commit();
-			} catch (error) {
-				console.log(error);
-			}
-		};
+		// 		membersDocs.docs.forEach(docRef => {
+		// 			const updatedMembers = members.map((member: { uid: string }) => ({
+		// 				...member,
+		// 				isReaded: member.uid === auth.uid && true,
+		// 			}));
+		// 			batch.update(docRef.ref, {
+		// 				[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+		// 			});
+		// 		});
+		// 		console.log('update GROUP_');
+		// 		// await batch.commit();
+		// 	} catch (error) {
+		// 		console.log(error);
+		// 	}
+		// };
 		const updateIsReadedPrivate = async (chatKeyToUpdate: string) => {
 			try {
 				await updateDoc(doc(db, 'userChats', auth.uid as string), {
@@ -147,10 +136,9 @@ const Left = ({
 			if (
 				chat.chatKey &&
 				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
-					chat.displayName === 'Czat ogólny') &&
-				!isUpdatingGroup
+					chat.displayName === 'Czat ogólny')
 			) {
-				updateIsReadedGroup();
+				// updateIsReadedGroup();
 			} else {
 				if (hasUnreadMessages) {
 					transformedChatsData.forEach(chatItem => {
@@ -184,14 +172,7 @@ const Left = ({
 		return () => {
 			unsub2();
 		};
-	}, [
-		auth.uid,
-		setUserChats,
-		setUserRoms,
-		setLoadingForum,
-		chat,
-		isUpdatingGroup,
-	]);
+	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat]);
 
 	useEffect(() => {
 		const updateInnerWidth = () => {
@@ -253,6 +234,7 @@ const Left = ({
 								userChats={userChats}
 								userRooms={userRooms}
 								toggleLeftBar={toggleLeftBar}
+								setLoadingForum={setLoadingForum}
 							/>
 						</div>
 					</div>

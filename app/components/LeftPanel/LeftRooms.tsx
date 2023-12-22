@@ -10,9 +10,15 @@ type LeftRoomsProps = {
 	userChats: TransformedUserChat[] | undefined;
 	userRooms: TransformedUserChat[];
 	toggleLeftBar: (bool?: boolean) => void;
+	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const LeftRooms = ({ userChats, userRooms, toggleLeftBar }: LeftRoomsProps) => {
+const LeftRooms = ({
+	userChats,
+	userRooms,
+	toggleLeftBar,
+	setLoadingForum,
+}: LeftRoomsProps) => {
 	// console.log('LeftRooms');
 	const auth = useAppSelector(state => state.auth);
 	const [showList, setShowList] = useState(false);
@@ -71,6 +77,7 @@ const LeftRooms = ({ userChats, userRooms, toggleLeftBar }: LeftRoomsProps) => {
 						photoURL={room.photoURL}
 						displayName={room.displayName}
 						toggleLeftBar={toggleLeftBar}
+						setLoadingForum={setLoadingForum}
 					/>
 				))}
 			</ul>
