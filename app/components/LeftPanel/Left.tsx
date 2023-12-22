@@ -69,32 +69,55 @@ const Left = ({
 		if (!auth.uid) return;
 		const updateIsReadedGroup = async () => {
 			try {
-				const userChatsSnap = await getDoc(
-					doc(db, 'userChats', auth.uid as string)
-				);
-				if (!userChatsSnap.exists() || !chat.chatKey) return;
-				const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
-				const membersUID = members.map((member: { uid: string }) => member.uid);
-				const userChatsQuery = query(
-					collection(db, 'userChats'),
-					where('__name__', 'in', membersUID)
-				);
-				const membersDocs = await getDocs(userChatsQuery);
-				const batch = writeBatch(db);
+				if (!chat.chatKey) return;
+				if (chat.chatKey.slice(0, 6) === 'GROUP_') {
+					const userChatsSnap = await getDoc(
+						doc(db, 'userChats', auth.uid as string)
+					);
+					if (!userChatsSnap.exists()) return;
+					const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
+					const membersUID = members.map(
+						(member: { uid: string }) => member.uid
+					);
+					const userChatsQuery = query(
+						collection(db, 'userChats'),
+						where('__name__', 'in', membersUID)
+					);
+					const membersDocs = await getDocs(userChatsQuery);
+					const batch = writeBatch(db);
 
-				membersDocs.docs.forEach(docRef => {
-					const updatedMembers = members.map(
+					membersDocs.docs.forEach(docRef => {
+						const updatedMembers = members.map(
+							(member: { uid: string; isReaded: string }) => ({
+								...member,
+								isReaded: member.uid === auth.uid ? true : member.isReaded,
+							})
+						);
+						console.log(updatedMembers);
+						batch.update(docRef.ref, {
+							[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+						});
+					});
+					await batch.commit();
+				} else {
+					const mainChatSnap = await getDoc(
+						doc(db, 'userChats', chat.chatKey as string)
+					);
+					if (!mainChatSnap.exists()) return;
+					const membersDoc =
+						mainChatSnap.data()[chat.chatKey].info.friendsInRoom;
+					const updatedDoc = membersDoc.map(
 						(member: { uid: string; isReaded: string }) => ({
 							...member,
 							isReaded: member.uid === auth.uid ? true : member.isReaded,
 						})
 					);
-					batch.update(docRef.ref, {
-						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+					console.log(updatedDoc);
+					await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
+						[`${chat.chatKey}.info.friendsInRoom`]: updatedDoc,
 					});
-				});
-				console.log('update GROUP_');
-				await batch.commit();
+					console.log('main chat update');
+				}
 			} catch (error) {
 				console.log(error);
 			}

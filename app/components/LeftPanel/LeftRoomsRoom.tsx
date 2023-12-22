@@ -13,6 +13,7 @@ import {
 	where,
 	getDocs,
 	writeBatch,
+	updateDoc,
 } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 
@@ -41,33 +42,52 @@ const LeftRoomsRoom = ({
 		try {
 			setLoadingForum(true);
 			toggleLeftBar(true);
-			const userChatsSnap = await getDoc(
-				doc(db, 'userChats', auth.uid as string)
-			);
-			if (!userChatsSnap.exists()) return;
-			const members = userChatsSnap.data()[chatKey].info.friendsInRoom;
-			console.log(members);
-			const membersUID = members.map((member: { uid: string }) => member.uid);
-			const userChatsQuery = query(
-				collection(db, 'userChats'),
-				where('__name__', 'in', membersUID)
-			);
-			const membersDocs = await getDocs(userChatsQuery);
-			// console.log(membersDocs.docs);
-			const batch = writeBatch(db);
+			if (chat.chatKey && chat.chatKey.slice(0, 6) === 'GROUP_') {
+				const userChatsSnap = await getDoc(
+					doc(db, 'userChats', auth.uid as string)
+				);
+				if (!userChatsSnap.exists()) return;
+				const members = userChatsSnap.data()[chatKey].info.friendsInRoom;
+				console.log(members);
+				const membersUID = members.map((member: { uid: string }) => member.uid);
+				const userChatsQuery = query(
+					collection(db, 'userChats'),
+					where('__name__', 'in', membersUID)
+				);
+				const membersDocs = await getDocs(userChatsQuery);
+				// console.log(membersDocs.docs);
+				const batch = writeBatch(db);
 
-			membersDocs.docs.forEach(docRef => {
-				const updatedMembers = members.map(
+				membersDocs.docs.forEach(docRef => {
+					const updatedMembers = members.map(
+						(member: { uid: string; isReaded: string }) => ({
+							...member,
+							isReaded: member.uid === auth.uid ? true : member.isReaded,
+						})
+					);
+					batch.update(docRef.ref, {
+						[`${chatKey}.info.friendsInRoom`]: updatedMembers,
+					});
+				});
+				await batch.commit();
+			} else {
+				const mainChatSnap = await getDoc(
+					doc(db, 'userChats', chat.chatKey as string)
+				);
+				if (!mainChatSnap.exists()) return;
+				const membersDoc = mainChatSnap.data()[chatKey].info.friendsInRoom;
+				const updatedDoc = membersDoc.map(
 					(member: { uid: string; isReaded: string }) => ({
 						...member,
 						isReaded: member.uid === auth.uid ? true : member.isReaded,
 					})
 				);
-				batch.update(docRef.ref, {
-					[`${chatKey}.info.friendsInRoom`]: updatedMembers,
+				console.log(updatedDoc);
+				await updateDoc(doc(db, 'userChats', chatKey as string), {
+					[`${chatKey}.info.friendsInRoom`]: updatedDoc,
 				});
-			});
-			await batch.commit();
+			}
+
 			dispatch(
 				changeUserChat({
 					chatKey: chatKey,
