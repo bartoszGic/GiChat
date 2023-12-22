@@ -126,13 +126,11 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 					const membersUID = members.map(
 						(member: { uid: string }) => member.uid
 					);
-					// console.log(members);
 					const userChatsQuery = query(
 						collection(db, 'userChats'),
 						where('__name__', 'in', membersUID)
 					);
 					const membersDocs = await getDocs(userChatsQuery);
-					// console.log(membersDocs.docs);
 					const batch = writeBatch(db);
 
 					membersDocs.docs.forEach(docRef => {
@@ -144,7 +142,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
 						});
 					});
-
+					console.log('ForumInput GROUP');
 					await batch.commit();
 				} else {
 					const mainChatSnap = await getDoc(
@@ -156,10 +154,11 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 					const updatedDoc = membersDoc.map(
 						(member: { uid: string; isReaded: string }) => ({
 							...member,
-							isReaded: member.uid === auth.uid ? true : member.isReaded,
+							isReaded: member.uid === auth.uid ? true : false,
 						})
 					);
-					console.log(updatedDoc);
+					console.log('ForumInput MAIN');
+
 					await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
 						[`${chat.chatKey}.info.friendsInRoom`]: updatedDoc,
 					});
