@@ -46,6 +46,7 @@ const LeftRoomsRoom = ({
 			);
 			if (!userChatsSnap.exists()) return;
 			const members = userChatsSnap.data()[chatKey].info.friendsInRoom;
+			console.log(members);
 			const membersUID = members.map((member: { uid: string }) => member.uid);
 			const userChatsQuery = query(
 				collection(db, 'userChats'),
@@ -56,10 +57,12 @@ const LeftRoomsRoom = ({
 			const batch = writeBatch(db);
 
 			membersDocs.docs.forEach(docRef => {
-				const updatedMembers = members.map((member: { uid: string }) => ({
-					...member,
-					isReaded: member.uid === auth.uid ? true : false,
-				}));
+				const updatedMembers = members.map(
+					(member: { uid: string; isReaded: string }) => ({
+						...member,
+						isReaded: member.uid === auth.uid ? true : member.isReaded,
+					})
+				);
 				batch.update(docRef.ref, {
 					[`${chatKey}.info.friendsInRoom`]: updatedMembers,
 				});

@@ -67,36 +67,38 @@ const Left = ({
 
 	useEffect(() => {
 		if (!auth.uid) return;
-		// const updateIsReadedGroup = async () => {
-		// 	try {
-		// 		const userChatsSnap = await getDoc(
-		// 			doc(db, 'userChats', auth.uid as string)
-		// 		);
-		// 		if (!userChatsSnap.exists() || !chat.chatKey) return;
-		// 		const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
-		// 		const membersUID = members.map((member: { uid: string }) => member.uid);
-		// 		const userChatsQuery = query(
-		// 			collection(db, 'userChats'),
-		// 			where('__name__', 'in', membersUID)
-		// 		);
-		// 		const membersDocs = await getDocs(userChatsQuery);
-		// 		const batch = writeBatch(db);
+		const updateIsReadedGroup = async () => {
+			try {
+				const userChatsSnap = await getDoc(
+					doc(db, 'userChats', auth.uid as string)
+				);
+				if (!userChatsSnap.exists() || !chat.chatKey) return;
+				const members = userChatsSnap.data()[chat.chatKey].info.friendsInRoom;
+				const membersUID = members.map((member: { uid: string }) => member.uid);
+				const userChatsQuery = query(
+					collection(db, 'userChats'),
+					where('__name__', 'in', membersUID)
+				);
+				const membersDocs = await getDocs(userChatsQuery);
+				const batch = writeBatch(db);
 
-		// 		membersDocs.docs.forEach(docRef => {
-		// 			const updatedMembers = members.map((member: { uid: string }) => ({
-		// 				...member,
-		// 				isReaded: member.uid === auth.uid && true,
-		// 			}));
-		// 			batch.update(docRef.ref, {
-		// 				[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
-		// 			});
-		// 		});
-		// 		console.log('update GROUP_');
-		// 		// await batch.commit();
-		// 	} catch (error) {
-		// 		console.log(error);
-		// 	}
-		// };
+				membersDocs.docs.forEach(docRef => {
+					const updatedMembers = members.map(
+						(member: { uid: string; isReaded: string }) => ({
+							...member,
+							isReaded: member.uid === auth.uid ? true : member.isReaded,
+						})
+					);
+					batch.update(docRef.ref, {
+						[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
+					});
+				});
+				console.log('update GROUP_');
+				await batch.commit();
+			} catch (error) {
+				console.log(error);
+			}
+		};
 		const updateIsReadedPrivate = async (chatKeyToUpdate: string) => {
 			try {
 				await updateDoc(doc(db, 'userChats', auth.uid as string), {
@@ -138,7 +140,7 @@ const Left = ({
 				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
 					chat.displayName === 'Czat ogólny')
 			) {
-				// updateIsReadedGroup();
+				updateIsReadedGroup();
 			} else {
 				if (hasUnreadMessages) {
 					transformedChatsData.forEach(chatItem => {
