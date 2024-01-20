@@ -10,6 +10,7 @@ export type UserChat = {
 			displayName: string;
 			photoURL: string;
 			uid: string;
+			friendsInRoom: UserInRoom[];
 		};
 	};
 };
@@ -20,6 +21,7 @@ export type TransformedUserChat = {
 	photoURL: string;
 	uid: string;
 	isReaded: boolean;
+	friendsInRoom: UserInRoom[];
 };
 export type Message = {
 	id: string;
@@ -38,6 +40,12 @@ export type User = {
 	displayName: string;
 	email: string;
 	photoURL: string;
+};
+export type UserInRoom = {
+	uid: string;
+	displayName: string;
+	email: string;
+	isReaded: boolean;
 };
 export const formatDate = (timestamp: number) => {
 	const date = new Date(timestamp * 1000);

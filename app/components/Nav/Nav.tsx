@@ -12,6 +12,7 @@ type NavProps = {
 	toggleRightBar: () => void;
 	setForumStyleZ: React.Dispatch<React.SetStateAction<string>>;
 	userChats: TransformedUserChat[] | undefined;
+	numberOfNotifications: number;
 };
 
 const Nav = ({
@@ -21,6 +22,7 @@ const Nav = ({
 	toggleRightBar,
 	setForumStyleZ,
 	userChats,
+	numberOfNotifications,
 }: NavProps) => {
 	// console.log('Nav');
 
@@ -30,10 +32,19 @@ const Nav = ({
 				<h3 className='hidden sm:flex tracking-widest font-bold ml-2'>
 					GiChat
 				</h3>
-				<NavBars
-					isLeftBarOpen={isLeftBarOpen}
-					toggleLeftBar={toggleLeftBar}
-				/>
+				<div className='flex w-12'>
+					<NavBars
+						isLeftBarOpen={isLeftBarOpen}
+						toggleLeftBar={toggleLeftBar}
+					/>
+					{numberOfNotifications > 0 && (
+						<div className='block sm:hidden w-[16px] h-[16px] text-center items-center'>
+							<div className='bg-red-500 rounded-full text-xs'>
+								{numberOfNotifications}
+							</div>
+						</div>
+					)}
+				</div>
 				<div className='flex items-center justify-end w-full'>
 					<NavSearch
 						setForumStyleZ={setForumStyleZ}

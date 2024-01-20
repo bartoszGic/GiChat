@@ -11,6 +11,7 @@ type LeftRoomsProps = {
 	userRooms: TransformedUserChat[];
 	toggleLeftBar: (bool?: boolean) => void;
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
+	setNumberOfNotifications: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const LeftRooms = ({
@@ -18,6 +19,7 @@ const LeftRooms = ({
 	userRooms,
 	toggleLeftBar,
 	setLoadingForum,
+	setNumberOfNotifications,
 }: LeftRoomsProps) => {
 	// console.log('LeftRooms');
 	const auth = useAppSelector(state => state.auth);
@@ -26,7 +28,6 @@ const LeftRooms = ({
 	const [image, setImage] = useState<File | null>(null);
 	const [imageURL, setImageURL] = useState<string | null>(null);
 	const usersListRef = useRef<HTMLDivElement | null>(null);
-
 	useEffect(() => {
 		const outsideClickCatch = (e: MouseEvent) => {
 			if (usersListRef.current) {
@@ -74,10 +75,12 @@ const LeftRooms = ({
 						chatKey={room.key}
 						key={room.uid}
 						id={room.uid}
+						friendsInRoom={room.friendsInRoom}
 						photoURL={room.photoURL}
 						displayName={room.displayName}
 						toggleLeftBar={toggleLeftBar}
 						setLoadingForum={setLoadingForum}
+						setNumberOfNotifications={setNumberOfNotifications}
 					/>
 				))}
 			</ul>

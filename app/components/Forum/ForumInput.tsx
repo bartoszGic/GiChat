@@ -142,7 +142,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
 						});
 					});
-					console.log('ForumInput GROUP');
 					await batch.commit();
 				} else {
 					const mainChatSnap = await getDoc(
@@ -157,7 +156,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							isReaded: member.uid === auth.uid ? true : false,
 						})
 					);
-					console.log('ForumInput MAIN');
 
 					await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
 						[`${chat.chatKey}.info.friendsInRoom`]: updatedDoc,

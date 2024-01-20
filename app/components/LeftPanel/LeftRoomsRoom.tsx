@@ -16,7 +16,7 @@ import {
 	updateDoc,
 } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
-
+import { UserInRoom } from '../Types/types';
 type LeftRoomsRoomProps = {
 	chatKey: string;
 	id: string;
@@ -24,19 +24,33 @@ type LeftRoomsRoomProps = {
 	displayName: string;
 	toggleLeftBar: (bool?: boolean) => void;
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
+	friendsInRoom: UserInRoom[];
+	setNumberOfNotifications: React.Dispatch<React.SetStateAction<number>>;
 };
 const LeftRoomsRoom = ({
 	id,
 	photoURL,
 	displayName,
 	chatKey,
+	friendsInRoom,
 	toggleLeftBar,
 	setLoadingForum,
+	setNumberOfNotifications,
 }: LeftRoomsRoomProps) => {
 	// console.log('LeftRoomsRoom');
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
 	const dispatch = useAppDispatch();
+	let color: string;
+
+	const meInRoom = friendsInRoom.find(user => user.uid === auth.uid);
+	const isRededByMe = meInRoom?.isReaded;
+
+	if (isRededByMe || (!isRededByMe && chatKey === chat.chatKey)) {
+		color = 'text-slate-50';
+	} else {
+		color = 'text-green-500';
+	}
 
 	const openRoomChat = async () => {
 		try {
@@ -48,14 +62,12 @@ const LeftRoomsRoom = ({
 				);
 				if (!userChatsSnap.exists()) return;
 				const members = userChatsSnap.data()[chatKey].info.friendsInRoom;
-				console.log(members);
 				const membersUID = members.map((member: { uid: string }) => member.uid);
 				const userChatsQuery = query(
 					collection(db, 'userChats'),
 					where('__name__', 'in', membersUID)
 				);
 				const membersDocs = await getDocs(userChatsQuery);
-				// console.log(membersDocs.docs);
 				const batch = writeBatch(db);
 
 				membersDocs.docs.forEach(docRef => {
@@ -78,6 +90,8 @@ const LeftRoomsRoom = ({
 						photoURL: photoURL,
 					})
 				);
+				color === 'text-green-500' &&
+					setNumberOfNotifications(state => state - 1);
 				setLoadingForum(false);
 			} else {
 				return;
@@ -86,7 +100,9 @@ const LeftRoomsRoom = ({
 			console.log(error);
 		}
 	};
-
+	useEffect(() => {
+		color === 'text-green-500' && setNumberOfNotifications(state => state + 1);
+	}, [color, setNumberOfNotifications]);
 	return (
 		<li
 			key={chatKey}
@@ -110,10 +126,11 @@ const LeftRoomsRoom = ({
 						icon={faUsers}
 					/>
 				)}
-
-				<div className='whitespace-nowrap overflow-x-hidden text-xs'>
+				<span
+					className={`
+					${color} whitespace-nowrap overflow-x-hidden text-xs`}>
 					{displayName}
-				</div>
+				</span>
 			</button>
 		</li>
 	);

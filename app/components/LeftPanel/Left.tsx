@@ -28,6 +28,7 @@ type LeftProps = {
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 	setArrayOfActualNames: React.Dispatch<React.SetStateAction<User[]>>;
 	arrayOfActualNames: User[];
+	setNumberOfNotifications: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const Left = ({
@@ -38,6 +39,7 @@ const Left = ({
 	setLoadingForum,
 	setArrayOfActualNames,
 	arrayOfActualNames,
+	setNumberOfNotifications,
 }: LeftProps) => {
 	// console.log('Left');
 
@@ -45,6 +47,7 @@ const Left = ({
 	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
 	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
+	const [mainChat, setMainChat] = useState<TransformedUserChat[]>([]);
 
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
@@ -93,7 +96,6 @@ const Left = ({
 								isReaded: member.uid === auth.uid ? true : member.isReaded,
 							})
 						);
-						console.log(updatedMembers);
 						batch.update(docRef.ref, {
 							[`${chat.chatKey}.info.friendsInRoom`]: updatedMembers,
 						});
@@ -112,11 +114,9 @@ const Left = ({
 							isReaded: member.uid === auth.uid ? true : member.isReaded,
 						})
 					);
-					console.log(updatedDoc);
 					await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
 						[`${chat.chatKey}.info.friendsInRoom`]: updatedDoc,
 					});
-					console.log('main chat update');
 				}
 			} catch (error) {
 				console.log(error);
@@ -146,6 +146,7 @@ const Left = ({
 						uid: data[key].info?.uid || '',
 						author: data[key]?.author || '',
 						isReaded: !!data[key]?.isReaded,
+						friendsInRoom: data[key]?.info.friendsInRoom || [],
 					};
 				}
 				return null;
@@ -194,8 +195,43 @@ const Left = ({
 			setUserRoms(sortedRooms);
 			setUserChats(sortedChats);
 		});
+		const unsub3 = onSnapshot(
+			doc(
+				db,
+				'userChats',
+				process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string
+			),
+			doc => {
+				const data = doc.data() as UserChat;
+				if (!data) return;
+				const transformedMainChatData = Object.keys(data).map(key => {
+					if (data[key]?.date) {
+						return {
+							key: key,
+							date: data[key].date?.seconds || 0,
+							displayName: data[key].info?.displayName || '',
+							photoURL: data[key].info?.photoURL || '',
+							uid: data[key].info?.uid || '',
+							author: data[key]?.author || '',
+							isReaded: !!data[key]?.isReaded,
+							friendsInRoom: data[key]?.info.friendsInRoom || [],
+						};
+					}
+					return null;
+				});
+				const main: TransformedUserChat[] = [];
+				transformedMainChatData.forEach(item => {
+					if (item === null) return;
+					if (item.displayName === 'Czat ogólny') {
+						main.push(item);
+					} else return;
+				});
+				setMainChat(main);
+			}
+		);
 		return () => {
 			unsub2();
+			unsub3();
 		};
 	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat]);
 
@@ -249,6 +285,7 @@ const Left = ({
 												displayName={friendActualName}
 												setLoadingForum={setLoadingForum}
 												toggleLeftBar={toggleLeftBar}
+												setNumberOfNotifications={setNumberOfNotifications}
 											/>
 										);
 									})}
@@ -260,10 +297,16 @@ const Left = ({
 								userRooms={userRooms}
 								toggleLeftBar={toggleLeftBar}
 								setLoadingForum={setLoadingForum}
+								setNumberOfNotifications={setNumberOfNotifications}
 							/>
 						</div>
 					</div>
-					<LeftMain />
+					<LeftMain
+						toggleLeftBar={toggleLeftBar}
+						setLoadingForum={setLoadingForum}
+						setNumberOfNotifications={setNumberOfNotifications}
+						mainChat={mainChat}
+					/>
 				</div>
 			</section>
 		</>

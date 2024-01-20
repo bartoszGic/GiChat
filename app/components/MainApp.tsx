@@ -18,6 +18,7 @@ const MainApp = () => {
 	const [userChats, setUserChats] = useState<TransformedUserChat[]>([]);
 	const [arrayOfActualNames, setArrayOfActualNames] = useState<User[]>([]);
 	const [loadingForum, setLoadingForum] = useState(false);
+	const [numberOfNotifications, setNumberOfNotifications] = useState(0);
 
 	const toggleLeftBar = (bool?: boolean) => {
 		setIsLeftbarOpen(!bool);
@@ -41,6 +42,7 @@ const MainApp = () => {
 				isRightBarOpen={isRightBarOpen}
 				setForumStyleZ={setForumStyleZ}
 				userChats={userChats}
+				numberOfNotifications={numberOfNotifications}
 			/>
 			<Left
 				isLeftBarOpen={isLeftBarOpen}
@@ -50,6 +52,7 @@ const MainApp = () => {
 				setLoadingForum={setLoadingForum}
 				setArrayOfActualNames={setArrayOfActualNames}
 				arrayOfActualNames={arrayOfActualNames}
+				setNumberOfNotifications={setNumberOfNotifications}
 			/>
 			<Forum
 				isLeftBarOpen={isLeftBarOpen}

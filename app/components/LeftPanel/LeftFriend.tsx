@@ -19,6 +19,7 @@ type LeftFriendProps = {
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 	isReaded: boolean;
 	toggleLeftBar: (bool?: boolean) => void;
+	setNumberOfNotifications: React.Dispatch<React.SetStateAction<number>>;
 };
 const LeftFriend = ({
 	id,
@@ -28,12 +29,19 @@ const LeftFriend = ({
 	setLoadingForum,
 	isReaded,
 	toggleLeftBar,
+	setNumberOfNotifications,
 }: LeftFriendProps) => {
 	// console.log('LeftFriend');
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
 	const dispatch = useAppDispatch();
+	let color: string;
 
+	if (isReaded || (!isReaded && chatKey === chat.chatKey)) {
+		color = 'text-slate-50';
+	} else {
+		color = 'text-green-500';
+	}
 	const openFriendChat = async () => {
 		try {
 			setLoadingForum(true);
@@ -59,12 +67,16 @@ const LeftFriend = ({
 					photoURL: userData.photoURL,
 				})
 			);
+			color === 'text-green-500' &&
+				setNumberOfNotifications(state => state - 1);
 			setLoadingForum(false);
 		} catch (error) {
 			console.log(error);
 		}
 	};
-
+	useEffect(() => {
+		color === 'text-green-500' && setNumberOfNotifications(state => state + 1);
+	}, [color, setNumberOfNotifications]);
 	return (
 		<li
 			className={`flex items-center p-2 overflow-x-hidden ${
@@ -81,11 +93,7 @@ const LeftFriend = ({
 					height={40}
 				/>
 				<span
-					className={`${
-						isReaded || (!isReaded && chatKey === chat.chatKey)
-							? 'text-slate-50'
-							: 'text-green-500'
-					} whitespace-nowrap overflow-x-hidden text-xs`}>
+					className={`${color} whitespace-nowrap overflow-x-hidden text-xs`}>
 					{displayName}
 				</span>
 			</button>

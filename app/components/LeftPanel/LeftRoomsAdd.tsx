@@ -60,6 +60,7 @@ const LeftRoomsAdd = ({
 				uid: auth.uid,
 				displayName: auth.displayName || '',
 				photoURL: auth.photoURL || '',
+				isReaded: true,
 			};
 			const docSnap = await getDoc(doc(db, 'allUsersChatMessages', combinedId));
 			if (!docSnap.exists()) {
@@ -72,6 +73,7 @@ const LeftRoomsAdd = ({
 						uid: user.uid,
 						displayName: user.displayName,
 						photoURL: user.photoURL,
+						isReaded: true,
 					})),
 					displayName: roomName,
 					photoURL: imageURL,
