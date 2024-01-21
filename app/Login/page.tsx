@@ -64,13 +64,13 @@ const Login = () => {
 		return null;
 	} else if (!logged) {
 		return (
-			<div className='flex flex-col items-center my-8'>
-				<h2 className='flex items-center justify-center h-6 text-xl lett tracking-wide'>
+			<div className='flex flex-col items-center mt-8'>
+				<h2 className='flex items-center justify-center h-6 text-xl'>
 					{!loading ? (
-						<span>Logowanie</span>
+						<span className='tracking-widest'>Logowanie</span>
 					) : (
 						<FontAwesomeIcon
-							className='w-6 h-6 py-1 text-slate-50'
+							className='w-6 h-6 py-1 text-gray-50'
 							icon={faSpinner}
 							spin
 						/>
@@ -81,7 +81,7 @@ const Login = () => {
 					onSubmit={signInHandler}>
 					<div className='p-4'>
 						<input
-							className='py-2 px-4 text-slate-700'
+							className='py-3 px-4 text-gray-700 rounded-full'
 							type='text'
 							id='username'
 							name='username'
@@ -90,12 +90,12 @@ const Login = () => {
 							value={email}
 						/>
 					</div>
-					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+					<div className='pb-4 px-4 text-red-500 w-full text-xs sm:text-sm'>
 						{emailError}
 					</div>
 					<div className='p-4'>
 						<input
-							className='py-2 px-4 text-slate-700'
+							className='py-3 px-4 text-gray-700 rounded-full'
 							type='password'
 							id='password'
 							name='password'
@@ -107,28 +107,32 @@ const Login = () => {
 					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
 						{passwordError}
 					</div>
-					<p className='w-full text-sm text-left px-4 mt-4'>
-						Nie masz konta?
-						<Link href='/Register'>
-							<button className='text-green-500 font-bold ml-2 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-								Zarejestruj się
+					<div className='flex w-full px-4 mt-8 text-sm'>
+						<div className='flex flex-col justify-between w-full text-left'>
+							<span className='mb-8'>Nie masz konta?</span>
+							<Link
+								className='flex h-full w-fit'
+								href='/'>
+								<button className='h-full'>
+									<FontAwesomeIcon
+										className='w-8 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+										icon={faArrowLeft}
+									/>
+								</button>
+							</Link>
+						</div>
+						<div className='flex flex-col justify-between items-center w-full'>
+							<Link href='/Register'>
+								<button className='mb-8 text-cyan-500 font-bold animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn tracking-wider'>
+									Zarejestruj się
+								</button>
+							</Link>
+							<button className='bg-cyan-500 px-8 py-2 relative group rounded-full font-medium text-gray-50 inline-block'>
+								<span
+									className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+								<span className='relative text-lg'>Zaloguj</span>
 							</button>
-						</Link>
-					</p>
-					<div className='flex justify-between w-full p-4 mt-4 '>
-						<Link href='/'>
-							<button>
-								<FontAwesomeIcon
-									className='w-8 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-									icon={faArrowLeft}
-								/>
-							</button>
-						</Link>
-
-						<Button
-							text={'Zaloguj'}
-							backgroundColor={'bg-blue-500'}
-						/>
+						</div>
 					</div>
 				</form>
 			</div>

@@ -24,7 +24,7 @@ const Home = () => {
 	} else if (!mainApp) {
 		return (
 			<div className='flex flex-col items-center mt-2'>
-				<header className='flex flex-col items-center my-8'>
+				<header className='flex flex-col items-center my-12'>
 					<h1 className='text-4xl font-bold tracking-widest'>GiChat</h1>
 				</header>
 				<p className='text-center mx-4'>
@@ -32,11 +32,12 @@ const Home = () => {
 				</p>
 				<Link
 					href='/Login'
-					className='mt-8'>
-					<Button
-						text={'Login'}
-						backgroundColor={'bg-blue-500'}
-					/>
+					className='mt-12'>
+					<button className='bg-cyan-500 px-12 py-4 relative group rounded-full font-medium text-gray-50 inline-block'>
+						<span
+							className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+						<span className='relative text-xl tracking-widest'>Login</span>
+					</button>
 				</Link>
 			</div>
 		);

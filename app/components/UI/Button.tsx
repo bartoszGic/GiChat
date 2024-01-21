@@ -9,16 +9,16 @@ interface ButtonProps {
 
 const Button = ({ text, backgroundColor, onClick }: ButtonProps) => {
 	const buttonClasses = `${
-		backgroundColor ? backgroundColor : 'bg-slate-900'
-	} px-4 py-2 relative group font-medium text-slate-100 inline-block`;
+		backgroundColor ? backgroundColor : 'bg-gray-950'
+	} px-12 py-4 relative group rounded-full font-medium text-gray-50 inline-block`;
 
 	return (
 		<button
 			className={buttonClasses}
 			onClick={onClick}>
 			<span
-				className={`absolute top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-slate-700 group-hover:h-full opacity-100`}></span>
-			<span className='relative'>{text}</span>
+				className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+			<span className='relative text-xl tracking-widest'>{text}</span>
 		</button>
 	);
 };

@@ -124,13 +124,13 @@ const Register = () => {
 		return null;
 	} else if (!logged) {
 		return (
-			<section className='flex flex-col items-center my-8'>
-				<h2 className='flex items-center justify-center h-6 text-xl lett tracking-wide'>
+			<section className='flex flex-col items-center mt-8'>
+				<h2 className='flex items-center justify-center h-6 text-xl'>
 					{!loading ? (
-						<span>Rejestracja</span>
+						<span className='tracking-widest'>Rejestracja</span>
 					) : (
 						<FontAwesomeIcon
-							className='w-6 h-6 py-1 text-slate-50'
+							className='w-6 h-6 py-1 text-gray-50'
 							icon={faSpinner}
 							spin
 						/>
@@ -140,7 +140,7 @@ const Register = () => {
 					className='flex flex-col items-center mt-4'
 					onSubmit={signUpHandler}>
 					<input
-						className='py-2 px-4 m-4 text-slate-700'
+						className='py-3 px-4 m-4 text-gray-700 rounded-full'
 						type='text'
 						id='username'
 						name='username'
@@ -148,11 +148,11 @@ const Register = () => {
 						onChange={e => setEmail(e.target.value)}
 						value={email}
 					/>
-					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+					<div className='pb-4 px-4 text-red-500 w-full text-xs sm:text-sm'>
 						{emailError}
 					</div>
 					<input
-						className='py-2 px-4 m-4 text-slate-700'
+						className='py-3 px-4 m-4 text-gray-700 rounded-full'
 						type='password'
 						id='password'
 						name='password'
@@ -160,11 +160,11 @@ const Register = () => {
 						onChange={e => setPassword1(e.target.value)}
 						value={password1}
 					/>
-					<div className='px-4 text-red-500 w-full text-xs sm:text-sm'>
+					<div className='pb-4 px-4 text-red-500 w-full text-xs sm:text-sm'>
 						{passwordError}
 					</div>
 					<input
-						className='py-2 px-4 m-4 text-slate-700'
+						className='py-3 px-4 m-4 text-gray-700 rounded-full'
 						type='password'
 						id='passwordConfirm'
 						name='passwordConfirm'
@@ -189,12 +189,16 @@ const Register = () => {
 							<span className='flex items-center cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
 								Dodaj avatar
 								{!avatarURL ? (
-									<Image
-										className='h-8 w-8 ml-2 align-middle rounded-full bg-center'
-										src='/user.png'
-										alt='avatar'
-										width={40}
-										height={40}
+									// <Image
+									// 	className=''
+									// 	src='/user.png'
+									// 	alt='avatar'
+									// 	width={40}
+									// 	height={40}
+									// />
+									<FontAwesomeIcon
+										className='h-6 w-6 m-2 align-middle bg-center'
+										icon={faUser}
 									/>
 								) : (
 									<Image
@@ -222,27 +226,32 @@ const Register = () => {
 							</button>
 						)}
 					</div>
-					<p className='w-full text-sm text-left px-4 mt-4'>
-						Masz konto?
-						<Link href='/Login'>
-							<button className='text-green-500 font-bold ml-2 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-								Zaloguj się
+					<div className='flex w-full px-4 mt-4 text-sm'>
+						<div className='flex flex-col justify-between w-full text-left'>
+							<span className='mb-8'>Masz konto?</span>
+							<Link
+								className='flex h-full w-fit'
+								href='/'>
+								<button className='h-full'>
+									<FontAwesomeIcon
+										className='w-8 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+										icon={faArrowLeft}
+									/>
+								</button>
+							</Link>
+						</div>
+						<div className='flex flex-col justify-between items-center w-full'>
+							<Link href='/Login'>
+								<button className='mb-8 text-cyan-500 font-bold animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn tracking-wider'>
+									Zaloguj się
+								</button>
+							</Link>
+							<button className='bg-cyan-500 px-8 py-2 relative group rounded-full font-medium text-gray-50 inline-block'>
+								<span
+									className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+								<span className='relative text-lg'>Zarejestruj</span>
 							</button>
-						</Link>
-					</p>
-					<div className='flex justify-between w-full p-4 mt-4 '>
-						<Link href='/'>
-							<button>
-								<FontAwesomeIcon
-									className='w-8 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
-									icon={faArrowLeft}
-								/>
-							</button>
-						</Link>
-						<Button
-							text={'Zarejestruj'}
-							backgroundColor={'bg-blue-500'}
-						/>
+						</div>
 					</div>
 				</form>
 			</section>
