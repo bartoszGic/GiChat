@@ -131,16 +131,16 @@ const LeftRoomsAdd = ({
 				ref={usersListRef}
 				className={`${
 					showList ? 'flex flex-col justify-between' : 'hidden'
-				} absolute left-0 -top-10 p-3 text-xs text-slate-50 w-48 bg-slate-600 z-30 sm:text-sm sm:w-60 sm:p-4`}>
+				} absolute rounded-xl -left-[124px] -top-10 p-4 text-xs text-neutral-50 w-64 h-[500px] bg-neutral-800 z-30 sm:text-sm sm:w-72 sm:p-4`}>
 				<input
 					type='text'
-					className='px-2 py-1 mb-2 h-6 text-xs text-slate-50 items-center text-center bg-slate-500 placeholder-slate-300 sm:text-sm'
+					className='px-2 py-4 mb-4 h-6 rounded-xl text-base text-neutral-950 items-center text-center bg-neutral-50 placeholder-neutral-500 sm:text-sm'
 					id='search'
 					placeholder='Wpisz nazwe pokoju...'
 					onChange={e => setRoomName(e.target.value)}
 					value={roomName}
 				/>
-				<ul className='flex flex-col items-stretch h-64 overflow-auto bg-slate-300'>
+				<ul className='flex flex-col items-stretch rounded-md py-2 px-1 h-64 overflow-auto bg-neutral-800'>
 					{userChats !== undefined ? (
 						userChats.map(user => (
 							<LeftRoomAddList
@@ -200,7 +200,7 @@ const LeftRoomsAdd = ({
 					<div className='my-2 text-center text-red-500'>{errorMsg}</div>
 					<button
 						type='submit'
-						className='cursor-pointer text-base left-0 top-7 flex items-center justify-center bg-green-500 mt-2 px-2 py-1 z-30 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
+						className='cursor-pointer rounded-full text-base left-0 top-7 flex items-center justify-center bg-cyan-500 mt-2 px-2 py-1 z-30 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
 						Stwórz pokój
 					</button>
 				</div>

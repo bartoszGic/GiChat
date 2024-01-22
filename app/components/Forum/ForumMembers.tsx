@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { useAppSelector } from '@/store';
 import { User } from '../Types/types';
 import { getDoc, doc } from 'firebase/firestore';
@@ -82,13 +82,20 @@ const ForumMembers = ({ arrayOfActualNames }: ForumMembersProps) => {
 						key={user.uid}
 						className='flex justify-between items-center py-1'>
 						<div className='flex items-center'>
-							<Image
-								className='h-6 w-6 mr-2 rounded-full'
-								src={user.photoURL}
-								alt='zdjęcie znajomego'
-								width={20}
-								height={20}
-							/>
+							{user.photoURL ? (
+								<Image
+									className='h-5 w-5 mr-1 rounded-full'
+									src={user.photoURL as string}
+									alt='ikona użytkownika'
+									width={40}
+									height={40}
+								/>
+							) : (
+								<FontAwesomeIcon
+									className='w-5 h-5 mr-1 rounded-full'
+									icon={faUser}
+								/>
+							)}
 							{user.displayName === auth.displayName ? (
 								<div className='ml-2 text-green-500'>TY</div>
 							) : (

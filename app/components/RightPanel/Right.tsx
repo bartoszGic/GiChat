@@ -54,23 +54,27 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 			avatar !== null
 				? await uploadBytesResumable(storageRef, avatar)
 				: await uploadBytesResumable(storageRef, blob);
-			const downloadURL = await getDownloadURL(storageRef);
+			const onStorageURL = await getDownloadURL(storageRef);
+			let onFirestoreURL;
+			avatar !== null
+				? (onFirestoreURL = onStorageURL)
+				: (onFirestoreURL = null);
 			await updateProfile(authProfile.currentUser, {
 				displayName: currentName,
-				photoURL: downloadURL,
+				photoURL: onStorageURL,
 			});
 			const updatedUser = {
 				uid: authProfile.currentUser.uid,
 				displayName: currentName,
 				email: authProfile.currentUser.email,
-				photoURL: downloadURL,
+				photoURL: onFirestoreURL,
 			};
 			dispatch(loadUser(updatedUser));
 			await updateDoc(
 				doc(db, 'users', authProfile.currentUser.uid),
 				updatedUser
 			);
-			setCurrentAvatarURL(downloadURL);
+			setCurrentAvatarURL(onFirestoreURL);
 			setLoading(false);
 			toggleRightBar();
 		} catch (error) {
@@ -109,7 +113,11 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 		<>
 			{isRightBarOpen && (
 				<Backdrop
-					onClick={toggleRightBar}
+					onClick={() => {
+						toggleRightBar();
+						setCurrentName(authState.displayName ?? '');
+						setCurrentAvatarURL(authState.photoURL);
+					}}
 					isRightBarOpen={isRightBarOpen}
 				/>
 			)}
@@ -137,13 +145,14 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 							<div className='flex items-center justify-between w-full'>
 								<div className='text-slate-300'>Avatar:</div>
 								<div className='flex items-center'>
-									{avatar && currentAvatarURL !== authState.photoURL && (
+									{avatar && currentAvatarURL !== null && (
 										<button className='mr-1'>
 											<FontAwesomeIcon
 												className='w-4 h-4 mr-1 text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 												icon={faXmark}
 												onClick={() => {
-													setCurrentAvatarURL(authState.photoURL);
+													setCurrentAvatarURL(null);
+													setAvatar(null);
 												}}
 											/>
 										</button>
@@ -159,7 +168,12 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 											id='avatar'
 										/>
 										<span className='flex items-center cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-											{avatar && (
+											{!avatar || currentAvatarURL === null ? (
+												<FontAwesomeIcon
+													className='h-6 w-6 m-1 align-middle bg-center'
+													icon={faUser}
+												/>
+											) : (
 												<Image
 													className='h-8 w-8 ml-2 align-middle rounded-full bg-center'
 													src={currentAvatarURL as string}

@@ -70,7 +70,7 @@ const Login = () => {
 						<span className='tracking-widest'>Logowanie</span>
 					) : (
 						<FontAwesomeIcon
-							className='w-6 h-6 py-1 text-gray-50'
+							className='w-6 h-6 py-1 text-neutral-50'
 							icon={faSpinner}
 							spin
 						/>
@@ -81,7 +81,7 @@ const Login = () => {
 					onSubmit={signInHandler}>
 					<div className='p-4'>
 						<input
-							className='py-3 px-4 text-gray-700 rounded-full'
+							className='py-3 px-4 text-neutral-700 rounded-full'
 							type='text'
 							id='username'
 							name='username'
@@ -95,7 +95,7 @@ const Login = () => {
 					</div>
 					<div className='p-4'>
 						<input
-							className='py-3 px-4 text-gray-700 rounded-full'
+							className='py-3 px-4 text-neutral-700 rounded-full'
 							type='password'
 							id='password'
 							name='password'
@@ -127,9 +127,9 @@ const Login = () => {
 									Zarejestruj się
 								</button>
 							</Link>
-							<button className='bg-cyan-500 px-8 py-2 relative group rounded-full font-medium text-gray-50 inline-block'>
+							<button className='bg-cyan-500 px-8 py-2 relative group rounded-full font-medium text-neutral-50 inline-block'>
 								<span
-									className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+									className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-neutral-950 group-hover:h-full group-hover:scale-105`}></span>
 								<span className='relative text-lg'>Zaloguj</span>
 							</button>
 						</div>

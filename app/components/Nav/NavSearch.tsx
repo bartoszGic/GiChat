@@ -121,13 +121,13 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 
 	return (
 		<form
-			className='flex'
+			className='flex items-center'
 			onSubmit={handleSearch}
 			ref={searchListRef}>
 			<div className='relative flex flex-col'>
 				<input
 					type='text'
-					className='px-2 py-1 mr-4 h-6 w-40 text-xs text-slate-50 items-center bg-slate-500 placeholder-slate-300 sm:text-sm sm:w-48'
+					className='px-2 py-1 mr-4 h-6 w-40 text-xs rounded-full text-neutral-50 items-center bg-neutral-700 placeholder-neutral-400 sm:text-sm sm:w-48'
 					id='search'
 					placeholder='Wyszukaj użytkownika...'
 					onChange={e => setSearchUser(e.target.value)}
@@ -136,19 +136,20 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 				<ul
 					className={`${
 						showList ? 'flex flex-col' : 'hidden'
-					} absolute left-0 top-7 px-2 py-1 text-xs text-slate-50 justify-center w-40 bg-slate-500 z-30 sm:text-sm sm:w-48`}>
+					} absolute left-0 top-8 px-2 py-1 text-xs text-neutral-50 justify-center w-40 bg-neutral-700 rounded-xl z-30 sm:text-sm sm:w-48`}>
 					{existingUsers.length !== 0 ? (
 						existingUsers.map(user => (
 							<li
 								key={user.email}
-								className='flex justify-between items-center py-1 overflow-hidden'>
-								{user.displayName}
+								className='flex justify-between items-center py-2 px-1 overflow-hidden'>
+								<div className='overflow-hidden'>{user.displayName}</div>
 								{userChats &&
 									!userChats.some(
 										existingUser => existingUser.uid === user.uid
 									) && (
 										<button
 											type='button'
+											className='ml-2'
 											onClick={() => addFriend(user)}>
 											<FontAwesomeIcon
 												className='text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
@@ -159,8 +160,8 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 							</li>
 						))
 					) : (
-						<li className='flex justify-between items-center py-1 overflow-hidden'>
-							No users found
+						<li className='flex justify-center items-center py-1 overflow-hidden'>
+							Brak użytkownika
 						</li>
 					)}
 				</ul>

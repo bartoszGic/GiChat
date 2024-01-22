@@ -106,12 +106,12 @@ const LeftRoomsRoom = ({
 	return (
 		<li
 			key={chatKey}
-			className={`flex items-center p-2 overflow-x-hidden ${
-				id === chat.chatID ? 'bg-slate-400' : 'bg-transparent'
+			className={`flex items-center p-2 overflow-x-hidden rounded-full mb-1 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn ${
+				id === chat.chatID ? 'bg-neutral-600' : 'bg-transparent'
 			}`}>
 			<button
 				onClick={openRoomChat}
-				className='flex items-center overflow-x-hidden animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
+				className='flex items-center overflow-x-hidden'>
 				{photoURL ? (
 					<Image
 						className='h-5 w-5 mr-1 rounded-full'

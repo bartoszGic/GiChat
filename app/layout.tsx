@@ -27,7 +27,8 @@ export default function RootLayout({
 			<head>
 				<title>GiChat</title>
 			</head>
-			<body className={`${inter.variable} font-sans bg-gray-950 text-gray-50`}>
+			<body
+				className={`${inter.variable} font-sans bg-neutral-950 text-gray-50`}>
 				<Provider store={store}>
 					<main className='relative flex flex-col max-w-4xl mx-auto h-screen'>
 						{children}

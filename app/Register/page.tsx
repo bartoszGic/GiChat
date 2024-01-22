@@ -60,16 +60,20 @@ const Register = () => {
 				? await uploadBytesResumable(storageRef, avatar)
 				: await uploadBytesResumable(storageRef, blob);
 
-			const downloadURL = await getDownloadURL(storageRef);
+			const onStorageURL = await getDownloadURL(storageRef);
+			let onFirestoreURL;
+			avatar !== null
+				? (onFirestoreURL = onStorageURL)
+				: (onFirestoreURL = null);
 			await updateProfile(profile.user, {
 				displayName: email,
-				photoURL: downloadURL,
+				photoURL: onStorageURL,
 			});
 			const userData = {
 				uid: profile.user.uid,
 				displayName: email,
 				email: email,
-				photoURL: downloadURL,
+				photoURL: onFirestoreURL,
 			};
 			dispatch(loadUser(userData));
 			await setDoc(doc(db, 'users', profile.user.uid), userData);
@@ -80,7 +84,7 @@ const Register = () => {
 				[`${chat.chatKey}.info.friendsInRoom`]: arrayUnion({
 					displayName: email,
 					uid: profile.user.uid,
-					photoURL: downloadURL,
+					photoURL: onFirestoreURL,
 					isReaded: false,
 				}),
 			});
@@ -130,7 +134,7 @@ const Register = () => {
 						<span className='tracking-widest'>Rejestracja</span>
 					) : (
 						<FontAwesomeIcon
-							className='w-6 h-6 py-1 text-gray-50'
+							className='w-6 h-6 py-1 text-neutral-50'
 							icon={faSpinner}
 							spin
 						/>
@@ -140,7 +144,7 @@ const Register = () => {
 					className='flex flex-col items-center mt-4'
 					onSubmit={signUpHandler}>
 					<input
-						className='py-3 px-4 m-4 text-gray-700 rounded-full'
+						className='py-3 px-4 m-4 text-neutral-700 rounded-full'
 						type='text'
 						id='username'
 						name='username'
@@ -152,7 +156,7 @@ const Register = () => {
 						{emailError}
 					</div>
 					<input
-						className='py-3 px-4 m-4 text-gray-700 rounded-full'
+						className='py-3 px-4 m-4 text-neutral-700 rounded-full'
 						type='password'
 						id='password'
 						name='password'
@@ -197,7 +201,7 @@ const Register = () => {
 									// 	height={40}
 									// />
 									<FontAwesomeIcon
-										className='h-6 w-6 m-2 align-middle bg-center'
+										className='h-6 w-6 m-1 align-middle bg-center'
 										icon={faUser}
 									/>
 								) : (
@@ -246,9 +250,9 @@ const Register = () => {
 									Zaloguj się
 								</button>
 							</Link>
-							<button className='bg-cyan-500 px-8 py-2 relative group rounded-full font-medium text-gray-50 inline-block'>
+							<button className='bg-cyan-500 px-8 py-2 relative group rounded-full font-medium text-neutral-50 inline-block'>
 								<span
-									className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+									className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-neutral-950 group-hover:h-full group-hover:scale-105`}></span>
 								<span className='relative text-lg'>Zarejestruj</span>
 							</button>
 						</div>

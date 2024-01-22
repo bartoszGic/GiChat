@@ -50,7 +50,7 @@ const Forum = ({
 
 	return (
 		<section
-			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-11 sm:w-2/3 sm:right-0 h-calc`}>
+			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-[60px] sm:w-2/3 sm:right-0 h-calc`}>
 			{loadingForum ? (
 				<div className='flex w-full h-full justify-center items-center'>
 					<FontAwesomeIcon

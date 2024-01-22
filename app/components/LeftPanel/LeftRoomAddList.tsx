@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus, faUser } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { User } from '../Types/types';
 import { TransformedUserChat } from '../Types/types';
@@ -17,15 +17,20 @@ const LeftRoomAddList = ({
 	toggleUser,
 }: LeftRoomAddListProps) => {
 	return (
-		<li className='flex w-full justify-between items-center py-2 px-1'>
+		<li className='flex w-full justify-between items-center mb-5'>
 			<div className='flex items-center w-5/6'>
-				{user.photoURL && (
+				{user.photoURL ? (
 					<Image
-						className='h-4 w-4 mr-1 rounded-full'
+						className='h-4 w-4 mr-2 rounded-full'
 						src={user.photoURL}
 						alt='czlowiek'
 						width={40}
 						height={40}
+					/>
+				) : (
+					<FontAwesomeIcon
+						className='w-4 h-4 rounded-full mr-2'
+						icon={faUser}
 					/>
 				)}
 				<span

@@ -35,7 +35,7 @@ const Home = () => {
 					className='mt-12'>
 					<button className='bg-cyan-500 px-12 py-4 relative group rounded-full font-medium text-gray-50 inline-block'>
 						<span
-							className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-gray-950 group-hover:h-full group-hover:scale-105`}></span>
+							className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-neutral-950 group-hover:h-full group-hover:scale-105`}></span>
 						<span className='relative text-xl tracking-widest'>Login</span>
 					</button>
 				</Link>

@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { db } from '@/app/firebase-config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { TransformedUserChat } from '../Types/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
 type LeftMainProps = {
 	toggleLeftBar: (bool?: boolean) => void;
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
@@ -88,15 +90,13 @@ const LeftMain = ({
 	return (
 		<button
 			className={`${
-				chat.displayName === 'Czat ogólny' ? 'bg-slate-400' : 'bg-transparent'
-			} flex items-center justify-center w-4/5 py-2 mb-6 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn`}
+				chat.displayName === 'Czat ogólny' ? 'bg-neutral-600' : 'bg-neutral-800'
+			} flex items-center justify-center w-4/5 py-2 mb-6 rounded-full   animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn`}
 			onClick={openMainChat}>
 			<span className={`${color} mr-2`}>Czat ogólny</span>
-			<Image
-				src='/home (1).png'
-				alt='czat ogólny'
-				width={20}
-				height={20}
+			<FontAwesomeIcon
+				className='text-cyan-500'
+				icon={faHouse}
 			/>
 		</button>
 	);
