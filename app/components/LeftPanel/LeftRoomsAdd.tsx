@@ -125,13 +125,13 @@ const LeftRoomsAdd = ({
 
 	return (
 		<form
-			className='relative mb-4 ml-2'
+			className={`relative mb-4 ml-2`}
 			onSubmit={addRoomHandler}>
 			<div
 				ref={usersListRef}
 				className={`${
 					showList ? 'flex flex-col justify-between' : 'hidden'
-				} absolute rounded-xl -left-[124px] -top-10 p-4 text-xs text-neutral-50 w-64 h-[500px] bg-neutral-800 z-30 sm:text-sm sm:w-72 sm:p-4`}>
+				} absolute rounded-xl -left-3/4 -top-10 p-4 text-xs text-neutral-50 w-64 h-[500px] bg-neutral-800 z-30 sm:text-sm sm:w-72 sm:p-4`}>
 				<input
 					type='text'
 					className='px-2 py-4 mb-4 h-6 rounded-xl text-base text-neutral-950 items-center text-center bg-neutral-50 placeholder-neutral-500 sm:text-sm'

@@ -15,7 +15,10 @@ const config: Config = {
 				btnShaddow: 'inset 6.5em 0 0 0 var(slate-100)',
 			},
 			height: {
-				calc: 'calc(100vh - 60px)',
+				calc: 'calc(100vh - 56px)',
+			},
+			width: {
+				calc: 'calc(50% + 16px)',
 			},
 			keyframes: {
 				animeBtn: {

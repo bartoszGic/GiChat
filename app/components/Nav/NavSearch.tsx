@@ -127,16 +127,16 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 			<div className='relative flex flex-col'>
 				<input
 					type='text'
-					className='px-2 py-1 mr-4 h-6 w-40 text-xs rounded-full text-neutral-50 items-center bg-neutral-700 placeholder-neutral-400 sm:text-sm sm:w-48'
+					className='flex items-center px-3 py-1 mr-4 h-8 w-40 text-xs rounded-full text-neutral-50 bg-neutral-700 placeholder-neutral-400 sm:text-sm sm:w-48'
 					id='search'
-					placeholder='Wyszukaj użytkownika...'
+					placeholder='Szukaj użytkownika...'
 					onChange={e => setSearchUser(e.target.value)}
 					value={searchUser}
 				/>
 				<ul
 					className={`${
 						showList ? 'flex flex-col' : 'hidden'
-					} absolute left-0 top-8 px-2 py-1 text-xs text-neutral-50 justify-center w-40 bg-neutral-700 rounded-xl z-30 sm:text-sm sm:w-48`}>
+					} absolute left-0 top-9 px-2 py-1 text-xs text-neutral-50 justify-center w-40 bg-neutral-700 rounded-xl z-30 sm:text-sm sm:w-48`}>
 					{existingUsers.length !== 0 ? (
 						existingUsers.map(user => (
 							<li

@@ -53,7 +53,7 @@ const LeftRooms = ({
 				onClick={() => setShowList(state => !state)}>
 				<h3 className='mr-2'>Grupy</h3>
 				<FontAwesomeIcon
-					className='text-green-500'
+					className='text-cyan-500'
 					icon={faPlus}
 				/>
 			</button>

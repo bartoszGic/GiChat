@@ -11,7 +11,7 @@ const Backdrop = ({ onClick, bool, isRightBarOpen }: Props) => {
 	return (
 		<div
 			onClick={handleClick}
-			className={`absolute max-w-4xl mx-auto mt-[60px] w-full h-calc bg-slate-900 opacity-75 sm:hidden animate-animeBackdrop z-30`}></div>
+			className={`absolute max-w-4xl mx-auto mt-[56px] w-full h-calc bg-neutral-900 opacity-75 sm:hidden animate-animeBackdrop z-30`}></div>
 	);
 };
 export default Backdrop;

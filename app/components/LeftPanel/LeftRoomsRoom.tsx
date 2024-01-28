@@ -106,15 +106,15 @@ const LeftRoomsRoom = ({
 	return (
 		<li
 			key={chatKey}
-			className={`flex items-center p-2 overflow-x-hidden rounded-full mb-1 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn ${
-				id === chat.chatID ? 'bg-neutral-600' : 'bg-transparent'
+			className={`flex items-center p-2 overflow-x-hidden rounded-full mb-1 transition duration-200 hover:bg-cyan-500 active:bg-cyan-500 cursor-pointer ${
+				id === chat.chatID ? 'bg-cyan-500' : 'bg-transparent'
 			}`}>
 			<button
 				onClick={openRoomChat}
 				className='flex items-center overflow-x-hidden'>
 				{photoURL ? (
 					<Image
-						className='h-5 w-5 mr-1 rounded-full'
+						className='h-6 w-6 mr-1 rounded-full'
 						src={photoURL as string}
 						alt='ikona użytkownika'
 						width={40}
@@ -122,7 +122,7 @@ const LeftRoomsRoom = ({
 					/>
 				) : (
 					<FontAwesomeIcon
-						className='w-6 h-6 rounded-full mr-2 cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+						className='w-6 h-6 rounded-full mr-2'
 						icon={faUsers}
 					/>
 				)}

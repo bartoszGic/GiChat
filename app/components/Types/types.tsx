@@ -32,6 +32,7 @@ export type Message = {
 	};
 	displayName: string;
 	authorID: string;
+	photoURL: string | null;
 	img?: string;
 	isReaded?: object[];
 };

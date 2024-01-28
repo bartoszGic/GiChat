@@ -90,12 +90,16 @@ const LeftMain = ({
 	return (
 		<button
 			className={`${
-				chat.displayName === 'Czat ogólny' ? 'bg-neutral-600' : 'bg-neutral-800'
-			} flex items-center justify-center w-4/5 py-2 mb-6 rounded-full   animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn`}
+				chat.displayName === 'Czat ogólny' ? 'bg-cyan-500' : 'bg-neutral-800'
+			} flex items-center justify-center w-4/5 py-2 mb-6 rounded-full transition duration-200 hover:bg-cyan-500 active:bg-cyan-500 cursor-pointer`}
 			onClick={openMainChat}>
 			<span className={`${color} mr-2`}>Czat ogólny</span>
 			<FontAwesomeIcon
-				className='text-cyan-500'
+				className={`${
+					chat.displayName === 'Czat ogólny'
+						? 'text-neutral-50'
+						: 'text-cyan-500'
+				} transition duration-200 hover:text-neutral-50`}
 				icon={faHouse}
 			/>
 		</button>

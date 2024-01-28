@@ -28,7 +28,7 @@ const RightAcountBtns = () => {
 	return (
 		<div className='flex px-4'>
 			<button
-				className='flex items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+				className='flex px-4 py-2 items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn bg-red-500 rounded-full'
 				onClick={logOutHandler}>
 				<FontAwesomeIcon
 					className=''

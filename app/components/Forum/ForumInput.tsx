@@ -67,6 +67,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							date: Timestamp.now(),
 							authorID: auth.uid,
 							displayName: auth.displayName,
+							photoURL: auth.photoURL,
 						}),
 					}
 				);
@@ -88,6 +89,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 							date: Timestamp.now(),
 							authorID: auth.uid,
 							displayName: auth.displayName,
+							photoURL: auth.photoURL,
 							img: downloadURL,
 						}),
 					}
@@ -191,9 +193,9 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 		<div
 			className={`${
 				isLeftBarOpen ? 'hidden sm:flex' : 'flex'
-			}  w-full h-11 justify-between bg-slate-50`}>
+			}  w-full h-13 justify-between bg-neutral-950`}>
 			<textarea
-				className='flex text-slate-900 bg-slate-50 text-sm py-1 px-1 mr-2 resize-none w-2/3 sm:text-base'
+				className='flex text-neutral-50 bg-neutral-700 text-sm py-1 px-1 resize-none w-2/3 sm:text-base'
 				placeholder='Napisz wiadomość...'
 				maxLength={200}
 				id='message'
@@ -201,7 +203,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				onKeyDown={handleKeyDown}
 				value={message}
 			/>
-			<div className='flex items-center'>
+			<div className='flex items-center w-1/3 justify-around'>
 				<>
 					{imageURL && (
 						<button>
@@ -217,7 +219,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 					)}
 					<label
 						htmlFor='picture'
-						className='flex items-center justify-end mr-2'>
+						className='flex items-center justify-end'>
 						<input
 							onChange={e => handleForumInputImg(e)}
 							className='hidden'
@@ -237,7 +239,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 								/>
 							) : (
 								<FontAwesomeIcon
-									className='w-6 h-6 cursor-pointer text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn mr-2'
+									className='w-6 h-6 cursor-pointer text-green-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 									icon={faImage}
 								/>
 							)}
@@ -246,7 +248,7 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 				</>
 				<button onClick={sendMessage}>
 					<FontAwesomeIcon
-						className='w-6 h-6 mr-2 cursor-pointer  text-blue-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+						className='w-6 h-6 cursor-pointer  text-red-500 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 						icon={faPaperPlane}
 					/>
 				</button>

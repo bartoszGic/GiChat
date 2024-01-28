@@ -79,20 +79,20 @@ const LeftFriend = ({
 	}, [color, setNumberOfNotifications]);
 	return (
 		<li
-			className={`flex items-center p-2 overflow-x-hidden rounded-full mb-1 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn  ${
-				id === chat.chatID ? 'bg-neutral-600' : 'bg-transparent'
+			className={`flex items-center p-2 overflow-x-hidden rounded-full mb-1 transition duration-200 hover:bg-cyan-500 active:bg-cyan-500 cursor-pointer  ${
+				id === chat.chatID ? 'bg-cyan-500' : 'bg-transparent'
 			}`}>
 			<button
 				className='flex items-center overflow-x-hidden'
 				onClick={openFriendChat}>
 				{photoURL === null ? (
 					<FontAwesomeIcon
-						className='h-5 w-5 mr-1 align-middle bg-center'
+						className='h-4 w-4 p-1 mr-1 align-middle bg-center rounded-full'
 						icon={faUser}
 					/>
 				) : (
 					<Image
-						className='h-5 w-5 mr-1 rounded-full'
+						className='h-6 w-6 mr-1 rounded-full'
 						src={photoURL}
 						alt='ikona użytkownika'
 						width={40}

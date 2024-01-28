@@ -7,7 +7,7 @@ type ImageModalProps = {
 const ImageModal = ({ setShowImage, image }: ImageModalProps) => {
 	return (
 		<div
-			className='fixed inset-0 flex items-center justify-center bg-slate-900 animate-animeBackdrop z-50'
+			className='fixed inset-0 flex items-center justify-center bg-neutral-900 animate-animeBackdrop z-50'
 			onClick={() => setShowImage(false)}>
 			<div className='max-w-screen-lg w-full opacity-100'>
 				<Image

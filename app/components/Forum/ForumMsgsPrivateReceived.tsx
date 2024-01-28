@@ -4,7 +4,8 @@ import { Message, User, formatDate } from '../Types/types';
 import { useAppSelector } from '@/store';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 type ForumMsgsPrivateReceivedProps = {
 	message: Message;
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,13 +24,27 @@ const ForumMsgsPrivateReceived = ({
 		<div
 			key={message.id}
 			className='flex mb-2'>
-			<div className='flex flex-col bg-slate-50 text-slate-950 px-2 py-2 w-3/4 rounded-t-lg rounded-br-lg sm:max-w-[350px]'>
-				<div className='flex flex-row-reverse text-slate-500 justify-between items-center'>
+			{message.photoURL ? (
+				<Image
+					className='h-6 w-6 rounded-full mr-2'
+					src={message.photoURL as string}
+					alt='przesłany obraz'
+					width={40}
+					height={40}
+				/>
+			) : (
+				<FontAwesomeIcon
+					className='h-6 w-6 rounded-full mr-2'
+					icon={faUser}
+				/>
+			)}
+			<div className='flex flex-col bg-neutral-800 text-neutral-50 px-2 py-2 w-3/4 rounded-lg sm:max-w-[350px]'>
+				<div className='flex flex-row-reverse text-neutral-600 justify-between items-center'>
 					<div>{formatDate(message.date.seconds)}</div>
 					<div className='text-sm font-bold'>{actualFriendName}</div>
 				</div>
 				<div className='mt-2 text-justify'>{message.message}</div>
-				<div className='relative mt-2 text-justify w-40'>
+				<div className='relative mt-2 text-justify w-40 rounded-lg'>
 					{message.img && (
 						<div
 							className='flex flex-col cursor-pointer mt-2'
@@ -38,6 +53,7 @@ const ForumMsgsPrivateReceived = ({
 								setImage(message.img as string);
 							}}>
 							<Image
+								className='overflow-hidden rounded-md'
 								src={message.img as string}
 								alt='przesłany obraz'
 								width={160}

@@ -4,7 +4,12 @@ import ForumMsgsGroup from './ForumMsgsGroup';
 import ForumMsgsPrivate from './ForumMsgsPrivate';
 import ForumInput from './ForumInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import {
+	faUsers,
+	faSpinner,
+	faUser,
+	faHome,
+} from '@fortawesome/free-solid-svg-icons';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { db } from '@/app/firebase-config';
 import { onSnapshot, doc, documentId, getDoc } from 'firebase/firestore';
@@ -50,7 +55,7 @@ const Forum = ({
 
 	return (
 		<section
-			className={`absolute flex flex-col w-full bg-slate-400 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-[60px] sm:w-2/3 sm:right-0 h-calc`}>
+			className={`absolute flex flex-col w-full bg-neutral-950 ease-in-out duration-200 transition-transform ${forumStyleZ} translate-y-[56px] sm:w-2/3 sm:right-0 h-calc`}>
 			{loadingForum ? (
 				<div className='flex w-full h-full justify-center items-center'>
 					<FontAwesomeIcon
@@ -61,25 +66,42 @@ const Forum = ({
 				</div>
 			) : (
 				<>
-					<div className='flex justify-end items-center py-3 px-4'>
+					<div className='flex items-center py-3 px-4'>
 						<div
 							className={`flex ${
 								chat.chatKey.substring(0, 6) === 'GROUP_'
-									? 'justify-between'
-									: 'justify-end'
-							} w-full items-center`}>
+									? 'w-calc justify-between'
+									: 'w-full justify-center sm:justify-end'
+							} items-center`}>
 							{chat.chatKey.substring(0, 6) === 'GROUP_' && (
 								<ForumMembers arrayOfActualNames={arrayOfActualNames} />
 							)}
 							<div className='flex items-center'>
 								<h3 className='mr-2'>{chat.displayName}</h3>
-								{chat.photoURL && (
-									<Image
-										className='h-7 w-7 rounded-full'
-										src={chat.photoURL as string}
-										alt='zdjęcie znajomego'
-										width={30}
-										height={30}
+								{chat.photoURL ? (
+									chat.displayName !== 'Czat ogólny' ? (
+										<Image
+											className='h-6 w-6 rounded-full'
+											src={chat.photoURL as string}
+											alt='zdjęcie znajomego'
+											width={30}
+											height={30}
+										/>
+									) : (
+										<FontAwesomeIcon
+											className='h-6 w-6 text-cyan-500'
+											icon={faHome}
+										/>
+									)
+								) : chat.chatKey.substring(0, 6) === 'GROUP_' ? (
+									<FontAwesomeIcon
+										className='h-7 w-7 align-middle bg-center'
+										icon={faUsers}
+									/>
+								) : (
+									<FontAwesomeIcon
+										className='h-6 w-6 align-middle bg-center'
+										icon={faUser}
 									/>
 								)}
 							</div>

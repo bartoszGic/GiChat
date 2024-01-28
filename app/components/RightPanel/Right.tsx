@@ -21,6 +21,7 @@ import {
 	uploadBytesResumable,
 	getDownloadURL,
 } from 'firebase/storage';
+import { UserChat } from '../Types/types';
 
 type RightProps = {
 	isRightBarOpen: boolean;
@@ -74,6 +75,34 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 				doc(db, 'users', authProfile.currentUser.uid),
 				updatedUser
 			);
+			const mainChatKey = process.env
+				.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string;
+			const mainChatSnap = await getDoc(doc(db, 'userChats', mainChatKey));
+			const mainChatData = mainChatSnap.data() as UserChat;
+			const transformedMainChatData = Object.keys(mainChatData).map(key => {
+				// Poniżej dodatkowe zabezpieczenia if, filter,? i z powodu błedu wystęującym tylko przy dodawniu nowego znajomego w NavSearch
+				if (mainChatData[key]?.date) {
+					return {
+						key: key,
+						date: mainChatData[key].date?.seconds || 0,
+						displayName: mainChatData[key].info?.displayName || '',
+						photoURL: mainChatData[key].info?.photoURL || '',
+						friendsInRoom: mainChatData[key]?.info.friendsInRoom || [],
+					};
+				}
+				return null;
+			});
+
+			const arrayOfUsers = transformedMainChatData[0]?.friendsInRoom;
+			const actualArrayOfUsers = arrayOfUsers?.map(user => {
+				if (user.uid === updatedUser.uid) {
+					return updatedUser;
+				}
+				return user;
+			});
+			await updateDoc(doc(db, 'userChats', mainChatKey), {
+				[`${mainChatKey}.info.friendsInRoom`]: actualArrayOfUsers,
+			});
 			setCurrentAvatarURL(onFirestoreURL);
 			setLoading(false);
 			toggleRightBar();
@@ -122,28 +151,28 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 				/>
 			)}
 			<section
-				className={`absolute flex flex-col right-0 w-full h-1/2 bg-slate-500 text-slate-50 ease-in-out duration-200 transition-transform sm:h-1/3 sm:w-2/3 sm:text-lg z-30 ${
-					isRightBarOpen ? 'translate-y-0 mt-11' : '-translate-y-full mt-0'
+				className={`absolute flex flex-col right-0 w-full h-1/2 bg-neutral-800 text-neutral-50 rounded-b-lg  ease-in-out duration-200 transition-transform sm:h-1/3 sm:w-2/3 sm:text-lg z-30 ${
+					isRightBarOpen ? 'translate-y-0 mt-14' : '-translate-y-full mt-0'
 				}`}>
 				<div className='flex flex-col py-6 h-full justify-between font-light text-xs sm:text-sm'>
-					<div className='flex justify-betweenc pl-4 h-3/4'>
+					<div className='flex justify-between pl-4 sm:pl-8 h-3/4'>
 						<div className='flex flex-col items-center justify-around w-3/5 sm:w-2/3'>
-							<div className='flex justify-between items-center w-full text-slate-300'>
+							<div className='flex justify-between items-center w-full text-neutral-500'>
 								<div>Nick:</div>
 								<input
-									className='bg-slate-400 text-center h-6 w-32 py-1 px-2'
+									className='bg-neutral-50 text-neutral-950 text-center h-6 w-32 py-1 px-2 rounded-lg'
 									type='text'
 									id='userName'
 									onChange={e => setCurrentName(e.target.value)}
 									value={currentName}
 								/>
 							</div>
-							<div className='flex justify-between w-full'>
-								<div className='text-slate-300'>Email:</div>
+							<div className='flex justify-between w-full text-neutral-500'>
+								<div>Email:</div>
 								<div>{authState.email}</div>
 							</div>
 							<div className='flex items-center justify-between w-full'>
-								<div className='text-slate-300'>Avatar:</div>
+								<div className='text-neutral-500'>Avatar:</div>
 								<div className='flex items-center'>
 									{avatar && currentAvatarURL !== null && (
 										<button className='mr-1'>

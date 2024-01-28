@@ -255,7 +255,7 @@ const Left = ({
 				/>
 			)}
 			<section
-				className={`absolute h-calc mt-[60px] px-2 bg-neutral-950 ease-in-out duration-200 transition-transform z-40  ${
+				className={`absolute h-calc mt-[56px] px-2 bg-neutral-950 ease-in-out duration-200 transition-transform z-40  ${
 					isLeftBarOpen || innerWidth >= 640
 						? 'transform translate-x-0 w-3/4 sm:w-1/3'
 						: 'transform -translate-x-full w-2/3 sm:w-1/3'
@@ -267,14 +267,14 @@ const Left = ({
 							<ul className='flex flex-col'>
 								{userChats !== undefined &&
 									userChats.map(chat => {
-										const friendName = arrayOfActualNames.find(
+										const friend = arrayOfActualNames.find(
 											user => user.uid === chat.uid
 										);
-										const friendAvatar = arrayOfActualNames.find(
-											user => user.uid === chat.uid
-										);
-										const friendActualName = friendName?.displayName || '';
-										const friendActualAvatar = friendAvatar?.photoURL || null;
+										// const friendAvatar = arrayOfActualNames.find(
+										// 	user => user.uid === chat.uid
+										// );
+										const friendActualName = friend?.displayName || '';
+										const friendActualAvatar = friend?.photoURL || null;
 										return (
 											<LeftFriend
 												chatKey={chat.key}

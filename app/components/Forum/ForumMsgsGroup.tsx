@@ -87,7 +87,7 @@ const ForumMsgsGroup = ({ setShowImage, setImage }: ForumMsgsGroupProps) => {
 									user => user.uid === message.authorID
 								);
 								const authorActualName = authorUser?.displayName || '';
-
+								const authorActualAvatar = authorUser?.photoURL || null;
 								return message.authorID === auth.uid ? (
 									<ForumMsgsSent
 										key={message.id}
@@ -101,6 +101,7 @@ const ForumMsgsGroup = ({ setShowImage, setImage }: ForumMsgsGroupProps) => {
 										message={{
 											...message,
 											displayName: authorActualName,
+											photoURL: authorActualAvatar,
 										}}
 										setShowImage={setShowImage}
 										setImage={setImage}

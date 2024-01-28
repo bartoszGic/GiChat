@@ -76,7 +76,7 @@ const ForumMembers = ({ arrayOfActualNames }: ForumMembersProps) => {
 			<ul
 				className={`${
 					showList ? 'flex' : 'hidden'
-				} flex-col justify-start absolute left-0 top-0 px-2 py-1 text-xs text-slate-50 w-40 bg-slate-500 max-h-40 max-w-[160px] overflow-y-auto z-30`}>
+				} flex-col justify-start absolute left-0 top-0 px-2 py-2 text-xs rounded-br-md text-slate-50 w-40 bg-neutral-800 max-h-40 max-w-[160px] overflow-y-auto z-30`}>
 				{membersList.map(user => (
 					<li
 						key={user.uid}
