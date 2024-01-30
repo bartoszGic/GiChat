@@ -97,7 +97,7 @@ const ForumMembers = ({ arrayOfActualNames }: ForumMembersProps) => {
 								/>
 							)}
 							{user.displayName === auth.displayName ? (
-								<div className='ml-2 text-green-500'>TY</div>
+								<div className='ml-2 text-cyan-500'>TY</div>
 							) : (
 								<div>{user.displayName}</div>
 							)}

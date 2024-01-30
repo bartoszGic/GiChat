@@ -20,16 +20,21 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 type ForumMsgsGroupProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
+	arrayOfActualDetails: User[];
 };
 
-const ForumMsgsGroup = ({ setShowImage, setImage }: ForumMsgsGroupProps) => {
+const ForumMsgsGroup = ({
+	setShowImage,
+	setImage,
+	arrayOfActualDetails,
+}: ForumMsgsGroupProps) => {
 	// console.log('ForumMsgsMain');
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
 	const [arrayOfActualNamesAndAvatars, setArrayOfActualNamesAndAvatars] =
 		useState<User[]>([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const allMsgsRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
@@ -39,33 +44,6 @@ const ForumMsgsGroup = ({ setShowImage, setImage }: ForumMsgsGroupProps) => {
 		return () => {
 			unsub();
 		};
-	}, [chat.chatKey]);
-
-	useEffect(() => {
-		const getActualChatDetails = async () => {
-			try {
-				const actualDetails: User[] = [];
-
-				const querySnapshot = await getDocs(query(collection(db, 'users')));
-
-				querySnapshot.forEach(doc => {
-					const userData = doc.data() as User;
-					actualDetails.push({
-						uid: userData.uid,
-						displayName: userData.displayName,
-						email: userData.email,
-						photoURL: userData.photoURL,
-					});
-				});
-
-				setArrayOfActualNamesAndAvatars(actualDetails);
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		getActualChatDetails();
 	}, [chat.chatKey]);
 
 	return (
@@ -83,7 +61,7 @@ const ForumMsgsGroup = ({ setShowImage, setImage }: ForumMsgsGroupProps) => {
 					<li className='flex flex-col mb-2 w-full text-xs break-words'>
 						{receivedMessages.length !== 0 &&
 							receivedMessages.map((message: Message) => {
-								const authorUser = arrayOfActualNamesAndAvatars.find(
+								const authorUser = arrayOfActualDetails.find(
 									user => user.uid === message.authorID
 								);
 								const authorActualName = authorUser?.displayName || '';

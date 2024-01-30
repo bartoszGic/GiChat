@@ -87,16 +87,20 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 						date: mainChatData[key].date?.seconds || 0,
 						displayName: mainChatData[key].info?.displayName || '',
 						photoURL: mainChatData[key].info?.photoURL || '',
+						author: mainChatData[key]?.author || '',
+						// isReaded: !!mainChatData[key]?.isReaded,
 						friendsInRoom: mainChatData[key]?.info.friendsInRoom || [],
 					};
 				}
 				return null;
 			});
-
 			const arrayOfUsers = transformedMainChatData[0]?.friendsInRoom;
+			const myActualProfile = arrayOfUsers?.find(
+				user => user.uid === updatedUser.uid
+			);
 			const actualArrayOfUsers = arrayOfUsers?.map(user => {
 				if (user.uid === updatedUser.uid) {
-					return updatedUser;
+					return { ...updatedUser, isReaded: myActualProfile?.isReaded };
 				}
 				return user;
 			});

@@ -54,7 +54,7 @@ const ForumMsgsSent = ({
 								setImage(message.img as string);
 							}}>
 							<Image
-								className='overflow-hidden rounded-md'
+								className='w-40 h-auto overflow-hidden rounded-md'
 								src={message.img as string}
 								alt='przesłany obraz'
 								width={160}

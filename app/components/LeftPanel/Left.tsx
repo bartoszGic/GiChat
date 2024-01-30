@@ -26,8 +26,8 @@ type LeftProps = {
 	setUserChats: React.Dispatch<React.SetStateAction<TransformedUserChat[]>>;
 	userChats: TransformedUserChat[];
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
-	setArrayOfActualNames: React.Dispatch<React.SetStateAction<User[]>>;
-	arrayOfActualNames: User[];
+	setArrayOfActualDetails: React.Dispatch<React.SetStateAction<User[]>>;
+	arrayOfActualDetails: User[];
 	setNumberOfNotifications: React.Dispatch<React.SetStateAction<number>>;
 };
 
@@ -37,8 +37,8 @@ const Left = ({
 	setUserChats,
 	userChats,
 	setLoadingForum,
-	setArrayOfActualNames,
-	arrayOfActualNames,
+	setArrayOfActualDetails,
+	arrayOfActualDetails,
 	setNumberOfNotifications,
 }: LeftProps) => {
 	// console.log('Left');
@@ -61,12 +61,12 @@ const Left = ({
 					photoURL: userData.photoURL,
 				});
 			});
-			setArrayOfActualNames(actualDetails);
+			setArrayOfActualDetails(actualDetails);
 		});
 		return () => {
 			unsub1();
 		};
-	}, [setArrayOfActualNames]);
+	}, [setArrayOfActualDetails]);
 
 	useEffect(() => {
 		if (!auth.uid) return;
@@ -87,6 +87,7 @@ const Left = ({
 						where('__name__', 'in', membersUID)
 					);
 					const membersDocs = await getDocs(userChatsQuery);
+					console.log(membersDocs.docs[0].data());
 					const batch = writeBatch(db);
 
 					membersDocs.docs.forEach(docRef => {
@@ -195,40 +196,37 @@ const Left = ({
 			setUserRoms(sortedRooms);
 			setUserChats(sortedChats);
 		});
-		const unsub3 = onSnapshot(
-			doc(
-				db,
-				'userChats',
-				process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string
-			),
-			doc => {
-				const data = doc.data() as UserChat;
-				if (!data) return;
-				const transformedMainChatData = Object.keys(data).map(key => {
-					if (data[key]?.date) {
-						return {
-							key: key,
-							date: data[key].date?.seconds || 0,
-							displayName: data[key].info?.displayName || '',
-							photoURL: data[key].info?.photoURL || '',
-							uid: data[key].info?.uid || '',
-							author: data[key]?.author || '',
-							isReaded: !!data[key]?.isReaded,
-							friendsInRoom: data[key]?.info.friendsInRoom || [],
-						};
-					}
-					return null;
-				});
-				const main: TransformedUserChat[] = [];
-				transformedMainChatData.forEach(item => {
-					if (item === null) return;
-					if (item.displayName === 'Czat ogólny') {
-						main.push(item);
-					} else return;
-				});
-				setMainChat(main);
-			}
-		);
+
+		const mainChatKey = process.env
+			.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string;
+
+		const unsub3 = onSnapshot(doc(db, 'userChats', mainChatKey), doc => {
+			const data = doc.data() as UserChat;
+			if (!data) return;
+			const transformedMainChatData = Object.keys(data).map(key => {
+				if (data[key]?.date) {
+					return {
+						key: key,
+						date: data[key].date?.seconds || 0,
+						displayName: data[key].info?.displayName || '',
+						photoURL: data[key].info?.photoURL || '',
+						uid: data[key].info?.uid || '',
+						author: data[key]?.author || '',
+						isReaded: !!data[key]?.isReaded,
+						friendsInRoom: data[key]?.info.friendsInRoom || [],
+					};
+				}
+				return null;
+			});
+			const main: TransformedUserChat[] = [];
+			transformedMainChatData.forEach(item => {
+				if (item === null) return;
+				if (item.displayName === 'Czat ogólny') {
+					main.push(item);
+				} else return;
+			});
+			setMainChat(main);
+		});
 		return () => {
 			unsub2();
 			unsub3();
@@ -267,12 +265,9 @@ const Left = ({
 							<ul className='flex flex-col'>
 								{userChats !== undefined &&
 									userChats.map(chat => {
-										const friend = arrayOfActualNames.find(
+										const friend = arrayOfActualDetails.find(
 											user => user.uid === chat.uid
 										);
-										// const friendAvatar = arrayOfActualNames.find(
-										// 	user => user.uid === chat.uid
-										// );
 										const friendActualName = friend?.displayName || '';
 										const friendActualAvatar = friend?.photoURL || null;
 										return (

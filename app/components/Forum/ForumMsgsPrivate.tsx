@@ -1,15 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
-import {
-	onSnapshot,
-	doc,
-	documentId,
-	getDoc,
-	collection,
-	getDocs,
-	query,
-} from 'firebase/firestore';
+import { onSnapshot, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { Message, User } from '../Types/types';
 import ForumMsgsSent from './ForumMsgsSent';
@@ -19,11 +11,13 @@ import ForumMsgsPrivateReceived from './ForumMsgsPrivateReceived';
 type ForumMsgsPrivateProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
+	arrayOfActualDetails: User[];
 };
 
 const ForumMsgsPrivate = ({
 	setShowImage,
 	setImage,
+	arrayOfActualDetails,
 }: ForumMsgsPrivateProps) => {
 	// console.log('ForumMsgsPrivate');
 
@@ -33,7 +27,9 @@ const ForumMsgsPrivate = ({
 		Message[] | undefined | null
 	>(null);
 	const [actualFriendName, setActualFriendName] = useState('');
-	const [actualFriendAvatar, setActualFriendAvatar] = useState('');
+	const [actualFriendAvatar, setActualFriendAvatar] = useState<string | null>(
+		''
+	);
 
 	useEffect(() => {
 		const allMsgsRef = doc(db, 'allUsersChatMessages', chat.chatKey as string);
@@ -51,13 +47,14 @@ const ForumMsgsPrivate = ({
 
 	useEffect(() => {
 		const getActualFriendDetails = async () => {
-			const friendRef = doc(db, 'users', chat.chatID as string);
-			const actualFriendDetails = await getDoc(friendRef);
-			setActualFriendName(actualFriendDetails.data()?.displayName);
-			setActualFriendAvatar(actualFriendDetails.data()?.photoURL);
+			const author = arrayOfActualDetails.find(
+				user => user.uid === chat.chatID
+			);
+			setActualFriendName(author?.displayName || '');
+			setActualFriendAvatar(author?.photoURL || null);
 		};
 		getActualFriendDetails();
-	}, [chat.chatID]);
+	}, [chat.chatID, arrayOfActualDetails]);
 
 	return (
 		<>

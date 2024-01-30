@@ -16,7 +16,7 @@ const MainApp = () => {
 	const [showImage, setShowImage] = useState(false);
 	const [image, setImage] = useState('');
 	const [userChats, setUserChats] = useState<TransformedUserChat[]>([]);
-	const [arrayOfActualNames, setArrayOfActualNames] = useState<User[]>([]);
+	const [arrayOfActualDetails, setArrayOfActualDetails] = useState<User[]>([]);
 	const [loadingForum, setLoadingForum] = useState(false);
 	const [numberOfNotifications, setNumberOfNotifications] = useState(0);
 
@@ -50,8 +50,8 @@ const MainApp = () => {
 				userChats={userChats}
 				setUserChats={setUserChats}
 				setLoadingForum={setLoadingForum}
-				setArrayOfActualNames={setArrayOfActualNames}
-				arrayOfActualNames={arrayOfActualNames}
+				setArrayOfActualDetails={setArrayOfActualDetails}
+				arrayOfActualDetails={arrayOfActualDetails}
 				setNumberOfNotifications={setNumberOfNotifications}
 			/>
 			<Forum
@@ -62,7 +62,7 @@ const MainApp = () => {
 				setImage={setImage}
 				userChats={userChats}
 				loadingForum={loadingForum}
-				arrayOfActualNames={arrayOfActualNames}
+				arrayOfActualDetails={arrayOfActualDetails}
 			/>
 			<Right
 				isRightBarOpen={isRightBarOpen}

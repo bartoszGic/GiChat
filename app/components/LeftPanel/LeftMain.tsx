@@ -43,38 +43,21 @@ const LeftMain = ({
 		try {
 			setLoadingForum(true);
 			toggleLeftBar(true);
-			const mainChatSnap = await getDoc(
-				doc(
-					db,
-					'userChats',
-					process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string
-				)
-			);
-			if (
-				!mainChatSnap.exists() ||
-				!process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY
-			)
-				return;
-			const membersDoc =
-				mainChatSnap.data()[process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY]
-					.info.friendsInRoom;
+			const mainChatKey = process.env
+				.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string;
+
+			const mainChatSnap = await getDoc(doc(db, 'userChats', mainChatKey));
+			if (!mainChatSnap.exists() || !mainChatKey) return;
+			const membersDoc = mainChatSnap.data()[mainChatKey].info.friendsInRoom;
 			const updatedDoc = membersDoc.map(
 				(member: { uid: string; isReaded: string }) => ({
 					...member,
 					isReaded: member.uid === auth.uid ? true : member.isReaded,
 				})
 			);
-			await updateDoc(
-				doc(
-					db,
-					'userChats',
-					process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string
-				),
-				{
-					[`${process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY}.info.friendsInRoom`]:
-						updatedDoc,
-				}
-			);
+			await updateDoc(doc(db, 'userChats', mainChatKey), {
+				[`${mainChatKey}.info.friendsInRoom`]: updatedDoc,
+			});
 
 			dispatch(logoutUserChat());
 			color === 'text-green-500' &&

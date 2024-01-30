@@ -11,7 +11,7 @@ type ForumMsgsPrivateReceivedProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
 	actualFriendName: string;
-	actualFriendAvatar: string;
+	actualFriendAvatar: string | null;
 };
 const ForumMsgsPrivateReceived = ({
 	message,
@@ -24,10 +24,10 @@ const ForumMsgsPrivateReceived = ({
 		<div
 			key={message.id}
 			className='flex mb-2'>
-			{message.photoURL ? (
+			{actualFriendAvatar ? (
 				<Image
 					className='h-6 w-6 rounded-full mr-2'
-					src={message.photoURL as string}
+					src={actualFriendAvatar}
 					alt='przesłany obraz'
 					width={40}
 					height={40}
@@ -53,7 +53,7 @@ const ForumMsgsPrivateReceived = ({
 								setImage(message.img as string);
 							}}>
 							<Image
-								className='overflow-hidden rounded-md'
+								className='w-40 h-auto overflow-hidden rounded-md'
 								src={message.img as string}
 								alt='przesłany obraz'
 								width={160}
