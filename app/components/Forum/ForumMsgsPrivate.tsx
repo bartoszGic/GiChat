@@ -12,12 +12,14 @@ type ForumMsgsPrivateProps = {
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
 	arrayOfActualDetails: User[];
+	friendReadMsg: boolean;
 };
 
 const ForumMsgsPrivate = ({
 	setShowImage,
 	setImage,
 	arrayOfActualDetails,
+	friendReadMsg,
 }: ForumMsgsPrivateProps) => {
 	// console.log('ForumMsgsPrivate');
 
@@ -81,6 +83,7 @@ const ForumMsgsPrivate = ({
 							)
 						)}
 				</li>
+				{friendReadMsg && <li>Przeczytał</li>}
 			</ul>
 		</>
 	);

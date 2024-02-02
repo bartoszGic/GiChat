@@ -25,6 +25,7 @@ type ForumProps = {
 	userChats: TransformedUserChat[];
 	loadingForum: boolean;
 	arrayOfActualDetails: User[];
+	friendReadMsg: boolean;
 };
 const Forum = ({
 	isLeftBarOpen,
@@ -35,6 +36,7 @@ const Forum = ({
 	loadingForum,
 	userChats,
 	arrayOfActualDetails,
+	friendReadMsg,
 }: ForumProps) => {
 	// console.log('Forum');
 	const chat = useAppSelector(state => state.chat);
@@ -121,6 +123,7 @@ const Forum = ({
 							setShowImage={setShowImage}
 							setImage={setImage}
 							arrayOfActualDetails={arrayOfActualDetails}
+							friendReadMsg={friendReadMsg}
 						/>
 					)}
 

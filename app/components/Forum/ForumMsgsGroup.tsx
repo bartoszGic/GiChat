@@ -32,8 +32,6 @@ const ForumMsgsGroup = ({
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
-	const [arrayOfActualNamesAndAvatars, setArrayOfActualNamesAndAvatars] =
-		useState<User[]>([]);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {

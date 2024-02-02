@@ -29,6 +29,7 @@ type LeftProps = {
 	setArrayOfActualDetails: React.Dispatch<React.SetStateAction<User[]>>;
 	arrayOfActualDetails: User[];
 	setNumberOfNotifications: React.Dispatch<React.SetStateAction<number>>;
+	setFriendReadMsg: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const Left = ({
@@ -40,6 +41,7 @@ const Left = ({
 	setArrayOfActualDetails,
 	arrayOfActualDetails,
 	setNumberOfNotifications,
+	setFriendReadMsg,
 }: LeftProps) => {
 	// console.log('Left');
 
@@ -87,7 +89,6 @@ const Left = ({
 						where('__name__', 'in', membersUID)
 					);
 					const membersDocs = await getDocs(userChatsQuery);
-					console.log(membersDocs.docs[0].data());
 					const batch = writeBatch(db);
 
 					membersDocs.docs.forEach(docRef => {
@@ -128,83 +129,85 @@ const Left = ({
 				await updateDoc(doc(db, 'userChats', auth.uid as string), {
 					[`${chatKeyToUpdate}.isReaded`]: true,
 				});
-				console.log('update Private');
 			} catch (error) {
 				console.error(error);
 			}
 		};
-		const unsub2 = onSnapshot(doc(db, 'userChats', auth.uid), doc => {
-			const data = doc.data() as UserChat;
-			if (!data) return;
-			const transformedChatsData = Object.keys(data).map(key => {
-				// Poniżej dodatkowe zabezpieczenia if, filter,? i z powodu błedu wystęującym tylko przy dodawniu nowego znajomego w NavSearch
-				if (data[key]?.date) {
-					return {
-						key: key,
-						date: data[key].date?.seconds || 0,
-						displayName: data[key].info?.displayName || '',
-						photoURL: data[key].info?.photoURL || '',
-						uid: data[key].info?.uid || '',
-						author: data[key]?.author || '',
-						isReaded: !!data[key]?.isReaded,
-						friendsInRoom: data[key]?.info.friendsInRoom || [],
-					};
-				}
-				return null;
-			});
+		const subOnChatsAndGroups = onSnapshot(
+			doc(db, 'userChats', auth.uid),
+			doc => {
+				const data = doc.data() as UserChat;
+				if (!data) return;
+				const transformedChatsData = Object.keys(data).map(key => {
+					// Poniżej dodatkowe zabezpieczenia if, filter,? i z powodu błedu wystęującym tylko przy dodawniu nowego znajomego w NavSearch
+					if (data[key]?.date) {
+						return {
+							key: key,
+							date: data[key].date?.seconds || 0,
+							displayName: data[key].info?.displayName || '',
+							photoURL: data[key].info?.photoURL || '',
+							uid: data[key].info?.uid || '',
+							author: data[key]?.author || '',
+							isReaded: !!data[key]?.isReaded,
+							friendsInRoom: data[key]?.info.friendsInRoom || [],
+						};
+					}
+					return null;
+				});
 
-			const hasUnreadMessages = transformedChatsData.some(
-				chatItem =>
-					chatItem !== null &&
-					!chatItem.isReaded &&
-					chatItem.key === chat.chatKey
-			);
+				const hasUnreadMessages = transformedChatsData.some(
+					chatItem =>
+						chatItem !== null &&
+						!chatItem.isReaded &&
+						chatItem.key === chat.chatKey
+				);
 
-			if (
-				chat.chatKey &&
-				(chat.chatKey.slice(0, 6) === 'GROUP_' ||
-					chat.displayName === 'Czat ogólny')
-			) {
-				updateIsReadedGroup();
-			} else {
-				if (hasUnreadMessages) {
-					transformedChatsData.forEach(chatItem => {
-						if (
-							chatItem !== null &&
-							!chatItem.isReaded &&
-							chatItem.key === chat.chatKey
-						) {
-							updateIsReadedPrivate(chatItem.key);
-						}
-					});
-				}
-			}
-
-			const rooms: TransformedUserChat[] = [];
-			const chats: TransformedUserChat[] = [];
-			transformedChatsData.forEach(item => {
-				if (item === null) return;
-				if (item.key.slice(0, 6) === 'GROUP_') {
-					rooms.push(item);
+				if (
+					chat.chatKey &&
+					(chat.chatKey.slice(0, 6) === 'GROUP_' ||
+						chat.displayName === 'Czat ogólny')
+				) {
+					updateIsReadedGroup();
 				} else {
-					chats.push(item);
+					if (hasUnreadMessages) {
+						transformedChatsData.forEach(chatItem => {
+							if (
+								chatItem !== null &&
+								!chatItem.isReaded &&
+								chatItem.key === chat.chatKey
+							) {
+								updateIsReadedPrivate(chatItem.key);
+							}
+						});
+					}
 				}
-			});
-			const sortedChats = chats.sort((a, b) => b.date - a.date);
-			const sortedRooms = rooms.sort((a, b) => b.date - a.date);
 
-			setUserRoms(sortedRooms);
-			setUserChats(sortedChats);
-		});
+				const rooms: TransformedUserChat[] = [];
+				const chats: TransformedUserChat[] = [];
+				transformedChatsData.forEach(item => {
+					if (item === null) return;
+					if (item.key.slice(0, 6) === 'GROUP_') {
+						rooms.push(item);
+					} else {
+						chats.push(item);
+					}
+				});
+				const sortedChats = chats.sort((a, b) => b.date - a.date);
+				const sortedRooms = rooms.sort((a, b) => b.date - a.date);
+
+				setUserRoms(sortedRooms);
+				setUserChats(sortedChats);
+			}
+		);
 
 		const mainChatKey = process.env
 			.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string;
 
-		const unsub3 = onSnapshot(doc(db, 'userChats', mainChatKey), doc => {
+		const subOnMainChat = onSnapshot(doc(db, 'userChats', mainChatKey), doc => {
 			const data = doc.data() as UserChat;
 			if (!data) return;
 			const transformedMainChatData = Object.keys(data).map(key => {
-				if (data[key]?.date) {
+				if (!data[key]?.date) {
 					return {
 						key: key,
 						date: data[key].date?.seconds || 0,
@@ -227,11 +230,34 @@ const Left = ({
 			});
 			setMainChat(main);
 		});
+
+		const subIfFriendReadMsg = onSnapshot(
+			doc(db, 'userChats', chat.chatID as string),
+			doc => {
+				const data = doc.data() as UserChat;
+				if (!data) return;
+				const chatKeyToUpdate = Object.keys(data).find(
+					key => key === chat.chatKey
+				);
+				if (chatKeyToUpdate) {
+					const chatToUpdate = data[chatKeyToUpdate];
+					setFriendReadMsg(chatToUpdate.isReaded);
+				} else return;
+			}
+		);
 		return () => {
-			unsub2();
-			unsub3();
+			subOnChatsAndGroups();
+			subOnMainChat();
+			subIfFriendReadMsg();
 		};
-	}, [auth.uid, setUserChats, setUserRoms, setLoadingForum, chat]);
+	}, [
+		auth.uid,
+		setUserChats,
+		setUserRoms,
+		setLoadingForum,
+		chat,
+		setFriendReadMsg,
+	]);
 
 	useEffect(() => {
 		const updateInnerWidth = () => {
