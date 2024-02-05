@@ -8,6 +8,7 @@ export type UserChat = {
 		};
 		info: {
 			displayName: string;
+			email: string;
 			photoURL: string;
 			uid: string;
 			friendsInRoom: UserInRoom[];
@@ -18,6 +19,7 @@ export type TransformedUserChat = {
 	key: string;
 	date: number;
 	displayName: string;
+	email: string;
 	photoURL: string;
 	uid: string;
 	isReaded: boolean;
@@ -46,20 +48,32 @@ export type UserInRoom = {
 	uid: string;
 	displayName: string;
 	email: string;
+	photoURL: string;
 	isReaded: boolean;
 };
 export const formatDate = (timestamp: number) => {
 	const date = new Date(timestamp * 1000);
 	const currentDate = new Date();
-	const currentDay = currentDate.getDate().toString().padStart(2, '0');
-	const day = date.getDate().toString().padStart(2, '0');
-	const month = (date.getMonth() + 1).toString().padStart(2, '0');
-	const year = date.getFullYear().toString();
+
+	const currentDay = currentDate.getDate();
+	const day = date.getDate();
+	const month = date.getMonth() + 1;
+	const year = date.getFullYear();
 	const hours = date.getHours().toString().padStart(2, '0');
 	const minutes = date.getMinutes().toString().padStart(2, '0');
-	if (currentDay > day) {
-		return `${day}.${month}.${year} ${hours}:${minutes} `;
-	} else {
+
+	const today =
+		currentDay === day &&
+		currentDate.getMonth() + 1 === month &&
+		currentDate.getFullYear() === year;
+
+	if (today) {
 		return `dzisiaj ${hours}:${minutes}`;
+	} else {
+		if (month < 10) {
+			return `${day}.0${month}`;
+		} else {
+			return `${day}.${month}`;
+		}
 	}
 };

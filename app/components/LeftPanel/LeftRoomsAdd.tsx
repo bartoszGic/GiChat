@@ -59,6 +59,7 @@ const LeftRoomsAdd = ({
 			const roomCreator = {
 				uid: auth.uid,
 				displayName: auth.displayName || '',
+				email: auth.email || '',
 				photoURL: auth.photoURL || '',
 				isReaded: true,
 			};
@@ -71,6 +72,7 @@ const LeftRoomsAdd = ({
 				const roomInfo = {
 					friendsInRoom: roomUsers.map(user => ({
 						uid: user.uid,
+						email: user.email,
 						displayName: user.displayName,
 						photoURL: user.photoURL,
 						isReaded: true,

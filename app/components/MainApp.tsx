@@ -16,6 +16,8 @@ const MainApp = () => {
 	const [showImage, setShowImage] = useState(false);
 	const [image, setImage] = useState('');
 	const [userChats, setUserChats] = useState<TransformedUserChat[]>([]);
+	const [userRooms, setUserRooms] = useState<TransformedUserChat[]>([]);
+	const [mainChat, setMainChat] = useState<TransformedUserChat[]>([]);
 	const [arrayOfActualDetails, setArrayOfActualDetails] = useState<User[]>([]);
 	const [loadingForum, setLoadingForum] = useState(false);
 	const [friendReadMsg, setFriendReadMsg] = useState(false);
@@ -50,11 +52,15 @@ const MainApp = () => {
 				toggleLeftBar={toggleLeftBar}
 				userChats={userChats}
 				setUserChats={setUserChats}
+				setUserRooms={setUserRooms}
+				userRooms={userRooms}
 				setLoadingForum={setLoadingForum}
 				setArrayOfActualDetails={setArrayOfActualDetails}
 				arrayOfActualDetails={arrayOfActualDetails}
 				setNumberOfNotifications={setNumberOfNotifications}
 				setFriendReadMsg={setFriendReadMsg}
+				setMainChat={setMainChat}
+				mainChat={mainChat}
 			/>
 			<Forum
 				isLeftBarOpen={isLeftBarOpen}
@@ -62,10 +68,11 @@ const MainApp = () => {
 				forumStyleZ={forumStyleZ}
 				setShowImage={setShowImage}
 				setImage={setImage}
-				userChats={userChats}
 				loadingForum={loadingForum}
 				arrayOfActualDetails={arrayOfActualDetails}
 				friendReadMsg={friendReadMsg}
+				userRooms={userRooms}
+				mainChat={mainChat}
 			/>
 			<Right
 				isRightBarOpen={isRightBarOpen}

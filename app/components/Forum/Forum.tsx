@@ -22,10 +22,11 @@ type ForumProps = {
 	forumStyleZ: string;
 	setShowImage: React.Dispatch<React.SetStateAction<boolean>>;
 	setImage: React.Dispatch<React.SetStateAction<string>>;
-	userChats: TransformedUserChat[];
 	loadingForum: boolean;
 	arrayOfActualDetails: User[];
 	friendReadMsg: boolean;
+	userRooms: TransformedUserChat[];
+	mainChat: TransformedUserChat[];
 };
 const Forum = ({
 	isLeftBarOpen,
@@ -34,9 +35,10 @@ const Forum = ({
 	setShowImage,
 	setImage,
 	loadingForum,
-	userChats,
 	arrayOfActualDetails,
 	friendReadMsg,
+	userRooms,
+	mainChat,
 }: ForumProps) => {
 	// console.log('Forum');
 	const chat = useAppSelector(state => state.chat);
@@ -76,7 +78,7 @@ const Forum = ({
 									: 'w-full justify-center sm:justify-end'
 							} items-center`}>
 							{chat.chatKey.substring(0, 6) === 'GROUP_' && (
-								<ForumMembers arrayOfActualNames={arrayOfActualDetails} />
+								<ForumMembers arrayOfActualDetails={arrayOfActualDetails} />
 							)}
 							<div className='flex items-center'>
 								<h3 className='mr-2'>{chat.displayName}</h3>
@@ -116,6 +118,8 @@ const Forum = ({
 							setShowImage={setShowImage}
 							setImage={setImage}
 							arrayOfActualDetails={arrayOfActualDetails}
+							userRooms={userRooms}
+							mainChat={mainChat}
 						/>
 					) : (
 						<ForumMsgsPrivate

@@ -83,6 +83,7 @@ const Register = () => {
 			await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
 				[`${chat.chatKey}.info.friendsInRoom`]: arrayUnion({
 					displayName: email,
+					email: email,
 					uid: profile.user.uid,
 					photoURL: onFirestoreURL,
 					isReaded: false,

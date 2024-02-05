@@ -18,9 +18,9 @@ const ForumMsgsGroupReceived = ({
 	setImage,
 }: ForumMsgsGroupReceivedProps) => {
 	return (
-		<div
+		<li
 			key={message.id}
-			className='flex mb-2'>
+			className='flex mb-2 w-full text-xs break-words'>
 			{message.photoURL ? (
 				<Image
 					className='h-6 w-6 rounded-full mr-2'
@@ -37,11 +37,11 @@ const ForumMsgsGroupReceived = ({
 			)}
 
 			<div className='flex flex-col bg-neutral-800 text-neutral-50 px-2 py-2 w-3/4 rounded-lg sm:max-w-[350px]'>
-				<div className='flex flex-row-reverse text-neutral-600 justify-between items-center'>
+				<div className='flex text-neutral-600 items-center'>
+					<div className='mr-2'>{message.displayName} </div>
 					<div>{formatDate(message.date.seconds)}</div>
-					<div className='text-sm font-bold'>{message.displayName}</div>
 				</div>
-				<div className='mt-2 text-justify'>{message.message}</div>
+				<div className='mt-2'>{message.message}</div>
 				<div className='relative mt-2 text-justify w-40 rounded-lg'>
 					{message.img && (
 						<div
@@ -61,7 +61,7 @@ const ForumMsgsGroupReceived = ({
 					)}
 				</div>
 			</div>
-		</div>
+		</li>
 	);
 };
 

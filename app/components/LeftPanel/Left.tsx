@@ -24,7 +24,11 @@ type LeftProps = {
 	isLeftBarOpen: boolean;
 	toggleLeftBar: (bool?: boolean) => void;
 	setUserChats: React.Dispatch<React.SetStateAction<TransformedUserChat[]>>;
+	setUserRooms: React.Dispatch<React.SetStateAction<TransformedUserChat[]>>;
+	setMainChat: React.Dispatch<React.SetStateAction<TransformedUserChat[]>>;
 	userChats: TransformedUserChat[];
+	userRooms: TransformedUserChat[];
+	mainChat: TransformedUserChat[];
 	setLoadingForum: React.Dispatch<React.SetStateAction<boolean>>;
 	setArrayOfActualDetails: React.Dispatch<React.SetStateAction<User[]>>;
 	arrayOfActualDetails: User[];
@@ -42,14 +46,16 @@ const Left = ({
 	arrayOfActualDetails,
 	setNumberOfNotifications,
 	setFriendReadMsg,
+	setUserRooms,
+	userRooms,
+	setMainChat,
+	mainChat,
 }: LeftProps) => {
 	// console.log('Left');
 
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
-	const [userRooms, setUserRoms] = useState<TransformedUserChat[]>([]);
-	const [mainChat, setMainChat] = useState<TransformedUserChat[]>([]);
 
 	useEffect(() => {
 		const unsub1 = onSnapshot(collection(db, 'users'), doc => {
@@ -72,6 +78,8 @@ const Left = ({
 
 	useEffect(() => {
 		if (!auth.uid) return;
+		const mainChatKey = process.env
+			.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string;
 		const updateIsReadedGroup = async () => {
 			try {
 				if (!chat.chatKey) return;
@@ -103,10 +111,16 @@ const Left = ({
 						});
 					});
 					await batch.commit();
-				} else {
-					const mainChatSnap = await getDoc(
-						doc(db, 'userChats', chat.chatKey as string)
-					);
+				} else return;
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		const updateIsReadedMain = async () => {
+			try {
+				if (!chat.chatKey) return;
+				if (chat.chatKey === mainChatKey) {
+					const mainChatSnap = await getDoc(doc(db, 'userChats', mainChatKey));
 					if (!mainChatSnap.exists()) return;
 					const membersDoc =
 						mainChatSnap.data()[chat.chatKey].info.friendsInRoom;
@@ -119,11 +133,12 @@ const Left = ({
 					await updateDoc(doc(db, 'userChats', chat.chatKey as string), {
 						[`${chat.chatKey}.info.friendsInRoom`]: updatedDoc,
 					});
-				}
+				} else return;
 			} catch (error) {
 				console.log(error);
 			}
 		};
+
 		const updateIsReadedPrivate = async (chatKeyToUpdate: string) => {
 			try {
 				await updateDoc(doc(db, 'userChats', auth.uid as string), {
@@ -145,6 +160,7 @@ const Left = ({
 							key: key,
 							date: data[key].date?.seconds || 0,
 							displayName: data[key].info?.displayName || '',
+							email: data[key].info?.email || '',
 							photoURL: data[key].info?.photoURL || '',
 							uid: data[key].info?.uid || '',
 							author: data[key]?.author || '',
@@ -161,11 +177,11 @@ const Left = ({
 						!chatItem.isReaded &&
 						chatItem.key === chat.chatKey
 				);
-
 				if (
 					chat.chatKey &&
-					(chat.chatKey.slice(0, 6) === 'GROUP_' ||
-						chat.displayName === 'Czat ogólny')
+					chat.chatKey.slice(0, 6) === 'GROUP_'
+					// ||
+					// 	chat.displayName === 'Czat ogólny'
 				) {
 					updateIsReadedGroup();
 				} else {
@@ -195,23 +211,23 @@ const Left = ({
 				const sortedChats = chats.sort((a, b) => b.date - a.date);
 				const sortedRooms = rooms.sort((a, b) => b.date - a.date);
 
-				setUserRoms(sortedRooms);
+				setUserRooms(sortedRooms);
 				setUserChats(sortedChats);
 			}
 		);
 
-		const mainChatKey = process.env
-			.NEXT_PUBLIC_FIREBASE_PUBLIC_FORUM_KEY as string;
-
 		const subOnMainChat = onSnapshot(doc(db, 'userChats', mainChatKey), doc => {
+			console.log('subOnMainChat');
 			const data = doc.data() as UserChat;
+			console.log(data);
 			if (!data) return;
 			const transformedMainChatData = Object.keys(data).map(key => {
-				if (!data[key]?.date) {
+				if (data[key]?.date) {
 					return {
 						key: key,
 						date: data[key].date?.seconds || 0,
 						displayName: data[key].info?.displayName || '',
+						email: data[key].info?.email || '',
 						photoURL: data[key].info?.photoURL || '',
 						uid: data[key].info?.uid || '',
 						author: data[key]?.author || '',
@@ -221,7 +237,9 @@ const Left = ({
 				}
 				return null;
 			});
+			chat.chatKey === mainChatKey && updateIsReadedMain();
 			const main: TransformedUserChat[] = [];
+			console.log(transformedMainChatData);
 			transformedMainChatData.forEach(item => {
 				if (item === null) return;
 				if (item.displayName === 'Czat ogólny') {
@@ -231,7 +249,7 @@ const Left = ({
 			setMainChat(main);
 		});
 
-		const subIfFriendReadMsg = onSnapshot(
+		const subOnFriendReadMsg = onSnapshot(
 			doc(db, 'userChats', chat.chatID as string),
 			doc => {
 				const data = doc.data() as UserChat;
@@ -245,18 +263,20 @@ const Left = ({
 				} else return;
 			}
 		);
+
 		return () => {
 			subOnChatsAndGroups();
 			subOnMainChat();
-			subIfFriendReadMsg();
+			subOnFriendReadMsg();
 		};
 	}, [
 		auth.uid,
 		setUserChats,
-		setUserRoms,
+		setUserRooms,
 		setLoadingForum,
 		chat,
 		setFriendReadMsg,
+		setMainChat,
 	]);
 
 	useEffect(() => {
