@@ -21,7 +21,6 @@ const LeftRooms = ({
 	setLoadingForum,
 	setNumberOfNotifications,
 }: LeftRoomsProps) => {
-	// console.log('LeftRooms');
 	const auth = useAppSelector(state => state.auth);
 	const [showList, setShowList] = useState(false);
 	const [roomUsers, setRoomUsers] = useState<TransformedUserChat[]>([]);

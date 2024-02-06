@@ -1,14 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-	faArrowRightFromBracket,
-	faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/app/firebase-config';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '../../../store';
-import { loadUser, logOutUser } from '@/store/auth-slice';
+import { logOutUser } from '@/store/auth-slice';
 import { logoutUserChat } from '@/store/chat-slice';
 
 const RightAcountBtns = () => {
@@ -36,13 +33,6 @@ const RightAcountBtns = () => {
 				/>
 				<span className='ml-2'>Wyloguj</span>
 			</button>
-			{/* <button className='flex items-center animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
-				<FontAwesomeIcon
-					className='p-2'
-					icon={faTrash}
-				/>
-				Usuń konto
-			</button> */}
 		</div>
 	);
 };

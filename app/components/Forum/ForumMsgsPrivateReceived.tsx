@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Message, User, formatDate } from '../Types/types';
-import { useAppSelector } from '@/store';
-import { getDoc, doc } from 'firebase/firestore';
-import { db } from '@/app/firebase-config';
+import { Message, formatDate } from '../Types/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 type ForumMsgsPrivateReceivedProps = {
@@ -17,7 +13,6 @@ const ForumMsgsPrivateReceived = ({
 	message,
 	setShowImage,
 	setImage,
-	actualFriendName,
 	actualFriendAvatar,
 }: ForumMsgsPrivateReceivedProps) => {
 	return (

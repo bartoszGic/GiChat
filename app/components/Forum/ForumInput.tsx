@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Button from '../UI/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faImage,
@@ -12,20 +11,17 @@ import {
 	arrayUnion,
 	collection,
 	doc,
-	serverTimestamp,
 	Timestamp,
 	updateDoc,
 	getDoc,
 	query,
 	where,
-	FieldPath,
 	getDocs,
 	writeBatch,
 } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/app/firebase-config';
 import { useAppSelector } from '@/store';
-import { User } from '../Types/types';
 
 type ForumInput = {
 	isLeftBarOpen: boolean;
@@ -172,17 +168,6 @@ const ForumInput = ({ isLeftBarOpen }: ForumInput) => {
 		setImage(undefined);
 		setImageURL(null);
 	};
-	// for (const member of membersDocs.docs) {
-	// 	console.log(member.);
-	// if (member.uid !== auth.uid) {
-	// 	member.isReaded = false;
-	// } else {
-	// 	member.isReaded = true;
-	// }
-	// }
-	// await updateDoc(doc(db, 'userChats', auth.uid as string), {
-	// 	[`${chat.chatKey}.info.friendsInRoom`]: members,
-	// });
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();

@@ -9,7 +9,6 @@ import ImageModal from './UI/ImageModal';
 import { TransformedUserChat, User } from './Types/types';
 
 const MainApp = () => {
-	// console.log('Main');
 	const [isLeftBarOpen, setIsLeftbarOpen] = useState(false);
 	const [isRightBarOpen, setIsRightBarOpen] = useState(false);
 	const [forumStyleZ, setForumStyleZ] = useState('z-0');

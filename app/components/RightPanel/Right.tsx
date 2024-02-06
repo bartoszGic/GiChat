@@ -29,7 +29,6 @@ type RightProps = {
 };
 
 const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
-	// console.log('Right');
 	const authState = useAppSelector(state => state.auth);
 	const [currentName, setCurrentName] = useState(authState.displayName ?? '');
 	const [loading, setLoading] = useState(false);
@@ -88,7 +87,6 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 						displayName: mainChatData[key].info?.displayName || '',
 						photoURL: mainChatData[key].info?.photoURL || '',
 						author: mainChatData[key]?.author || '',
-						// isReaded: !!mainChatData[key]?.isReaded,
 						friendsInRoom: mainChatData[key]?.info.friendsInRoom || [],
 					};
 				}

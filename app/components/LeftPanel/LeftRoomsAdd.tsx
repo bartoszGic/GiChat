@@ -1,5 +1,5 @@
-import { TransformedUserChat, User } from '../Types/types';
-import React, { useEffect, useRef, useState } from 'react';
+import { TransformedUserChat } from '../Types/types';
+import React, { useState } from 'react';
 import LeftRoomAddList from './LeftRoomAddList';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -33,7 +33,6 @@ const LeftRoomsAdd = ({
 	setShowList,
 	setRoomUsers,
 	usersListRef,
-	image,
 	setImage,
 	imageURL,
 	setImageURL,

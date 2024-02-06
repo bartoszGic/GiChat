@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import ForumMsgsGroup from './ForumMsgsGroup';
 import ForumMsgsPrivate from './ForumMsgsPrivate';
@@ -10,9 +10,7 @@ import {
 	faUser,
 	faHome,
 } from '@fortawesome/free-solid-svg-icons';
-import { useAppSelector, useAppDispatch } from '@/store';
-import { db } from '@/app/firebase-config';
-import { onSnapshot, doc, documentId, getDoc } from 'firebase/firestore';
+import { useAppSelector } from '@/store';
 import { TransformedUserChat, User } from '../Types/types';
 import ForumMembers from './ForumMembers';
 

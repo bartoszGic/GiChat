@@ -14,9 +14,7 @@ import {
 	writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
-import { useAppSelector, useAppDispatch } from '@/store';
-import { updateDisplayNameAndPhotoURL } from '@/store/chat-slice';
-import Image from 'next/image';
+import { useAppSelector } from '@/store';
 import { UserChat, TransformedUserChat, User } from '../Types/types';
 import LeftMain from './LeftMain';
 
@@ -51,8 +49,6 @@ const Left = ({
 	setMainChat,
 	mainChat,
 }: LeftProps) => {
-	// console.log('Left');
-
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [innerWidth, setInnerWidth] = useState(0);
@@ -177,12 +173,7 @@ const Left = ({
 						!chatItem.isReaded &&
 						chatItem.key === chat.chatKey
 				);
-				if (
-					chat.chatKey &&
-					chat.chatKey.slice(0, 6) === 'GROUP_'
-					// ||
-					// 	chat.displayName === 'Czat ogólny'
-				) {
+				if (chat.chatKey && chat.chatKey.slice(0, 6) === 'GROUP_') {
 					updateIsReadedGroup();
 				} else {
 					if (hasUnreadMessages) {
@@ -217,9 +208,7 @@ const Left = ({
 		);
 
 		const subOnMainChat = onSnapshot(doc(db, 'userChats', mainChatKey), doc => {
-			console.log('subOnMainChat');
 			const data = doc.data() as UserChat;
-			console.log(data);
 			if (!data) return;
 			const transformedMainChatData = Object.keys(data).map(key => {
 				if (data[key]?.date) {
@@ -239,7 +228,6 @@ const Left = ({
 			});
 			chat.chatKey === mainChatKey && updateIsReadedMain();
 			const main: TransformedUserChat[] = [];
-			console.log(transformedMainChatData);
 			transformedMainChatData.forEach(item => {
 				if (item === null) return;
 				if (item.displayName === 'Czat ogólny') {

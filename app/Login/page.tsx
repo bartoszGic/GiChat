@@ -1,19 +1,17 @@
 'use client';
-import Button from '../components/UI/Button';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase-config';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { loadUser } from '@/store/auth-slice';
-import { useRouter, redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { getDoc, doc } from 'firebase/firestore';
 
 const Login = () => {
-	// console.log('Login');
 	const [email, setEmail] = useState('');
 	const [password1, setPassword1] = useState('');
 	const [loading, setLoading] = useState(false);

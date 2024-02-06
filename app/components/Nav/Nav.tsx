@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Dispatch, setSt } from 'react';
 import NavBars from './NavBars';
 import NavSearch from './NavSearch';
 import NavUser from './NavUser';
@@ -24,8 +23,6 @@ const Nav = ({
 	userChats,
 	numberOfNotifications,
 }: NavProps) => {
-	// console.log('Nav');
-
 	return (
 		<nav className='flex w-full items-center z-0'>
 			<div className='flex justify-between w-full p-3 items-center bg-neutral-950'>

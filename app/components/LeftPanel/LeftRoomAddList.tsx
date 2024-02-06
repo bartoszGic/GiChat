@@ -2,7 +2,6 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus, faUser } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
-import { User } from '../Types/types';
 import { TransformedUserChat } from '../Types/types';
 
 type LeftRoomAddListProps = {

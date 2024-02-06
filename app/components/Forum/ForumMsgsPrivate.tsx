@@ -1,12 +1,11 @@
 import React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useAppSelector, useAppDispatch } from '@/store';
+import { useAppSelector } from '@/store';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { Message, User } from '../Types/types';
 import ForumMsgsSent from './ForumMsgsSent';
-import ForumMsgsReceived from './ForumMsgsGroupReceived';
 import ForumMsgsPrivateReceived from './ForumMsgsPrivateReceived';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
@@ -24,8 +23,6 @@ const ForumMsgsPrivate = ({
 	arrayOfActualDetails,
 	friendReadMsg,
 }: ForumMsgsPrivateProps) => {
-	// console.log('ForumMsgsPrivate');
-
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<

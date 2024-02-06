@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logoutUserChat } from '@/store/chat-slice';
-import Image from 'next/image';
 import { db } from '@/app/firebase-config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { TransformedUserChat } from '../Types/types';
@@ -19,7 +18,6 @@ const LeftMain = ({
 	setNumberOfNotifications,
 	mainChat,
 }: LeftMainProps) => {
-	// console.log('LeftMain');
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
 	let color: string;

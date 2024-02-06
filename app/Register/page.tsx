@@ -1,31 +1,24 @@
 'use client';
-import Button from '../components/UI/Button';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faArrowLeft,
 	faUser,
-	faUsers,
 	faXmark,
 	faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import {
-	createUserWithEmailAndPassword,
-	updateProfile,
-	onAuthStateChanged,
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, storage, db } from '../firebase-config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { setDoc, doc, getDoc, arrayUnion, updateDoc } from 'firebase/firestore';
+import { setDoc, doc, arrayUnion, updateDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { loadUser } from '@/store/auth-slice';
 import { useRouter, redirect } from 'next/navigation';
 
 const Register = () => {
-	// console.log('Register');
 	const [email, setEmail] = useState('');
 	const [password1, setPassword1] = useState('');
 	const [password2, setPassword2] = useState('');

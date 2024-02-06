@@ -27,7 +27,6 @@ type NavSearchProps = {
 };
 
 const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
-	// console.log('NavSearch');
 	const [searchUser, setSearchUser] = useState('');
 	const [existingUsers, setExistingUsers] = useState<User[]>([]);
 	const [showList, setShowList] = useState(false);

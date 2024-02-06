@@ -1,17 +1,10 @@
 'use client';
-import Button from './components/UI/Button';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-// import { useAppSelector } from '@/store/hookszzz';
 import { useAppSelector } from '@/store';
 import MainApp from './components/MainApp';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase-config';
-// import { useRouter } from 'next/navigation';
 
-type HomeProps = {};
 const Home = () => {
-	// console.log('Home');
 	const [mainApp, setMainApp] = useState<null | boolean>(null);
 	const auth = useAppSelector(state => state.auth);
 
@@ -23,17 +16,17 @@ const Home = () => {
 		return null;
 	} else if (!mainApp) {
 		return (
-			<div className='flex flex-col items-center mt-2'>
-				<header className='flex flex-col items-center my-12'>
+			<div className='flex flex-col items-center h-screen'>
+				<header className='flex flex-col items-center my-20'>
 					<h1 className='text-4xl font-bold tracking-widest'>GiChat</h1>
 				</header>
 				<p className='text-center mx-4'>
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, in!
+					An application for chatting with friends and groups.
 				</p>
 				<Link
 					href='/Login'
-					className='mt-12'>
-					<button className='bg-cyan-500 px-12 py-4 relative group rounded-full font-medium text-gray-50 inline-block'>
+					className='mt-20'>
+					<button className='bg-cyan-500 px-12 py-4 relative group rounded-full font-medium text-neutral-50 inline-block'>
 						<span
 							className={`absolute rounded-full top-0 left-0 flex w-full h-0 mb-0 transition-all duration-200 ease-out transform translate-y-0 bg-neutral-950 group-hover:h-full group-hover:scale-105`}></span>
 						<span className='relative text-xl tracking-widest'>Login</span>

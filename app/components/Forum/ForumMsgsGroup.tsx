@@ -1,14 +1,14 @@
 import React from 'react';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store';
+import { useState, useEffect } from 'react';
+import { useAppSelector } from '@/store';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { Message, User, UserInRoom } from '../Types/types';
 import ForumMsgsSent from './ForumMsgsSent';
 import ForumMsgsGroupReceived from './ForumMsgsGroupReceived';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { TransformedUserChat } from '../Types/types';
 
 type ForumMsgsGroupProps = {
@@ -26,12 +26,10 @@ const ForumMsgsGroup = ({
 	userRooms,
 	mainChat,
 }: ForumMsgsGroupProps) => {
-	// console.log('ForumMsgsMain');
 	const auth = useAppSelector(state => state.auth);
 	const chat = useAppSelector(state => state.chat);
 	const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
 	const [usersInRoom, setUsersInRoom] = useState<UserInRoom[]>([]);
-	// const messagesEndRef = useRef<HTMLUListElement | null>(null);
 	const lastMessage =
 		receivedMessages && receivedMessages.length > 0
 			? receivedMessages[receivedMessages.length - 1]
@@ -71,17 +69,9 @@ const ForumMsgsGroup = ({
 			unsub();
 		};
 	}, [chat.chatKey, auth.uid, userRooms, arrayOfActualDetails, mainChat]);
-	// useEffect(() => {
-	// 	if (messagesEndRef.current) {
-	// 		messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
-	// 	}
-	// }, [receivedMessages]);
 	return (
 		<>
-			<ul
-				className='flex flex-col overflow-y-auto h-full w-full px-2 max-w-full'
-				// ref={messagesEndRef}
-			>
+			<ul className='flex flex-col overflow-y-auto h-full w-full px-2 max-w-full'>
 				{receivedMessages.length !== 0 &&
 					receivedMessages.map((message: Message) => {
 						const authorUser = arrayOfActualDetails.find(

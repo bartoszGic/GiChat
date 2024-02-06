@@ -2,7 +2,7 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { changeUserChat } from '@/store/chat-slice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import {
@@ -13,7 +13,6 @@ import {
 	where,
 	getDocs,
 	writeBatch,
-	updateDoc,
 } from 'firebase/firestore';
 import { db } from '@/app/firebase-config';
 import { UserInRoom } from '../Types/types';
@@ -37,7 +36,6 @@ const LeftRoomsRoom = ({
 	setLoadingForum,
 	setNumberOfNotifications,
 }: LeftRoomsRoomProps) => {
-	// console.log('LeftRoomsRoom');
 	const chat = useAppSelector(state => state.chat);
 	const auth = useAppSelector(state => state.auth);
 	const dispatch = useAppDispatch();
