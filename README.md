@@ -1,3 +1,11 @@
+# GiChat
+
+An application for chatting with friends and groups.
+
+## Live
+
+https://gi-chat-two.vercel.app/
+
 ## Description
 
 Create an account using your email or log in with one of the test accounts:
@@ -26,5 +34,5 @@ The application is extensive enough to include several useful features:
 
 ## Preview
 
-![preview1](https://github.com/bartoszGic/HerbsReact/blob/main/public/preview1.PNG)
-![preview1](https://github.com/bartoszGic/HerbsReact/blob/main/public/preview2.PNG)
+![preview1](https://github.com/bartoszGic/GiChat/blob/main/public/preview1.PNG)
+![preview1](https://github.com/bartoszGic/GiChat/blob/main/public/preview2.PNG)
