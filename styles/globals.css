@@ -10,7 +10,6 @@
 	scroll-snap-type: y mandatory;
 }
 html {
-	overflow: hidden;
 	height: --webkit-fill-available;
 }
 body {
