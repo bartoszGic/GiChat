@@ -11,19 +11,11 @@
 }
 html {
 	overflow: hidden;
-	width: 100%;
-	margin: 0;
-	height: 100%;
-	overflow: hidden;
+	height: --webkit-fill-available;
 }
 body {
-	position: fixed;
-	height: 100%;
-	width: 100%;
-	margin: 0;
-	position: fixed;
-	overflow: hidden;
-	-webkit-overflow-scrolling: touch;
+	overflow-y: scroll;
+	height: --webkit-fill-available;
 }
 .inter {
 	font-family: var(--font-inter);
