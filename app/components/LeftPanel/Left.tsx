@@ -287,7 +287,7 @@ const Left = ({
 				/>
 			)}
 			<section
-				className={`absolute h-calc mt-[56px] px-2 bg-neutral-950 ease-in-out duration-200 transition-transform z-40  ${
+				className={`absolute h-calc mt-[56px] px-2 bg-neutral-950 ease-in-out duration-200 transition-transform z-30  ${
 					isLeftBarOpen || innerWidth >= 640
 						? 'transform translate-x-0 w-3/4 sm:w-1/3'
 						: 'transform -translate-x-full w-2/3 sm:w-1/3'

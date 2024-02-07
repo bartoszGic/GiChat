@@ -10,5 +10,18 @@
 	scroll-snap-type: y mandatory;
 }
 html {
+	overflow: hidden;
+	width: 100%;
+}
+body {
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	background-color: lightgreen;
 	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+}
+.inter {
+	font-family: var(--font-inter);
 }

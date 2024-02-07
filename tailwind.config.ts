@@ -9,7 +9,7 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['var(--font-inter)'],
+				inter: ['var(--font-inter)'],
 			},
 			boxShadow: {
 				btnShaddow: 'inset 6.5em 0 0 0 var(slate-100)',

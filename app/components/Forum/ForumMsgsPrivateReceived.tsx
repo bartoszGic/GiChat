@@ -52,6 +52,7 @@ const ForumMsgsPrivateReceived = ({
 								alt='przesłany obraz'
 								width={160}
 								height={160}
+								priority
 							/>
 						</div>
 					)}

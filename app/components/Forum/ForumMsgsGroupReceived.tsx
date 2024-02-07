@@ -38,7 +38,7 @@ const ForumMsgsGroupReceived = ({
 					<div>{formatDate(message.date.seconds)}</div>
 				</div>
 				<div className='mt-2'>{message.message}</div>
-				<div className='relative mt-2 text-justify w-40 rounded-lg'>
+				<div className='mt-2 text-justify rounded-lg'>
 					{message.img && (
 						<div
 							className='flex flex-col cursor-pointer mt-2'
@@ -52,6 +52,7 @@ const ForumMsgsGroupReceived = ({
 								alt='przesłany obraz'
 								width={160}
 								height={160}
+								priority
 							/>
 						</div>
 					)}
