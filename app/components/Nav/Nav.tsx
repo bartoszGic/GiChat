@@ -24,7 +24,7 @@ const Nav = ({
 	numberOfNotifications,
 }: NavProps) => {
 	return (
-		<nav className='flex w-full items-center z-0'>
+		<nav className='flex w-full items-center z-50'>
 			<div className='flex justify-between w-full p-3 items-center bg-neutral-950'>
 				<h3 className='hidden sm:flex tracking-widest font-bold ml-2'>
 					GiChat

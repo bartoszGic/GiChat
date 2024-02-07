@@ -38,12 +38,14 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 		e.preventDefault();
 		setLoading(true);
 		const usersRef = collection(db, 'users');
-		const usersQ = query(usersRef, where('displayName', '==', searchUser));
 		try {
-			const usersQSnapshot = await getDocs(usersQ);
+			const usersQSnapshot = await getDocs(usersRef);
 			const usersData: User[] = [];
 			usersQSnapshot.forEach(doc => {
-				usersData.push(doc.data() as User);
+				const toLowerName = doc.data().displayName.toLowerCase();
+				if (toLowerName === searchUser.toLowerCase()) {
+					usersData.push(doc.data() as User);
+				}
 			});
 			const currentUserIndex = usersData.findIndex(
 				user => user.uid === auth.uid
@@ -135,7 +137,7 @@ const NavSearch = ({ setForumStyleZ, userChats }: NavSearchProps) => {
 				<ul
 					className={`${
 						showList ? 'flex flex-col' : 'hidden'
-					} absolute left-0 top-9 px-2 py-1 text-xs text-neutral-50 justify-center w-40 bg-neutral-700 rounded-xl z-30 sm:text-sm sm:w-48`}>
+					} absolute left-0 top-9 px-2 py-1 text-xs text-neutral-50 justify-center w-40 bg-neutral-700 rounded-xl sm:text-sm sm:w-48 z-30`}>
 					{existingUsers.length !== 0 ? (
 						existingUsers.map(user => (
 							<li
