@@ -187,13 +187,6 @@ const Register = () => {
 							<span className='flex items-center cursor-pointer animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'>
 								Dodaj avatar
 								{!avatarURL ? (
-									// <Image
-									// 	className=''
-									// 	src='/user.png'
-									// 	alt='avatar'
-									// 	width={40}
-									// 	height={40}
-									// />
 									<FontAwesomeIcon
 										className='h-6 w-6 m-1 align-middle bg-center'
 										icon={faUser}

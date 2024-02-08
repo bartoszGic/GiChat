@@ -18,7 +18,7 @@ const NavUser = ({ isRightBarOpen, toggleRightBar }: NavUser) => {
 					onClick={() => toggleRightBar()}>
 					{auth.photoURL ? (
 						<Image
-							className='h-6 w-6 mr-1 rounded-full'
+							className='h-6 w-6 mr-1 align-middle rounded-full'
 							src={auth.photoURL as string}
 							alt='ikona użytkownika'
 							width={40}
@@ -26,7 +26,7 @@ const NavUser = ({ isRightBarOpen, toggleRightBar }: NavUser) => {
 						/>
 					) : (
 						<FontAwesomeIcon
-							className='w-5 h-6 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+							className='w-6 h-6 mr-1'
 							icon={faUser}
 						/>
 					)}
@@ -36,7 +36,7 @@ const NavUser = ({ isRightBarOpen, toggleRightBar }: NavUser) => {
 					className='flex'
 					onClick={() => toggleRightBar()}>
 					<FontAwesomeIcon
-						className='w-5 h-6 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
+						className='w-6 h-6 mr-1 animate-animeOffBtn hover:animate-animeBtn active:animate-animeBtn'
 						icon={faXmark}
 					/>
 				</button>

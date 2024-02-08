@@ -14,7 +14,7 @@ html {
 }
 body {
 	overflow-y: scroll;
-	/* height: 100dvh; */
+	height: 100svh;
 }
 .inter {
 	font-family: var(--font-inter);
