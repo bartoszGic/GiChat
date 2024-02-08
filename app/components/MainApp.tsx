@@ -30,7 +30,7 @@ const MainApp = () => {
 	};
 
 	return (
-		<div className='flex h-dvh'>
+		<div className='flex h-svh'>
 			{showImage && (
 				<ImageModal
 					setShowImage={setShowImage}
