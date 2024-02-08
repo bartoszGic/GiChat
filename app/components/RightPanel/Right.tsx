@@ -153,7 +153,7 @@ const Right = ({ isRightBarOpen, toggleRightBar }: RightProps) => {
 				/>
 			)}
 			<section
-				className={`absolute flex flex-col right-0 w-full h-1/2 bg-neutral-800 text-neutral-50 rounded-b-lg  ease-in-out duration-200 transition-transform sm:h-1/3 sm:w-2/3 sm:text-lg z-30 ${
+				className={`absolute flex flex-col right-0 w-full h-72 bg-neutral-800 text-neutral-50 rounded-b-lg  ease-in-out duration-200 transition-transform sm:w-2/3 sm:text-lg z-30 ${
 					isRightBarOpen ? 'translate-y-0 mt-14' : '-translate-y-full mt-0'
 				}`}>
 				<div className='flex flex-col py-6 h-full justify-between font-light text-xs sm:text-sm'>
