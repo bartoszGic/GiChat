@@ -10,12 +10,11 @@
 	scroll-snap-type: y mandatory;
 }
 html {
-	height: 100%;
 	height: --webkit-fill-available;
 }
 body {
 	overflow-y: scroll;
-	height: --webkit-fill-available;
+	height: 100dvh;
 }
 .inter {
 	font-family: var(--font-inter);

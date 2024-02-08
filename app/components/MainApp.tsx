@@ -30,7 +30,7 @@ const MainApp = () => {
 	};
 
 	return (
-		<>
+		<div className='flex h-dvh'>
 			{showImage && (
 				<ImageModal
 					setShowImage={setShowImage}
@@ -77,7 +77,7 @@ const MainApp = () => {
 				isRightBarOpen={isRightBarOpen}
 				toggleRightBar={toggleRightBar}
 			/>
-		</>
+		</div>
 	);
 };
 
