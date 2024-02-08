@@ -10,7 +10,7 @@
 	scroll-snap-type: y mandatory;
 }
 html {
-	height: --webkit-fill-available;
+	height: 100svh;
 }
 body {
 	overflow-y: scroll;
